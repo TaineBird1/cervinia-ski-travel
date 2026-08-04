@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: cervinia-travel-services
+    runtime: node
+    plan: free
+    rootDir: cervinia-shop
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: BUSINESS_NAME
+        value: Cervinia Travel Services
+      - key: BUSINESS_EMAIL
+        value: info@cerviniatravelservices.com
+      - key: BUSINESS_WHATSAPP
+        value: "+39 366 879 4487"
+      - key: BUSINESS_ADDRESS
+        value: Breuil-Cervinia, Aosta Valley, Italy

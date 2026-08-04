@@ -1,0 +1,1023 @@
+{
+  "_source": "Imported from Website - Ski_Hire_Pass_Lessons.xlsx (transfers still placeholder \u2014 no transfer rates supplied yet)",
+  "currency": "EUR",
+  "transfers": {
+    "_status": "PLACEHOLDER \u2014 replace with real figures from your spreadsheet",
+    "options": [
+      {
+        "id": "malpensa-shared",
+        "airport": "Milan Malpensa",
+        "type": "Shared Shuttle",
+        "pricePerPerson": 65
+      },
+      {
+        "id": "malpensa-private",
+        "airport": "Milan Malpensa",
+        "type": "Private Transfer",
+        "pricePerPerson": 180
+      },
+      {
+        "id": "linate-shared",
+        "airport": "Milan Linate",
+        "type": "Shared Shuttle",
+        "pricePerPerson": 70
+      },
+      {
+        "id": "linate-private",
+        "airport": "Milan Linate",
+        "type": "Private Transfer",
+        "pricePerPerson": 190
+      },
+      {
+        "id": "bergamo-shared",
+        "airport": "Bergamo Orio",
+        "type": "Shared Shuttle",
+        "pricePerPerson": 75
+      },
+      {
+        "id": "bergamo-private",
+        "airport": "Bergamo Orio",
+        "type": "Private Transfer",
+        "pricePerPerson": 200
+      },
+      {
+        "id": "turin-shared",
+        "airport": "Turin Caselle",
+        "type": "Shared Shuttle",
+        "pricePerPerson": 55
+      },
+      {
+        "id": "turin-private",
+        "airport": "Turin Caselle",
+        "type": "Private Transfer",
+        "pricePerPerson": 150
+      }
+    ]
+  },
+  "equipment": {
+    "categories": [
+      "Skis and Poles",
+      "Ski Boots",
+      "Snowboard",
+      "Snowboard Boots",
+      "Ski Accessories",
+      "Ski Set - Skis, Boots & Poles",
+      "Snowboard Set - Board & Boots"
+    ],
+    "data": {
+      "Skis and Poles": {
+        "items": [
+          "Kids up to 11 years",
+          "Evolution Beginner",
+          "Performance Intermediate",
+          "Excellence Experienced"
+        ],
+        "pricesByDays": {
+          "1": [
+            13,
+            21,
+            30,
+            38
+          ],
+          "2": [
+            24,
+            36,
+            53,
+            69
+          ],
+          "3": [
+            34,
+            51,
+            71,
+            89
+          ],
+          "4": [
+            44,
+            63,
+            87,
+            107
+          ],
+          "5": [
+            54,
+            76,
+            102,
+            123
+          ],
+          "6": [
+            63,
+            89,
+            118,
+            143
+          ],
+          "7": [
+            72,
+            101,
+            134,
+            162
+          ],
+          "8": [
+            80,
+            114,
+            149,
+            181
+          ],
+          "9": [
+            89,
+            126,
+            164,
+            199
+          ],
+          "10": [
+            97,
+            139,
+            179,
+            218
+          ],
+          "11": [
+            105,
+            152,
+            194,
+            236
+          ],
+          "12": [
+            114,
+            164,
+            209,
+            255
+          ],
+          "13": [
+            122,
+            177,
+            224,
+            273
+          ]
+        }
+      },
+      "Ski Boots": {
+        "items": [
+          "Kids up to 11 years",
+          "Evolution Beginner",
+          "Performance Intermediate",
+          "Excellence Experienced"
+        ],
+        "pricesByDays": {
+          "1": [
+            9,
+            14,
+            14,
+            14
+          ],
+          "2": [
+            16,
+            28,
+            25,
+            26
+          ],
+          "3": [
+            23,
+            35,
+            34,
+            34
+          ],
+          "4": [
+            30,
+            42,
+            42,
+            42
+          ],
+          "5": [
+            36,
+            51,
+            51,
+            51
+          ],
+          "6": [
+            42,
+            59,
+            59,
+            59
+          ],
+          "7": [
+            47,
+            68,
+            68,
+            68
+          ],
+          "8": [
+            51,
+            76,
+            76,
+            76
+          ],
+          "9": [
+            55,
+            84,
+            84,
+            84
+          ],
+          "10": [
+            59,
+            93,
+            93,
+            93
+          ],
+          "11": [
+            63,
+            101,
+            101,
+            101
+          ],
+          "12": [
+            68,
+            110,
+            110,
+            110
+          ],
+          "13": [
+            72,
+            118,
+            118,
+            118
+          ]
+        }
+      },
+      "Snowboard": {
+        "items": [
+          "Rider up to 13 years",
+          "Evolution Beginner",
+          "Performance Intermediate",
+          "Excellence Experienced"
+        ],
+        "pricesByDays": {
+          "1": [
+            13,
+            21,
+            30,
+            38
+          ],
+          "2": [
+            24,
+            37,
+            53,
+            69
+          ],
+          "3": [
+            34,
+            51,
+            71,
+            89
+          ],
+          "4": [
+            44,
+            63,
+            87,
+            107
+          ],
+          "5": [
+            54,
+            76,
+            102,
+            123
+          ],
+          "6": [
+            63,
+            89,
+            118,
+            143
+          ],
+          "7": [
+            72,
+            101,
+            134,
+            162
+          ],
+          "8": [
+            80,
+            114,
+            149,
+            180
+          ],
+          "9": [
+            89,
+            126,
+            164,
+            199
+          ],
+          "10": [
+            97,
+            139,
+            179,
+            218
+          ],
+          "11": [
+            105,
+            152,
+            194,
+            236
+          ],
+          "12": [
+            114,
+            164,
+            209,
+            255
+          ],
+          "13": [
+            122,
+            177,
+            224,
+            273
+          ]
+        }
+      },
+      "Snowboard Boots": {
+        "items": [
+          "Rider up to 13 years",
+          "Evolution Beginner",
+          "Performance Intermediate",
+          "Excellence Experienced"
+        ],
+        "pricesByDays": {
+          "1": [
+            9,
+            13,
+            13,
+            13
+          ],
+          "2": [
+            16,
+            28,
+            24,
+            26
+          ],
+          "3": [
+            23,
+            35,
+            35,
+            35
+          ],
+          "4": [
+            30,
+            42,
+            42,
+            42
+          ],
+          "5": [
+            36,
+            51,
+            51,
+            51
+          ],
+          "6": [
+            42,
+            59,
+            59,
+            59
+          ],
+          "7": [
+            47,
+            68,
+            68,
+            68
+          ],
+          "8": [
+            51,
+            76,
+            76,
+            76
+          ],
+          "9": [
+            55,
+            84,
+            84,
+            84
+          ],
+          "10": [
+            59,
+            93,
+            93,
+            93
+          ],
+          "11": [
+            63,
+            101,
+            101,
+            101
+          ],
+          "12": [
+            68,
+            110,
+            110,
+            110
+          ],
+          "13": [
+            72,
+            118,
+            118,
+            118
+          ]
+        }
+      },
+      "Ski Accessories": {
+        "items": [
+          "Ski Jacket & Pants",
+          "Helmet (Junior)",
+          "Helmet (Adult)",
+          "Gloves (Junior)",
+          "Gloves (Adult)",
+          "Goggles (Junior)",
+          "Goggles (Adult)",
+          "Storage Lockers"
+        ],
+        "pricesByDays": {
+          "1": [
+            53,
+            5,
+            7,
+            6,
+            9,
+            6,
+            9,
+            9
+          ],
+          "2": [
+            53,
+            7,
+            11,
+            8,
+            13,
+            8,
+            13,
+            17
+          ],
+          "3": [
+            53,
+            8,
+            14,
+            10,
+            17,
+            10,
+            17,
+            26
+          ],
+          "4": [
+            53,
+            10,
+            16,
+            12,
+            20,
+            12,
+            20,
+            34
+          ],
+          "5": [
+            53,
+            12,
+            19,
+            14,
+            24,
+            14,
+            24,
+            42
+          ],
+          "6": [
+            63,
+            13,
+            21,
+            16,
+            27,
+            16,
+            27,
+            51
+          ],
+          "7": [
+            63,
+            15,
+            24,
+            18,
+            30,
+            18,
+            30,
+            59
+          ],
+          "8": [
+            74,
+            16,
+            27,
+            20,
+            33,
+            20,
+            33,
+            68
+          ],
+          "9": [
+            84,
+            18,
+            29,
+            23,
+            35,
+            23,
+            35,
+            76
+          ],
+          "10": [
+            95,
+            20,
+            32,
+            25,
+            38,
+            25,
+            38,
+            84
+          ],
+          "11": [
+            105,
+            21,
+            34,
+            27,
+            41,
+            27,
+            41,
+            93
+          ],
+          "12": [
+            116,
+            24,
+            36,
+            29,
+            45,
+            29,
+            45,
+            101
+          ],
+          "13": [
+            126,
+            26,
+            39,
+            31,
+            48,
+            31,
+            48,
+            110
+          ],
+          "14": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            158
+          ]
+        }
+      },
+      "Ski Set - Skis, Boots & Poles": {
+        "items": [
+          "Evolution Beginner",
+          "Performance Intermediate",
+          "Excellence Experienced",
+          "Kids up to 11 years"
+        ],
+        "pricesByDays": {
+          "1": [
+            35,
+            44,
+            52,
+            22
+          ],
+          "2": [
+            64,
+            78,
+            95,
+            40
+          ],
+          "3": [
+            86,
+            105,
+            123,
+            57
+          ],
+          "4": [
+            105,
+            129,
+            149,
+            74
+          ],
+          "5": [
+            127,
+            153,
+            174,
+            90
+          ],
+          "6": [
+            148,
+            177,
+            202,
+            105
+          ],
+          "7": [
+            169,
+            202,
+            230,
+            119
+          ],
+          "8": [
+            190,
+            225,
+            257,
+            131
+          ],
+          "9": [
+            210,
+            248,
+            283,
+            144
+          ],
+          "10": [
+            232,
+            272,
+            311,
+            156
+          ],
+          "11": [
+            253,
+            295,
+            337,
+            168
+          ],
+          "12": [
+            274,
+            319,
+            365,
+            182
+          ],
+          "13": [
+            295,
+            342,
+            391,
+            194
+          ]
+        }
+      },
+      "Snowboard Set - Board & Boots": {
+        "items": [
+          "Evolution Beginner",
+          "Performance Intermediate",
+          "Excellence Experienced",
+          "Kids up to 11 years"
+        ],
+        "pricesByDays": {
+          "1": [
+            34,
+            43,
+            51,
+            22
+          ],
+          "2": [
+            65,
+            77,
+            95,
+            40
+          ],
+          "3": [
+            86,
+            106,
+            124,
+            57
+          ],
+          "4": [
+            105,
+            129,
+            149,
+            74
+          ],
+          "5": [
+            127,
+            153,
+            174,
+            90
+          ],
+          "6": [
+            148,
+            177,
+            202,
+            105
+          ],
+          "7": [
+            169,
+            202,
+            230,
+            119
+          ],
+          "8": [
+            190,
+            225,
+            256,
+            131
+          ],
+          "9": [
+            210,
+            248,
+            283,
+            144
+          ],
+          "10": [
+            232,
+            272,
+            311,
+            156
+          ],
+          "11": [
+            253,
+            295,
+            337,
+            168
+          ],
+          "12": [
+            274,
+            319,
+            365,
+            182
+          ],
+          "13": [
+            295,
+            342,
+            391,
+            194
+          ]
+        }
+      }
+    }
+  },
+  "liftPasses": {
+    "season": "Season 24 Oct 2026 - 02 May 2027",
+    "tiers": [
+      "Adult Standard",
+      "Senior (>65)",
+      "Young (U24)",
+      "Junior (U16)",
+      "Child (U8)"
+    ],
+    "pricesByDays": {
+      "1": [
+        64,
+        57,
+        51,
+        45,
+        16
+      ],
+      "2": [
+        123,
+        108,
+        99,
+        86,
+        31
+      ],
+      "3": [
+        181,
+        159,
+        145,
+        127,
+        46
+      ],
+      "4": [
+        236,
+        208,
+        189,
+        165,
+        59
+      ],
+      "5": [
+        288,
+        254,
+        231,
+        202,
+        72
+      ],
+      "6": [
+        338,
+        298,
+        271,
+        237,
+        85
+      ],
+      "7": [
+        386,
+        339,
+        308,
+        270,
+        97
+      ],
+      "8": [
+        430,
+        379,
+        344,
+        301,
+        108
+      ],
+      "9": [
+        494,
+        435,
+        395,
+        346,
+        124
+      ],
+      "10": [
+        553,
+        487,
+        443,
+        387,
+        139
+      ],
+      "11": [
+        611,
+        538,
+        489,
+        428,
+        153
+      ],
+      "12": [
+        666,
+        586,
+        533,
+        466,
+        167
+      ],
+      "13": [
+        718,
+        632,
+        575,
+        503,
+        180
+      ]
+    },
+    "notes": "Child (U8) ski free with an adult pass, or pay the listed price for a standalone pass. A Zermatt (international) upgrade can be purchased at the lift kiosk on the day, weather permitting."
+  },
+  "lessons": {
+    "seasonNote": "High Season: 06-08 Dec | 20 Dec-11 Jan | 14 Feb-01 Mar | 30 Mar-12 Apr. All other dates are Low Season.",
+    "private": {
+      "peopleOptions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "durations": [
+        "2 hours",
+        "3 hours",
+        "4 hours",
+        "Full day"
+      ],
+      "rates": {
+        "1": {
+          "2 hours": {
+            "lowMorning": 121,
+            "lowAfternoon": 116,
+            "high": 125
+          },
+          "3 hours": {
+            "lowMorning": 179,
+            "lowAfternoon": 158,
+            "high": 175
+          },
+          "4 hours": {
+            "lowMorning": 231,
+            "lowAfternoon": null,
+            "high": 230
+          },
+          "Full day": {
+            "lowMorning": 473,
+            "lowAfternoon": null,
+            "high": 450
+          }
+        },
+        "2": {
+          "2 hours": {
+            "lowMorning": 137,
+            "lowAfternoon": 121,
+            "high": 145
+          },
+          "3 hours": {
+            "lowMorning": 200,
+            "lowAfternoon": 179,
+            "high": 200
+          },
+          "4 hours": {
+            "lowMorning": 252,
+            "lowAfternoon": null,
+            "high": 260
+          },
+          "Full day": {
+            "lowMorning": 473,
+            "lowAfternoon": null,
+            "high": 500
+          }
+        },
+        "3": {
+          "2 hours": {
+            "lowMorning": 158,
+            "lowAfternoon": 137,
+            "high": 165
+          },
+          "3 hours": {
+            "lowMorning": 221,
+            "lowAfternoon": 200,
+            "high": 225
+          },
+          "4 hours": {
+            "lowMorning": 273,
+            "lowAfternoon": null,
+            "high": 290
+          },
+          "Full day": {
+            "lowMorning": 525,
+            "lowAfternoon": null,
+            "high": 550
+          }
+        },
+        "4": {
+          "2 hours": {
+            "lowMorning": 179,
+            "lowAfternoon": 158,
+            "high": 185
+          },
+          "3 hours": {
+            "lowMorning": 242,
+            "lowAfternoon": 221,
+            "high": 250
+          },
+          "4 hours": {
+            "lowMorning": 294,
+            "lowAfternoon": null,
+            "high": 320
+          },
+          "Full day": {
+            "lowMorning": 578,
+            "lowAfternoon": null,
+            "high": 600
+          }
+        },
+        "5": {
+          "2 hours": {
+            "lowMorning": 200,
+            "lowAfternoon": 179,
+            "high": null
+          },
+          "3 hours": {
+            "lowMorning": 263,
+            "lowAfternoon": 242,
+            "high": null
+          },
+          "4 hours": {
+            "lowMorning": 315,
+            "lowAfternoon": null,
+            "high": null
+          },
+          "Full day": {
+            "lowMorning": 630,
+            "lowAfternoon": null,
+            "high": null
+          }
+        },
+        "6": {
+          "2 hours": {
+            "lowMorning": 221,
+            "lowAfternoon": 200,
+            "high": null
+          },
+          "3 hours": {
+            "lowMorning": 284,
+            "lowAfternoon": 263,
+            "high": null
+          },
+          "4 hours": {
+            "lowMorning": 336,
+            "lowAfternoon": null,
+            "high": null
+          },
+          "Full day": {
+            "lowMorning": 683,
+            "lowAfternoon": null,
+            "high": null
+          }
+        }
+      }
+    },
+    "group": [
+      {
+        "id": "group-3day",
+        "label": "Group Lesson \u2014 3 Days (Mon\u2013Fri 10:00\u201312:30)",
+        "low": 189,
+        "high": 205
+      },
+      {
+        "id": "group-5day",
+        "label": "Group Lesson \u2014 5 Days (Mon\u2013Fri 10:00\u201312:30)",
+        "low": 210,
+        "high": 273
+      }
+    ]
+  }
+}

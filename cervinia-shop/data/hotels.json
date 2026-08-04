@@ -1,0 +1,1257 @@
+{
+  "_source": "Imported from Website - Cervinia_Hotel_Rates_26-27 from 24-25.xlsx",
+  "currency": "EUR",
+  "hotels": {
+    "Hotel Perruquet": {
+      "title": "HOTEL PERRUQUET RATES 2026/2027",
+      "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "rooms": [
+        "Standard Room",
+        "Luxury room"
+      ],
+      "notes": [
+        "\u2022 \u20ac1.50 tourist tax per person to be paid to hotel on arrival for Standard Room",
+        "\u2022 No tourist tax payable on Luxury Room (hotel will pay)"
+      ],
+      "weeks": [
+        {
+          "arrival": "2026-12-05",
+          "departure": "2026-12-12",
+          "prices": [
+            866,
+            6321
+          ]
+        },
+        {
+          "arrival": "2026-12-12",
+          "departure": "2026-12-19",
+          "prices": [
+            866,
+            6321
+          ]
+        },
+        {
+          "arrival": "2026-12-19",
+          "departure": "2026-12-26",
+          "prices": [
+            1204,
+            8428
+          ]
+        },
+        {
+          "arrival": "2026-12-26",
+          "departure": "2027-01-02",
+          "prices": [
+            1317,
+            9219
+          ]
+        },
+        {
+          "arrival": "2027-01-02",
+          "departure": "2027-01-09",
+          "prices": [
+            1280,
+            8955
+          ]
+        },
+        {
+          "arrival": "2027-01-09",
+          "departure": "2027-01-16",
+          "prices": [
+            903,
+            6321
+          ]
+        },
+        {
+          "arrival": "2027-01-16",
+          "departure": "2027-01-23",
+          "prices": [
+            914,
+            6321
+          ]
+        },
+        {
+          "arrival": "2027-01-23",
+          "departure": "2027-01-30",
+          "prices": [
+            903,
+            6321
+          ]
+        },
+        {
+          "arrival": "2027-01-30",
+          "departure": "2027-02-06",
+          "prices": [
+            903,
+            6321
+          ]
+        },
+        {
+          "arrival": "2027-02-06",
+          "departure": "2027-02-13",
+          "prices": [
+            1054,
+            7375
+          ]
+        },
+        {
+          "arrival": "2027-02-13",
+          "departure": "2027-02-20",
+          "prices": [
+            1204,
+            8428
+          ]
+        },
+        {
+          "arrival": "2027-02-20",
+          "departure": "2027-02-27",
+          "prices": [
+            1204,
+            8428
+          ]
+        },
+        {
+          "arrival": "2027-02-27",
+          "departure": "2027-03-06",
+          "prices": [
+            1054,
+            7375
+          ]
+        },
+        {
+          "arrival": "2027-03-06",
+          "departure": "2027-03-13",
+          "prices": [
+            1054,
+            7375
+          ]
+        },
+        {
+          "arrival": "2027-03-13",
+          "departure": "2027-03-20",
+          "prices": [
+            1054,
+            7375
+          ]
+        },
+        {
+          "arrival": "2027-03-20",
+          "departure": "2027-03-27",
+          "prices": [
+            1054,
+            7375
+          ]
+        },
+        {
+          "arrival": "2027-03-27",
+          "departure": "2027-04-03",
+          "prices": [
+            1167,
+            8165
+          ]
+        },
+        {
+          "arrival": "2027-04-03",
+          "departure": "2027-04-10",
+          "prices": [
+            1129,
+            7902
+          ]
+        },
+        {
+          "arrival": "2027-04-10",
+          "departure": "2027-04-17",
+          "prices": [
+            866,
+            6058
+          ]
+        },
+        {
+          "arrival": "2027-04-17",
+          "departure": "2027-04-24",
+          "prices": [
+            866,
+            6058
+          ]
+        },
+        {
+          "arrival": "2027-04-24",
+          "departure": "2027-05-01",
+          "prices": [
+            866,
+            6058
+          ]
+        }
+      ]
+    },
+    "Hotel Lyskamm": {
+      "title": "HOTEL LYSKAMM RATES 2026/2027",
+      "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "rooms": [
+        "Standard Room",
+        "Superior Room"
+      ],
+      "notes": [
+        "\u2022 Minimum stay 7 nights",
+        "\u2022 Half Board",
+        "\u2022 Tourist tax of \u20ac1-\u20ac2 per person per night not included (Pay hotel direct on arrival)",
+        "\u2022 Third Bed: discount of 20% for children under 12",
+        "\u2022 Third Bed: discount of 10% for children over 12"
+      ],
+      "weeks": [
+        {
+          "arrival": "2026-12-05",
+          "departure": "2026-12-12",
+          "prices": [
+            866,
+            941
+          ]
+        },
+        {
+          "arrival": "2026-12-12",
+          "departure": "2026-12-19",
+          "prices": [
+            866,
+            941
+          ]
+        },
+        {
+          "arrival": "2026-12-19",
+          "departure": "2026-12-26",
+          "prices": [
+            1092,
+            1167
+          ]
+        },
+        {
+          "arrival": "2026-12-26",
+          "departure": "2027-01-02",
+          "prices": [
+            1129,
+            1204
+          ]
+        },
+        {
+          "arrival": "2027-01-02",
+          "departure": "2027-01-09",
+          "prices": [
+            968,
+            1043
+          ]
+        },
+        {
+          "arrival": "2027-01-09",
+          "departure": "2027-01-16",
+          "prices": [
+            903,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-01-16",
+          "departure": "2027-01-23",
+          "prices": [
+            903,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-01-23",
+          "departure": "2027-01-30",
+          "prices": [
+            903,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-01-30",
+          "departure": "2027-02-06",
+          "prices": [
+            903,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-02-06",
+          "departure": "2027-02-13",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-02-13",
+          "departure": "2027-02-20",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-02-20",
+          "departure": "2027-02-27",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-02-27",
+          "departure": "2027-03-06",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-03-06",
+          "departure": "2027-03-13",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-03-13",
+          "departure": "2027-03-20",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-03-20",
+          "departure": "2027-03-27",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-03-27",
+          "departure": "2027-04-03",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-04-03",
+          "departure": "2027-04-10",
+          "prices": [
+            995,
+            1070
+          ]
+        },
+        {
+          "arrival": "2027-04-10",
+          "departure": "2027-04-17",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-04-17",
+          "departure": "2027-04-24",
+          "prices": [
+            1016,
+            1092
+          ]
+        },
+        {
+          "arrival": "2027-04-24",
+          "departure": "2027-05-01",
+          "prices": [
+            1016,
+            1092
+          ]
+        }
+      ]
+    },
+    "Hotel Da Compagnoni": {
+      "title": "HOTEL DA COMPAGNONI RATES 2026/2027",
+      "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "rooms": [
+        "Comfort room 1-2 persons",
+        "Deluxe room 2-3 persons",
+        "Family room 2-3 adults or 2 adults and 2 children"
+      ],
+      "notes": [
+        "\u2022 Minimum stay 7 nights",
+        "\u2022 Bed and breakfast",
+        "\u2022 Tourist tax of \u20ac1-\u20ac2 per person per night not included (Pay hotel direct on arrival)",
+        "\u2022 Children 0-4 years old sharing bed with parents are free",
+        "\u2022 Children 0-4 years old in cot or using 3rd bed pay \u20ac30 per day",
+        "\u2022 Children 5-7 years old in 3rd bed \u20ac40 per day",
+        "\u2022 Children 8-11 years old in 3rd bed - 40% reduction",
+        "\u2022 Single supplement \u20ac50 per night"
+      ],
+      "weeks": [
+        {
+          "arrival": "2026-12-05",
+          "departure": "2026-12-12",
+          "prices": [
+            828,
+            903,
+            1016
+          ]
+        },
+        {
+          "arrival": "2026-12-12",
+          "departure": "2026-12-19",
+          "prices": [
+            828,
+            903,
+            1016
+          ]
+        },
+        {
+          "arrival": "2026-12-19",
+          "departure": "2026-12-26",
+          "prices": [
+            1097,
+            1172,
+            1285
+          ]
+        },
+        {
+          "arrival": "2026-12-26",
+          "departure": "2027-01-02",
+          "prices": [
+            1317,
+            1393,
+            1505
+          ]
+        },
+        {
+          "arrival": "2027-01-02",
+          "departure": "2027-01-09",
+          "prices": [
+            995,
+            1070,
+            1183
+          ]
+        },
+        {
+          "arrival": "2027-01-09",
+          "departure": "2027-01-16",
+          "prices": [
+            941,
+            1016,
+            1129
+          ]
+        },
+        {
+          "arrival": "2027-01-16",
+          "departure": "2027-01-23",
+          "prices": [
+            941,
+            1016,
+            1129
+          ]
+        },
+        {
+          "arrival": "2027-01-23",
+          "departure": "2027-01-30",
+          "prices": [
+            941,
+            1016,
+            1129
+          ]
+        },
+        {
+          "arrival": "2027-01-30",
+          "departure": "2027-02-06",
+          "prices": [
+            941,
+            1016,
+            1129
+          ]
+        },
+        {
+          "arrival": "2027-02-06",
+          "departure": "2027-02-13",
+          "prices": [
+            1129,
+            1204,
+            1317
+          ]
+        },
+        {
+          "arrival": "2027-02-13",
+          "departure": "2027-02-20",
+          "prices": [
+            1129,
+            1204,
+            1317
+          ]
+        },
+        {
+          "arrival": "2027-02-20",
+          "departure": "2027-02-27",
+          "prices": [
+            1129,
+            1204,
+            1317
+          ]
+        },
+        {
+          "arrival": "2027-02-27",
+          "departure": "2027-03-06",
+          "prices": [
+            1129,
+            1204,
+            1317
+          ]
+        },
+        {
+          "arrival": "2027-03-06",
+          "departure": "2027-03-13",
+          "prices": [
+            1129,
+            1204,
+            1317
+          ]
+        },
+        {
+          "arrival": "2027-03-13",
+          "departure": "2027-03-20",
+          "prices": [
+            1129,
+            1204,
+            1317
+          ]
+        },
+        {
+          "arrival": "2027-03-20",
+          "departure": "2027-03-27",
+          "prices": [
+            941,
+            1016,
+            1129
+          ]
+        },
+        {
+          "arrival": "2027-03-27",
+          "departure": "2027-04-03",
+          "prices": [
+            941,
+            1016,
+            1129
+          ]
+        },
+        {
+          "arrival": "2027-04-03",
+          "departure": "2027-04-10",
+          "prices": [
+            828,
+            903,
+            1016
+          ]
+        },
+        {
+          "arrival": "2027-04-10",
+          "departure": "2027-04-17",
+          "prices": [
+            844,
+            920,
+            1032
+          ]
+        },
+        {
+          "arrival": "2027-04-17",
+          "departure": "2027-04-24",
+          "prices": [
+            860,
+            936,
+            1049
+          ]
+        },
+        {
+          "arrival": "2027-04-24",
+          "departure": "2027-05-01",
+          "prices": [
+            753,
+            903,
+            1016
+          ]
+        }
+      ]
+    },
+    "Hotel Bucaneve": {
+      "title": "HOTEL BUCANEVE RATES 2026/2027",
+      "priceBasis": "Prices in \u20ac Per Person for 7 nights Bed & Breakfast",
+      "rooms": [
+        "Superior Room BB",
+        "Deluxe Room BB",
+        "Junior Suite BB"
+      ],
+      "notes": [
+        "\u2022 Minimum stay 7 nights",
+        "\u2022 Supplement DUS 30%",
+        "- 3rd and 4th beds sharing the room with 2 adults:",
+        "- From 0 to 3 years in a cot - \u20ac20 p/day (plus eventual meals)",
+        "- From 4 to 6 years - 50% discount",
+        "- From 7 years and for 3-4 Adults: 35% discount",
+        "- Access to the Wellness Centre is included in the rates.",
+        "- The Wellness area includes .Swimming Pool, Whirlpool, Kneipp pool, Vitarium,",
+        "as well as the Turkish bath and Sauna",
+        "- Children are allowed from 6 years old.",
+        "- Access to the Sauna world is permitted from 16 years old.",
+        "- Children from 6 to 12 years must be accompanied by an adult.",
+        "CANCELLATION POLICY:",
+        "\u2022 Till 30 days before the arrival: no penalty.",
+        "\u2022 From 29 to 16 days: we keep 30% of the stay.",
+        "\u2022 From 15 till 7 days: we keep 50% of the stay.",
+        "\u2022 From 6 to the day of arrival: we keep the full amount of the stay."
+      ],
+      "weeks": [
+        {
+          "arrival": "2026-12-05",
+          "departure": "2026-12-12",
+          "prices": [
+            847,
+            1036,
+            1253
+          ]
+        },
+        {
+          "arrival": "2026-12-12",
+          "departure": "2026-12-19",
+          "prices": [
+            847,
+            1036,
+            1253
+          ]
+        },
+        {
+          "arrival": "2026-12-19",
+          "departure": "2026-12-26",
+          "prices": [
+            1045,
+            1220,
+            1439
+          ]
+        },
+        {
+          "arrival": "2026-12-26",
+          "departure": "2027-01-02",
+          "prices": [
+            1540,
+            1680,
+            1904
+          ]
+        },
+        {
+          "arrival": "2027-01-02",
+          "departure": "2027-01-09",
+          "prices": [
+            1315,
+            1458,
+            1685
+          ]
+        },
+        {
+          "arrival": "2027-01-09",
+          "departure": "2027-01-16",
+          "prices": [
+            1015,
+            1162,
+            1393
+          ]
+        },
+        {
+          "arrival": "2027-01-16",
+          "departure": "2027-01-23",
+          "prices": [
+            1015,
+            1162,
+            1393
+          ]
+        },
+        {
+          "arrival": "2027-01-23",
+          "departure": "2027-01-30",
+          "prices": [
+            1015,
+            1162,
+            1393
+          ]
+        },
+        {
+          "arrival": "2027-01-30",
+          "departure": "2027-02-06",
+          "prices": [
+            1333,
+            1456,
+            1669
+          ]
+        },
+        {
+          "arrival": "2027-02-06",
+          "departure": "2027-02-13",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-02-13",
+          "departure": "2027-02-20",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-02-20",
+          "departure": "2027-02-27",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-02-27",
+          "departure": "2027-03-06",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-03-06",
+          "departure": "2027-03-13",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-03-13",
+          "departure": "2027-03-20",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-03-20",
+          "departure": "2027-03-27",
+          "prices": [
+            1386,
+            1505,
+            1715
+          ]
+        },
+        {
+          "arrival": "2027-03-27",
+          "departure": "2027-04-03",
+          "prices": [
+            1196,
+            1330,
+            1525
+          ]
+        },
+        {
+          "arrival": "2027-04-03",
+          "departure": "2027-04-10",
+          "prices": [
+            1120,
+            1260,
+            1449
+          ]
+        },
+        {
+          "arrival": "2027-04-10",
+          "departure": "2027-04-17",
+          "prices": [
+            1120,
+            1260,
+            1449
+          ]
+        },
+        {
+          "arrival": "2027-04-17",
+          "departure": "2027-04-24",
+          "prices": [
+            847,
+            1036,
+            1253
+          ]
+        },
+        {
+          "arrival": "2027-04-24",
+          "departure": "2027-05-01",
+          "prices": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "Hotel Miravidi": {
+      "title": "HOTEL MIRAVIDI RATES 2026/2027",
+      "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "rooms": [
+        "Classic Double HB",
+        "Classic Double B&B",
+        "Superior Double HB",
+        "Superior Double B&B",
+        "Superior Cervino HB",
+        "Superior Cervino B&B"
+      ],
+      "notes": [
+        "\u2022 Minimum stay 7 nights",
+        "\u2022 Half board or B&B",
+        "\u2022 The Tourism tax is not included in these prices.",
+        "\u2022 \u20ac1-\u20ac2 per day per person is payable to the hotel"
+      ],
+      "weeks": [
+        {
+          "arrival": "2026-12-05",
+          "departure": "2026-12-12",
+          "prices": [
+            1016,
+            903,
+            1092,
+            979,
+            1204,
+            1092
+          ]
+        },
+        {
+          "arrival": "2026-12-12",
+          "departure": "2026-12-19",
+          "prices": [
+            1016,
+            903,
+            1092,
+            979,
+            1204,
+            1092
+          ]
+        },
+        {
+          "arrival": "2026-12-19",
+          "departure": "2026-12-26",
+          "prices": [
+            1280,
+            1167,
+            1355,
+            1242,
+            1468,
+            1355
+          ]
+        },
+        {
+          "arrival": "2026-12-26",
+          "departure": "2027-01-02",
+          "prices": [
+            1280,
+            1167,
+            1355,
+            1242,
+            1468,
+            1355
+          ]
+        },
+        {
+          "arrival": "2027-01-02",
+          "departure": "2027-01-09",
+          "prices": [
+            979,
+            866,
+            1054,
+            941,
+            1167,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-01-09",
+          "departure": "2027-01-16",
+          "prices": [
+            979,
+            866,
+            1054,
+            941,
+            1167,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-01-16",
+          "departure": "2027-01-23",
+          "prices": [
+            979,
+            866,
+            1054,
+            941,
+            1167,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-01-23",
+          "departure": "2027-01-30",
+          "prices": [
+            979,
+            866,
+            1054,
+            941,
+            1167,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-01-30",
+          "departure": "2027-02-06",
+          "prices": [
+            979,
+            866,
+            1054,
+            941,
+            1167,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-02-06",
+          "departure": "2027-02-13",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-02-13",
+          "departure": "2027-02-20",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-02-20",
+          "departure": "2027-02-27",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-02-27",
+          "departure": "2027-03-06",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-03-06",
+          "departure": "2027-03-13",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-03-13",
+          "departure": "2027-03-20",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-03-20",
+          "departure": "2027-03-27",
+          "prices": [
+            1204,
+            1092,
+            1280,
+            1167,
+            1393,
+            1280
+          ]
+        },
+        {
+          "arrival": "2027-03-27",
+          "departure": "2027-04-03",
+          "prices": [
+            828,
+            715,
+            903,
+            791,
+            1016,
+            903
+          ]
+        },
+        {
+          "arrival": "2027-04-03",
+          "departure": "2027-04-10",
+          "prices": [
+            903,
+            791,
+            979,
+            866,
+            1092,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-04-10",
+          "departure": "2027-04-17",
+          "prices": [
+            903,
+            791,
+            979,
+            866,
+            1092,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-04-17",
+          "departure": "2027-04-24",
+          "prices": [
+            903,
+            791,
+            979,
+            866,
+            1092,
+            979
+          ]
+        },
+        {
+          "arrival": "2027-04-24",
+          "departure": "2027-05-01",
+          "prices": [
+            903,
+            791,
+            979,
+            866,
+            1092,
+            979
+          ]
+        }
+      ]
+    },
+    "Chambres Mont Cervin": {
+      "title": "CHAMBRES MONT CERVIN RATES 2026/2027",
+      "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "rooms": [
+        "Standard Room B&B",
+        "Suite Room B&B"
+      ],
+      "notes": [
+        "\u2022 Minimum stay 7 nights",
+        "\u2022 Bed & Breakfast",
+        "\u2022 The Tourism tax is not included in these prices. \u20ac1-\u20ac2 per day per person is payable to the hotel"
+      ],
+      "weeks": [
+        {
+          "arrival": "2026-12-05",
+          "departure": "2026-12-12",
+          "prices": [
+            640,
+            828
+          ]
+        },
+        {
+          "arrival": "2026-12-12",
+          "departure": "2026-12-19",
+          "prices": [
+            640,
+            828
+          ]
+        },
+        {
+          "arrival": "2026-12-19",
+          "departure": "2026-12-26",
+          "prices": [
+            866,
+            1054
+          ]
+        },
+        {
+          "arrival": "2026-12-26",
+          "departure": "2027-01-02",
+          "prices": [
+            866,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-01-02",
+          "departure": "2027-01-09",
+          "prices": [
+            801,
+            968
+          ]
+        },
+        {
+          "arrival": "2027-01-09",
+          "departure": "2027-01-16",
+          "prices": [
+            753,
+            903
+          ]
+        },
+        {
+          "arrival": "2027-01-16",
+          "departure": "2027-01-23",
+          "prices": [
+            753,
+            903
+          ]
+        },
+        {
+          "arrival": "2027-01-23",
+          "departure": "2027-01-30",
+          "prices": [
+            753,
+            903
+          ]
+        },
+        {
+          "arrival": "2027-01-30",
+          "departure": "2027-02-06",
+          "prices": [
+            753,
+            903
+          ]
+        },
+        {
+          "arrival": "2027-02-06",
+          "departure": "2027-02-13",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-02-13",
+          "departure": "2027-02-20",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-02-20",
+          "departure": "2027-02-27",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-02-27",
+          "departure": "2027-03-06",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-03-06",
+          "departure": "2027-03-13",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-03-13",
+          "departure": "2027-03-20",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-03-20",
+          "departure": "2027-03-27",
+          "prices": [
+            828,
+            1054
+          ]
+        },
+        {
+          "arrival": "2027-03-27",
+          "departure": "2027-04-03",
+          "prices": [
+            602,
+            828
+          ]
+        },
+        {
+          "arrival": "2027-04-03",
+          "departure": "2027-04-10",
+          "prices": [
+            602,
+            828
+          ]
+        },
+        {
+          "arrival": "2027-04-10",
+          "departure": "2027-04-17",
+          "prices": [
+            602,
+            828
+          ]
+        },
+        {
+          "arrival": "2027-04-17",
+          "departure": "2027-04-24",
+          "prices": [
+            602,
+            828
+          ]
+        },
+        {
+          "arrival": "2027-04-24",
+          "departure": "2027-05-01",
+          "prices": [
+            602,
+            828
+          ]
+        }
+      ]
+    }
+  }
+}

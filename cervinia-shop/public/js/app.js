@@ -1,0 +1,671 @@
+(() => {
+  const state = {
+    pricing: null,
+    hotels: null,
+    basket: JSON.parse(localStorage.getItem('cervinia_basket') || '[]'),
+    transfer: { airport: null, type: null, guests: 1 },
+    equip: { catIndex: 0, itemIndex: 0, days: 1 },
+    pass: { tierIndex: 0, days: 1, guests: 1 },
+    lesson: {
+      type: 'private',
+      people: 1,
+      duration: '2 hours',
+      season: 'low',
+      time: 'lowMorning',
+      groupId: null,
+      groupSeason: 'low',
+      groupGuests: 1
+    },
+    hotel: { name: null, weekIndex: 0, roomIndex: 0, guests: 1 }
+  };
+
+  const fmt = (n) => `€${Number(n).toFixed(2)}`;
+
+  fetch('/api/pricing')
+    .then((r) => r.json())
+    .then((pricing) => {
+      state.pricing = pricing;
+      initTransfers();
+      initEquipment();
+      initPasses();
+      initLessons();
+      renderBasket();
+    })
+    .catch(() => {
+      document.querySelectorAll('.cat-section').forEach((s) => {
+        const sub = s.querySelector('.section-sub');
+        if (sub && s.id !== 'accommodation') sub.textContent = 'Could not load pricing — is the server running?';
+      });
+    });
+
+  fetch('/api/hotels')
+    .then((r) => r.json())
+    .then((data) => {
+      state.hotels = data.hotels;
+      initAccommodation();
+    })
+    .catch(() => {
+      const sub = document.getElementById('hotelPriceBasisNote');
+      if (sub) sub.textContent = 'Could not load hotel rates — is the server running?';
+    });
+
+  // ---------- helpers ----------
+  function buildButtons(container, labels, activeIndex, onClick) {
+    container.innerHTML = '';
+    labels.forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt-btn' + (i === activeIndex ? ' active' : '');
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.opt-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        onClick(i);
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function sortedDayKeys(obj) {
+    return Object.keys(obj).sort((a, b) => Number(a) - Number(b));
+  }
+
+  function setupStepper(el, valueEl, onChange, min = 1, max = 20) {
+    let value = 1;
+    el.querySelectorAll('.step-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const delta = Number(btn.dataset.step);
+        value = Math.min(max, Math.max(min, value + delta));
+        valueEl.textContent = value;
+        onChange(value);
+      });
+    });
+    return () => value;
+  }
+
+  // ---------- Transfers ----------
+  function initTransfers() {
+    const options = state.pricing.transfers.options;
+    const airports = [...new Set(options.map((o) => o.airport))];
+    const airportBtns = document.getElementById('transferAirportBtns');
+    const typeBtns = document.getElementById('transferTypeBtns');
+
+    function renderTypesFor(airport) {
+      const types = options.filter((o) => o.airport === airport).map((o) => o.type);
+      buildButtons(typeBtns, types, 0, (i) => {
+        state.transfer.type = types[i];
+        updateTransferPrice();
+      });
+      state.transfer.type = types[0];
+    }
+
+    buildButtons(airportBtns, airports, 0, (i) => {
+      state.transfer.airport = airports[i];
+      renderTypesFor(airports[i]);
+      updateTransferPrice();
+    });
+    state.transfer.airport = airports[0];
+    renderTypesFor(airports[0]);
+
+    setupStepper(
+      document.getElementById('transferGuestsStepper'),
+      document.getElementById('transferGuestsValue'),
+      (v) => { state.transfer.guests = v; updateTransferPrice(); }
+    );
+
+    updateTransferPrice();
+
+    document.getElementById('transferAddBtn').addEventListener('click', () => {
+      const opt = options.find((o) => o.airport === state.transfer.airport && o.type === state.transfer.type);
+      if (!opt) return;
+      addToBasket({
+        id: `transfer-${opt.id}`,
+        name: `Airport Transfer — ${opt.airport} (${opt.type})`,
+        unitPrice: opt.pricePerPerson,
+        qty: state.transfer.guests
+      });
+    });
+  }
+
+  function updateTransferPrice() {
+    const options = state.pricing.transfers.options;
+    const opt = options.find((o) => o.airport === state.transfer.airport && o.type === state.transfer.type);
+    const total = opt ? opt.pricePerPerson * state.transfer.guests : 0;
+    document.getElementById('transferPrice').textContent = fmt(total);
+  }
+
+  // ---------- Equipment ----------
+  function initEquipment() {
+    const categories = state.pricing.equipment.categories;
+    buildButtons(document.getElementById('equipCategoryBtns'), categories, 0, (i) => {
+      state.equip.catIndex = i;
+      state.equip.itemIndex = 0;
+      renderEquipItems();
+      renderEquipDays();
+      updateEquipPrice();
+    });
+
+    renderEquipItems();
+    renderEquipDays();
+    updateEquipPrice();
+
+    document.getElementById('equipAddBtn').addEventListener('click', () => {
+      const price = currentEquipPrice();
+      if (price == null) return;
+      const cat = state.pricing.equipment.categories[state.equip.catIndex];
+      const item = state.pricing.equipment.data[cat].items[state.equip.itemIndex];
+      addToBasket({
+        id: `equip-${state.equip.catIndex}-${state.equip.itemIndex}-${state.equip.days}`,
+        name: `${cat} — ${item} — ${state.equip.days} day${state.equip.days > 1 ? 's' : ''}`,
+        unitPrice: price,
+        qty: 1
+      });
+    });
+  }
+
+  function renderEquipItems() {
+    const cat = state.pricing.equipment.categories[state.equip.catIndex];
+    const items = state.pricing.equipment.data[cat].items;
+    buildButtons(document.getElementById('equipItemBtns'), items, state.equip.itemIndex, (i) => {
+      state.equip.itemIndex = i;
+      updateEquipPrice();
+    });
+  }
+
+  function renderEquipDays() {
+    const cat = state.pricing.equipment.categories[state.equip.catIndex];
+    const dayKeys = sortedDayKeys(state.pricing.equipment.data[cat].pricesByDays);
+    if (!dayKeys.includes(String(state.equip.days))) state.equip.days = Number(dayKeys[0]);
+    buildButtons(
+      document.getElementById('equipDaysBtns'),
+      dayKeys.map((d) => `${d} day${d > 1 ? 's' : ''}`),
+      dayKeys.indexOf(String(state.equip.days)),
+      (i) => { state.equip.days = Number(dayKeys[i]); updateEquipPrice(); }
+    );
+  }
+
+  function currentEquipPrice() {
+    const cat = state.pricing.equipment.categories[state.equip.catIndex];
+    const row = state.pricing.equipment.data[cat].pricesByDays[String(state.equip.days)];
+    return row ? row[state.equip.itemIndex] : null;
+  }
+
+  function updateEquipPrice() {
+    const price = currentEquipPrice();
+    const addBtn = document.getElementById('equipAddBtn');
+    const note = document.getElementById('equipUnavailable');
+    if (price == null) {
+      document.getElementById('equipPrice').textContent = '—';
+      addBtn.disabled = true;
+      note.style.display = 'block';
+    } else {
+      document.getElementById('equipPrice').textContent = fmt(price);
+      addBtn.disabled = false;
+      note.style.display = 'none';
+    }
+  }
+
+  // ---------- Lift Passes ----------
+  function initPasses() {
+    const tiers = state.pricing.liftPasses.tiers;
+    buildButtons(document.getElementById('passTierBtns'), tiers, 0, (i) => {
+      state.pass.tierIndex = i;
+      updatePassPrice();
+    });
+
+    const dayKeys = sortedDayKeys(state.pricing.liftPasses.pricesByDays);
+    buildButtons(
+      document.getElementById('passDaysBtns'),
+      dayKeys.map((d) => `${d} day${d > 1 ? 's' : ''}`),
+      0,
+      (i) => { state.pass.days = Number(dayKeys[i]); updatePassPrice(); }
+    );
+    state.pass.days = Number(dayKeys[0]);
+
+    document.getElementById('passSeasonNote').textContent = state.pricing.liftPasses.season || '';
+    document.getElementById('passZermattNote').textContent = state.pricing.liftPasses.notes || '';
+
+    setupStepper(
+      document.getElementById('passGuestsStepper'),
+      document.getElementById('passGuestsValue'),
+      (v) => { state.pass.guests = v; updatePassPrice(); }
+    );
+
+    updatePassPrice();
+
+    document.getElementById('passAddBtn').addEventListener('click', () => {
+      const unitPrice = currentPassUnitPrice();
+      if (unitPrice == null) return;
+      const tierLabel = state.pricing.liftPasses.tiers[state.pass.tierIndex];
+      addToBasket({
+        id: `pass-${state.pass.tierIndex}-${state.pass.days}`,
+        name: `Ski Lift Pass — ${tierLabel}, ${state.pass.days} day${state.pass.days > 1 ? 's' : ''}`,
+        unitPrice,
+        qty: state.pass.guests
+      });
+    });
+  }
+
+  function currentPassUnitPrice() {
+    const row = state.pricing.liftPasses.pricesByDays[String(state.pass.days)];
+    return row ? row[state.pass.tierIndex] : null;
+  }
+
+  function updatePassPrice() {
+    const unit = currentPassUnitPrice();
+    const total = unit == null ? null : unit * state.pass.guests;
+    document.getElementById('passPrice').textContent = total == null ? '—' : fmt(total);
+    document.getElementById('passAddBtn').disabled = total == null;
+  }
+
+  // ---------- Lessons ----------
+  function initLessons() {
+    document.getElementById('lessonSeasonNote').textContent = state.pricing.lessons.seasonNote || '';
+
+    const typeBtns = document.getElementById('lessonTypeBtns');
+    typeBtns.querySelectorAll('.opt-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        typeBtns.querySelectorAll('.opt-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.lesson.type = btn.dataset.type;
+        document.getElementById('lessonPrivatePanel').style.display = state.lesson.type === 'private' ? 'block' : 'none';
+        document.getElementById('lessonGroupPanel').style.display = state.lesson.type === 'group' ? 'block' : 'none';
+        updateLessonPrice();
+      });
+    });
+
+    // Private panel
+    const people = state.pricing.lessons.private.peopleOptions;
+    buildButtons(document.getElementById('lessonPeopleBtns'), people.map((p) => `${p} ${p === 1 ? 'person' : 'people'}`), 0, (i) => {
+      state.lesson.people = people[i];
+      renderLessonTimes();
+      updateLessonPrice();
+    });
+
+    const durations = state.pricing.lessons.private.durations;
+    buildButtons(document.getElementById('lessonDurationBtns'), durations, 0, (i) => {
+      state.lesson.duration = durations[i];
+      renderLessonTimes();
+      updateLessonPrice();
+    });
+
+    document.getElementById('lessonSeasonBtns').querySelectorAll('.opt-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById('lessonSeasonBtns').querySelectorAll('.opt-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.lesson.season = btn.dataset.season;
+        renderLessonTimes();
+        updateLessonPrice();
+      });
+    });
+
+    renderLessonTimes();
+
+    // Group panel
+    const groupOptions = state.pricing.lessons.group;
+    buildButtons(document.getElementById('lessonGroupOptionBtns'), groupOptions.map((g) => g.label), 0, (i) => {
+      state.lesson.groupId = groupOptions[i].id;
+      updateLessonPrice();
+    });
+    state.lesson.groupId = groupOptions[0]?.id;
+
+    document.getElementById('lessonGroupSeasonBtns').querySelectorAll('.opt-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById('lessonGroupSeasonBtns').querySelectorAll('.opt-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.lesson.groupSeason = btn.dataset.season;
+        updateLessonPrice();
+      });
+    });
+
+    setupStepper(
+      document.getElementById('lessonGroupGuestsStepper'),
+      document.getElementById('lessonGroupGuestsValue'),
+      (v) => { state.lesson.groupGuests = v; updateLessonPrice(); }
+    );
+
+    updateLessonPrice();
+
+    document.getElementById('lessonAddBtn').addEventListener('click', () => {
+      if (state.lesson.type === 'private') {
+        const price = currentPrivateLessonPrice();
+        if (price == null) return;
+        const seasonLabel = state.lesson.season === 'high' ? 'High Season' : `Low Season, ${state.lesson.time === 'lowAfternoon' ? 'Afternoon' : 'Morning'}`;
+        addToBasket({
+          id: `lesson-private-${state.lesson.people}-${state.lesson.duration}-${state.lesson.season}-${state.lesson.time}`,
+          name: `Private Lesson — ${state.lesson.people} people, ${state.lesson.duration} (${seasonLabel})`,
+          unitPrice: price,
+          qty: 1
+        });
+      } else {
+        const price = currentGroupLessonPrice();
+        if (price == null) return;
+        const g = state.pricing.lessons.group.find((g) => g.id === state.lesson.groupId);
+        const seasonLabel = state.lesson.groupSeason === 'high' ? 'High Season' : 'Low Season';
+        addToBasket({
+          id: `lesson-group-${g.id}-${state.lesson.groupSeason}`,
+          name: `${g.label} (${seasonLabel})`,
+          unitPrice: price,
+          qty: state.lesson.groupGuests
+        });
+      }
+    });
+  }
+
+  function renderLessonTimes() {
+    const rates = state.pricing.lessons.private.rates[String(state.lesson.people)];
+    const durationRates = rates ? rates[state.lesson.duration] : null;
+    const timeGroup = document.getElementById('lessonTimeGroup');
+
+    if (state.lesson.season === 'high' || !durationRates) {
+      timeGroup.style.display = 'none';
+      state.lesson.time = 'high';
+      return;
+    }
+
+    const options = [];
+    if (durationRates.lowMorning != null) options.push({ key: 'lowMorning', label: 'Morning' });
+    if (durationRates.lowAfternoon != null) options.push({ key: 'lowAfternoon', label: 'Afternoon' });
+
+    if (options.length === 0) {
+      timeGroup.style.display = 'none';
+      return;
+    }
+    timeGroup.style.display = 'block';
+    if (!options.find((o) => o.key === state.lesson.time)) {
+      state.lesson.time = options[0].key;
+    }
+    buildButtons(
+      document.getElementById('lessonTimeBtns'),
+      options.map((o) => o.label),
+      options.findIndex((o) => o.key === state.lesson.time),
+      (i) => { state.lesson.time = options[i].key; updateLessonPrice(); }
+    );
+  }
+
+  function currentPrivateLessonPrice() {
+    const rates = state.pricing.lessons.private.rates[String(state.lesson.people)];
+    const durationRates = rates ? rates[state.lesson.duration] : null;
+    if (!durationRates) return null;
+    if (state.lesson.season === 'high') return durationRates.high;
+    return durationRates[state.lesson.time];
+  }
+
+  function currentGroupLessonPrice() {
+    const g = state.pricing.lessons.group.find((g) => g.id === state.lesson.groupId);
+    if (!g) return null;
+    const per = state.lesson.groupSeason === 'high' ? g.high : g.low;
+    return per == null ? null : per * state.lesson.groupGuests;
+  }
+
+  function updateLessonPrice() {
+    const note = document.getElementById('lessonUnavailable');
+    const addBtn = document.getElementById('lessonAddBtn');
+    let total = null;
+
+    if (state.lesson.type === 'private') {
+      total = currentPrivateLessonPrice();
+    } else {
+      total = currentGroupLessonPrice();
+    }
+
+    if (total == null) {
+      document.getElementById('lessonPrice').textContent = '—';
+      addBtn.disabled = true;
+      note.style.display = 'block';
+    } else {
+      document.getElementById('lessonPrice').textContent = fmt(total);
+      addBtn.disabled = false;
+      note.style.display = 'none';
+    }
+  }
+
+  // ---------- Accommodation ----------
+  function initAccommodation() {
+    const hotelNames = Object.keys(state.hotels);
+
+    buildButtons(document.getElementById('hotelNameBtns'), hotelNames, 0, (i) => {
+      state.hotel.name = hotelNames[i];
+      state.hotel.weekIndex = 0;
+      state.hotel.roomIndex = 0;
+      renderHotelWeeks();
+      renderHotelRooms();
+      renderHotelNotes();
+      updateHotelPrice();
+    });
+    state.hotel.name = hotelNames[0];
+
+    renderHotelWeeks();
+    renderHotelRooms();
+    renderHotelNotes();
+
+    setupStepper(
+      document.getElementById('hotelGuestsStepper'),
+      document.getElementById('hotelGuestsValue'),
+      (v) => { state.hotel.guests = v; updateHotelPrice(); },
+      1,
+      10
+    );
+
+    updateHotelPrice();
+
+    document.getElementById('hotelAddBtn').addEventListener('click', () => {
+      const unitPrice = currentHotelUnitPrice();
+      if (!unitPrice) return;
+      const hotel = state.hotels[state.hotel.name];
+      const roomName = hotel.rooms[state.hotel.roomIndex];
+      const label = weekLabel(hotel.weeks[state.hotel.weekIndex]);
+      addToBasket({
+        id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}`,
+        name: `${state.hotel.name} — ${roomName}, ${label}`,
+        unitPrice,
+        qty: state.hotel.guests
+      });
+    });
+  }
+
+  function renderHotelWeeks() {
+    const hotel = state.hotels[state.hotel.name];
+    const labels = hotel.weeks.map(weekLabel);
+    buildButtons(document.getElementById('hotelWeekBtns'), labels, state.hotel.weekIndex, (i) => {
+      state.hotel.weekIndex = i;
+      updateHotelPrice();
+    });
+  }
+
+  function renderHotelRooms() {
+    const hotel = state.hotels[state.hotel.name];
+    buildButtons(document.getElementById('hotelRoomBtns'), hotel.rooms, state.hotel.roomIndex, (i) => {
+      state.hotel.roomIndex = i;
+      updateHotelPrice();
+    });
+  }
+
+  function renderHotelNotes() {
+    const hotel = state.hotels[state.hotel.name];
+    document.getElementById('hotelPriceBasisNote').textContent = hotel.priceBasis;
+    document.getElementById('hotelNotesList').innerHTML = hotel.notes.map((n) => `<p>${escapeHtml(n)}</p>`).join('');
+  }
+
+  function currentHotelUnitPrice() {
+    const hotel = state.hotels[state.hotel.name];
+    const week = hotel.weeks[state.hotel.weekIndex];
+    return week ? week.prices[state.hotel.roomIndex] || null : null;
+  }
+
+  function updateHotelPrice() {
+    const unitPrice = currentHotelUnitPrice();
+    const priceEl = document.getElementById('hotelPrice');
+    const addBtn = document.getElementById('hotelAddBtn');
+    const note = document.getElementById('hotelUnavailable');
+    if (!unitPrice) {
+      priceEl.textContent = '—';
+      addBtn.disabled = true;
+      note.style.display = 'block';
+    } else {
+      priceEl.textContent = fmt(unitPrice * state.hotel.guests);
+      addBtn.disabled = false;
+      note.style.display = 'none';
+    }
+  }
+
+  function weekLabel(week) {
+    const opts = { day: 'numeric', month: 'short' };
+    const start = new Date(`${week.arrival}T00:00:00`).toLocaleDateString('en-GB', opts);
+    const end = new Date(`${week.departure}T00:00:00`).toLocaleDateString('en-GB', opts);
+    return `${start} – ${end}`;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------- Basket ----------
+  function addToBasket(item) {
+    const existing = state.basket.find((b) => b.id === item.id);
+    if (existing) {
+      existing.qty += item.qty;
+    } else {
+      state.basket.push(item);
+    }
+    persistBasket();
+    renderBasket();
+    openBasket();
+  }
+
+  function removeFromBasket(id) {
+    state.basket = state.basket.filter((b) => b.id !== id);
+    persistBasket();
+    renderBasket();
+  }
+
+  function persistBasket() {
+    localStorage.setItem('cervinia_basket', JSON.stringify(state.basket));
+  }
+
+  function renderBasket() {
+    const container = document.getElementById('basketItems');
+    const emptyMsg = document.getElementById('basketEmpty');
+    container.innerHTML = '';
+
+    if (state.basket.length === 0) {
+      container.appendChild(emptyMsg);
+      emptyMsg.style.display = 'block';
+    } else {
+      state.basket.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'basket-item';
+        row.innerHTML = `
+          <div>
+            <div class="basket-item-name">${item.name}</div>
+            <div class="basket-item-meta">${item.qty} × €${item.unitPrice.toFixed(2)}</div>
+          </div>
+          <div class="basket-item-right">
+            <div class="basket-item-price">${fmt(item.unitPrice * item.qty)}</div>
+            <button class="basket-item-remove" data-id="${item.id}">Remove</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+      container.querySelectorAll('.basket-item-remove').forEach((btn) => {
+        btn.addEventListener('click', () => removeFromBasket(btn.dataset.id));
+      });
+    }
+
+    const total = state.basket.reduce((sum, i) => sum + i.unitPrice * i.qty, 0);
+    document.getElementById('basketTotal').textContent = fmt(total);
+    const count = state.basket.reduce((sum, i) => sum + i.qty, 0);
+    document.getElementById('basketCount').textContent = count;
+  }
+
+  function openBasket() {
+    document.getElementById('basketDrawer').classList.add('open');
+    document.getElementById('basketOverlay').classList.add('open');
+  }
+  function closeBasket() {
+    document.getElementById('basketDrawer').classList.remove('open');
+    document.getElementById('basketOverlay').classList.remove('open');
+  }
+
+  document.getElementById('basketToggle').addEventListener('click', openBasket);
+  document.getElementById('basketClose').addEventListener('click', closeBasket);
+  document.getElementById('basketOverlay').addEventListener('click', closeBasket);
+
+  // ---------- Checkout ----------
+  document.getElementById('checkoutBtn').addEventListener('click', async () => {
+    const errorEl = document.getElementById('checkoutError');
+    errorEl.style.display = 'none';
+    const customerName = document.getElementById('customerName').value.trim();
+
+    if (state.basket.length === 0) {
+      errorEl.textContent = 'Your basket is empty.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if (!customerName) {
+      errorEl.textContent = 'Please enter a name for the booking.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const btn = document.getElementById('checkoutBtn');
+    btn.disabled = true;
+    btn.textContent = 'Redirecting to secure checkout…';
+
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerName, items: state.basket })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Checkout failed');
+      window.location.href = data.url;
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Pay & Checkout';
+    }
+  });
+
+  // ---------- Resort info dropdown ----------
+  const infoDropdown = document.getElementById('infoDropdown');
+  const infoDropdownBtn = document.getElementById('infoDropdownBtn');
+  if (infoDropdown && infoDropdownBtn) {
+    infoDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = infoDropdown.classList.toggle('open');
+      infoDropdownBtn.setAttribute('aria-expanded', String(isOpen));
+    });
+    document.addEventListener('click', (e) => {
+      if (!infoDropdown.contains(e.target)) {
+        infoDropdown.classList.remove('open');
+        infoDropdownBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // ---------- Category nav ----------
+  document.querySelectorAll('.cat-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  const sections = ['transfers', 'equipment', 'passes', 'lessons', 'accommodation'].map((id) => document.getElementById(id));
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        document.querySelectorAll('.cat-btn').forEach((b) => {
+          b.classList.toggle('active', b.dataset.target === entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach((s) => navObserver.observe(s));
+})();

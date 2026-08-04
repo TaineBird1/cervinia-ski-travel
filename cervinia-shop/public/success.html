@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking Confirmed | Cervinia Travel Services</title>
+<link rel="stylesheet" href="/shop/css/styles.css">
+<style>
+  .confirm-wrap{max-width:640px; margin:0 auto; padding:80px 24px; text-align:center;}
+  .confirm-icon{font-size:3rem; margin-bottom:16px;}
+  .confirm-card{
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:16px; padding:28px;
+    margin-top:32px; text-align:left;
+  }
+  .confirm-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.94rem;}
+  .confirm-row:last-child{border-bottom:none;}
+  .confirm-total{font-weight:800; font-size:1.1rem;}
+  .download-btn{
+    display:inline-block; margin-top:26px; background:var(--blue); color:#fff; padding:14px 28px;
+    border-radius:12px; font-weight:800; text-decoration:none;
+  }
+  .status-msg{color:var(--slate); margin-top:20px;}
+</style>
+</head>
+<body>
+  <header><div class="wrap header-inner"><a href="/" class="logo">Cervinia <span>Travel Services</span></a></div></header>
+
+  <div class="confirm-wrap">
+    <div class="confirm-icon">🎉</div>
+    <h1>Thank you — your booking is confirmed!</h1>
+    <p class="status-msg" id="statusMsg">Finalizing your order…</p>
+
+    <div class="confirm-card" id="orderCard" style="display:none;"></div>
+
+    <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Download Invoice (PDF)</a>
+    <p style="margin-top:24px;"><a href="/shop" style="color:var(--blue); font-weight:700;">← Back to booking</a></p>
+  </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  const statusMsg = document.getElementById('statusMsg');
+  const orderCard = document.getElementById('orderCard');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  if (!sessionId) {
+    statusMsg.textContent = 'No order reference found.';
+  } else {
+    localStorage.removeItem('cervinia_basket');
+    poll(0);
+  }
+
+  function poll(attempt) {
+    fetch(`/api/order/${sessionId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status === 'paid') {
+          renderOrder(data.order);
+        } else if (attempt < 10) {
+          statusMsg.textContent = 'Confirming payment…';
+          setTimeout(() => poll(attempt + 1), 1500);
+        } else {
+          statusMsg.textContent = 'Payment received — your invoice is being prepared. Refresh in a moment.';
+        }
+      })
+      .catch(() => {
+        statusMsg.textContent = 'Could not confirm your order automatically — check your email or contact us.';
+      });
+  }
+
+  function renderOrder(order) {
+    statusMsg.textContent = `Booking reference: ${order.id}`;
+    orderCard.style.display = 'block';
+    orderCard.innerHTML = order.items.map((item) => `
+      <div class="confirm-row">
+        <span>${item.name} × ${item.qty}</span>
+        <span>€${item.total.toFixed(2)}</span>
+      </div>
+    `).join('') + `
+      <div class="confirm-row confirm-total">
+        <span>Total Paid</span>
+        <span>€${order.total.toFixed(2)}</span>
+      </div>
+    `;
+    downloadBtn.href = `/api/invoice/${order.id}`;
+    downloadBtn.style.display = 'inline-block';
+  }
+</script>
+</body>
+</html>

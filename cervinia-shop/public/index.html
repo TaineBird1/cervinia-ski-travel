@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cervinia Travel Services | Book Your Trip</title>
+<meta name="description" content="Book airport transfers, equipment hire, ski lift passes and lessons for your Cervinia ski holiday — direct prices, instant checkout.">
+<link rel="stylesheet" href="/shop/css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo">Cervinia <span>Travel Services</span></a>
+    <nav class="cat-nav" aria-label="Categories">
+      <button class="cat-btn active" data-target="transfers">🚐 Transfers</button>
+      <button class="cat-btn" data-target="equipment">🎿 Equipment</button>
+      <button class="cat-btn" data-target="passes">🎫 Lift Passes</button>
+      <button class="cat-btn" data-target="lessons">🧑‍🏫 Lessons</button>
+      <button class="cat-btn" data-target="accommodation">🏨 Stay</button>
+      <div class="dropdown" id="infoDropdown">
+        <button class="cat-btn dropdown-toggle" id="infoDropdownBtn" aria-haspopup="true" aria-expanded="false">
+          🗺️ Resort Info <span class="caret">▾</span>
+        </button>
+        <div class="dropdown-menu" id="infoDropdownMenu">
+          <a href="https://www.cervinia.it/en/webcam" target="_blank" rel="noopener">📷 Live Webcam</a>
+          <a href="https://www.cerviniatouristoffice.com/village-map/" target="_blank" rel="noopener">🏘️ Village Map</a>
+          <a href="https://www.cervinia.it/en/skirama" target="_blank" rel="noopener">⛷️ Piste Map</a>
+        </div>
+      </div>
+    </nav>
+    <button class="basket-btn" id="basketToggle">
+      🧺 Basket <span class="basket-count" id="basketCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Breuil-Cervinia, Italy</span>
+      <h1>Build your ski trip, item by item.</h1>
+      <p>Pick what you need, add it to your basket, and check out securely — we'll email you a paid invoice.</p>
+    </div>
+  </section>
+
+  <section class="cat-section" id="transfers">
+    <div class="wrap">
+      <h2>Airport Transfers</h2>
+      <p class="section-sub">Shared or private transfers from your arrival airport.</p>
+
+      <div class="config-group">
+        <label class="config-label">Airport</label>
+        <div class="btn-group" id="transferAirportBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Transfer type</label>
+        <div class="btn-group" id="transferTypeBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Guests</label>
+        <div class="stepper" id="transferGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="transferGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Total: <strong id="transferPrice">€0</strong></div>
+        <button class="add-btn" id="transferAddBtn">Add to Basket</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="cat-section alt" id="equipment">
+    <div class="wrap">
+      <h2>Equipment Hire</h2>
+      <p class="section-sub">Discounted ski &amp; snowboard hire, priced by number of days — 25/26 rate card.</p>
+
+      <div class="config-group">
+        <label class="config-label">Category</label>
+        <div class="btn-group" id="equipCategoryBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Item / Ability tier</label>
+        <div class="btn-group" id="equipItemBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Number of days</label>
+        <div class="btn-group" id="equipDaysBtns"></div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Total: <strong id="equipPrice">€0</strong></div>
+        <button class="add-btn" id="equipAddBtn">Add to Basket</button>
+      </div>
+      <p class="unavailable-note" id="equipUnavailable">This combination isn't available at that day count — try a different number of days.</p>
+    </div>
+  </section>
+
+  <section class="cat-section" id="passes">
+    <div class="wrap">
+      <h2>Ski Lift Passes</h2>
+      <p class="section-sub" id="passSeasonNote">Local Italian side pass — Breuil-Cervinia &amp; Valtournenche.</p>
+
+      <div class="config-group">
+        <label class="config-label">Pass holder</label>
+        <div class="btn-group" id="passTierBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Number of days</label>
+        <div class="btn-group" id="passDaysBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Guests</label>
+        <div class="stepper" id="passGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="passGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Total: <strong id="passPrice">€0</strong></div>
+        <button class="add-btn" id="passAddBtn">Add to Basket</button>
+      </div>
+      <p class="tiny-note" id="passZermattNote"></p>
+    </div>
+  </section>
+
+  <section class="cat-section alt" id="lessons">
+    <div class="wrap">
+      <h2>Ski &amp; Snowboard Lessons</h2>
+      <p class="section-sub" id="lessonSeasonNote">We'll match you with the right instructor.</p>
+
+      <div class="config-group">
+        <label class="config-label">Lesson type</label>
+        <div class="btn-group" id="lessonTypeBtns">
+          <button type="button" class="opt-btn active" data-type="private">Private Lesson</button>
+          <button type="button" class="opt-btn" data-type="group">Group Lesson</button>
+        </div>
+      </div>
+
+      <div id="lessonPrivatePanel">
+        <div class="config-group">
+          <label class="config-label">People</label>
+          <div class="btn-group" id="lessonPeopleBtns"></div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Duration</label>
+          <div class="btn-group" id="lessonDurationBtns"></div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Season</label>
+          <div class="btn-group" id="lessonSeasonBtns">
+            <button type="button" class="opt-btn active" data-season="low">Low Season</button>
+            <button type="button" class="opt-btn" data-season="high">High Season</button>
+          </div>
+        </div>
+        <div class="config-group" id="lessonTimeGroup">
+          <label class="config-label">Time</label>
+          <div class="btn-group" id="lessonTimeBtns"></div>
+        </div>
+      </div>
+
+      <div id="lessonGroupPanel" style="display:none;">
+        <div class="config-group">
+          <label class="config-label">Package</label>
+          <div class="btn-group" id="lessonGroupOptionBtns"></div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Season</label>
+          <div class="btn-group" id="lessonGroupSeasonBtns">
+            <button type="button" class="opt-btn active" data-season="low">Low Season</button>
+            <button type="button" class="opt-btn" data-season="high">High Season</button>
+          </div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Participants</label>
+          <div class="stepper" id="lessonGroupGuestsStepper">
+            <button type="button" class="step-btn" data-step="-1">−</button>
+            <span id="lessonGroupGuestsValue">1</span>
+            <button type="button" class="step-btn" data-step="1">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Total: <strong id="lessonPrice">€0</strong></div>
+        <button class="add-btn" id="lessonAddBtn">Add to Basket</button>
+      </div>
+      <p class="unavailable-note" id="lessonUnavailable">Not offered for this combination — try a different duration, season or time.</p>
+    </div>
+  </section>
+
+  <section class="cat-section alt" id="accommodation">
+    <div class="wrap">
+      <h2>Accommodation</h2>
+      <p class="section-sub" id="hotelPriceBasisNote">Real weekly rates, per person, from our partner hotels.</p>
+
+      <div class="config-group">
+        <label class="config-label">Hotel</label>
+        <div class="btn-group" id="hotelNameBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Arrival week (7 nights)</label>
+        <div class="btn-group btn-group-scroll" id="hotelWeekBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Room type</label>
+        <div class="btn-group" id="hotelRoomBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Guests</label>
+        <div class="stepper" id="hotelGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="hotelGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Total: <strong id="hotelPrice">€0</strong></div>
+        <button class="add-btn" id="hotelAddBtn">Add to Basket</button>
+      </div>
+      <p class="unavailable-note" id="hotelUnavailable">Not available for that week — please choose another.</p>
+
+      <details class="hotel-notes-details">
+        <summary>Rates &amp; policy details</summary>
+        <div id="hotelNotesList"></div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<!-- BASKET DRAWER -->
+<div class="basket-overlay" id="basketOverlay"></div>
+<aside class="basket-drawer" id="basketDrawer" aria-label="Basket">
+  <div class="basket-header">
+    <h3>Your Basket</h3>
+    <button class="basket-close" id="basketClose" aria-label="Close basket">✕</button>
+  </div>
+  <div class="basket-items" id="basketItems">
+    <p class="basket-empty" id="basketEmpty">Your basket is empty — add some items to get started.</p>
+  </div>
+  <div class="basket-footer">
+    <div class="basket-total-row">
+      <span>Total</span>
+      <strong id="basketTotal">€0.00</strong>
+    </div>
+    <div class="field">
+      <label for="customerName">Name for booking</label>
+      <input type="text" id="customerName" placeholder="Jane Doe">
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">Pay &amp; Checkout</button>
+    <p class="checkout-note">Secure payment via Stripe. You'll get a paid invoice after checkout.</p>
+    <p class="checkout-error" id="checkoutError"></p>
+  </div>
+</aside>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Cervinia Travel Services</span>
+    <span>info@cerviniatravelservices.com · WhatsApp +39 366 879 4487</span>
+  </div>
+</footer>
+
+<script src="/shop/js/app.js"></script>
+</body>
+</html>
