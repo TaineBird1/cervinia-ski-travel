@@ -5,7 +5,7 @@
     basket: JSON.parse(localStorage.getItem('cervinia_basket') || '[]'),
     transfer: { airport: null, type: null, guests: 1 },
     equip: { catIndex: 0, itemIndex: 0, days: 1 },
-    pass: { tierIndex: 0, days: 1, guests: 1 },
+    pass: { tierIndex: 0, days: 1, guests: 1, childFree: false },
     lesson: {
       type: 'private',
       people: 1,
@@ -246,8 +246,28 @@
   // ---------- Lift Passes ----------
   function initPasses() {
     const tiers = state.pricing.liftPasses.tiers;
+    const childTierIndex = tiers.indexOf('Child (U8)');
+    const childFreeGroup = document.getElementById('passChildFreeGroup');
+    const childFreeCheck = document.getElementById('passChildFreeCheck');
+
+    function syncChildFreeVisibility() {
+      const isChildTier = state.pass.tierIndex === childTierIndex;
+      childFreeGroup.style.display = isChildTier ? 'block' : 'none';
+      if (!isChildTier) {
+        state.pass.childFree = false;
+        childFreeCheck.checked = false;
+      }
+    }
+
     buildButtons(document.getElementById('passTierBtns'), tiers, 0, (i) => {
       state.pass.tierIndex = i;
+      syncChildFreeVisibility();
+      updatePassPrice();
+    });
+    syncChildFreeVisibility();
+
+    childFreeCheck.addEventListener('change', () => {
+      state.pass.childFree = childFreeCheck.checked;
       updatePassPrice();
     });
 
@@ -275,9 +295,10 @@
       const unitPrice = currentPassUnitPrice();
       if (unitPrice == null) return;
       const tierLabel = state.pricing.liftPasses.tiers[state.pass.tierIndex];
+      const freeSuffix = state.pass.childFree ? ' — Free (with adult pass)' : '';
       addToBasket({
-        id: `pass-${state.pass.tierIndex}-${state.pass.days}`,
-        name: `Ski Lift Pass — ${tierLabel}, ${state.pass.days} day${state.pass.days > 1 ? 's' : ''}`,
+        id: `pass-${state.pass.tierIndex}-${state.pass.days}${state.pass.childFree ? '-free' : ''}`,
+        name: `Ski Lift Pass — ${tierLabel}, ${state.pass.days} day${state.pass.days > 1 ? 's' : ''}${freeSuffix}`,
         unitPrice,
         qty: state.pass.guests
       });
@@ -285,6 +306,7 @@
   }
 
   function currentPassUnitPrice() {
+    if (state.pass.childFree) return 0;
     const row = state.pricing.liftPasses.pricesByDays[String(state.pass.days)];
     return row ? row[state.pass.tierIndex] : null;
   }
@@ -292,7 +314,8 @@
   function updatePassPrice() {
     const unit = currentPassUnitPrice();
     const total = unit == null ? null : unit * state.pass.guests;
-    document.getElementById('passPrice').textContent = total == null ? '—' : fmt(total);
+    document.getElementById('passPrice').textContent =
+      total == null ? '—' : state.pass.childFree ? 'Free' : fmt(total);
     document.getElementById('passAddBtn').disabled = total == null;
   }
 

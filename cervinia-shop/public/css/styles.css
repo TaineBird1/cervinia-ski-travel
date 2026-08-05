@@ -93,6 +93,14 @@ header{
 .opt-btn:hover{border-color:var(--blue);}
 .opt-btn.active{background:var(--ink); border-color:var(--ink); color:#fff;}
 
+.check-row{
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  font-weight:700; font-size:0.85rem; color:var(--ink);
+  background:var(--bg-alt); border:2px solid var(--line); border-radius:12px;
+  padding:12px 16px;
+}
+.check-row input{width:18px; height:18px; accent-color:var(--blue); cursor:pointer; flex-shrink:0;}
+
 .stepper{
   display:inline-flex; align-items:center; gap:16px; background:#fff; border:2px solid var(--line);
   border-radius:12px; padding:6px 18px; font-weight:800;
