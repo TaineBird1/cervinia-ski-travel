@@ -16,7 +16,7 @@
       groupSeason: 'low',
       groupGuests: 1
     },
-    hotel: { name: null, weekIndex: 0, roomIndex: 0, guests: 1 }
+    hotel: { name: null, weekIndex: 0, roomIndex: 0, guests: 1, children: 0, childRateIndexes: [] }
   };
 
   const fmt = (n) => `€${Number(n).toFixed(2)}`;
@@ -70,17 +70,20 @@
     return Object.keys(obj).sort((a, b) => Number(a) - Number(b));
   }
 
-  function setupStepper(el, valueEl, onChange, min = 1, max = 20) {
-    let value = 1;
+  function setupStepper(el, valueEl, onChange, min = 1, max = 20, initial = 1) {
+    let value = initial;
+    valueEl.textContent = value;
+    function setValue(v) {
+      value = Math.min(max, Math.max(min, v));
+      valueEl.textContent = value;
+    }
     el.querySelectorAll('.step-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        const delta = Number(btn.dataset.step);
-        value = Math.min(max, Math.max(min, value + delta));
-        valueEl.textContent = value;
+        setValue(value + Number(btn.dataset.step));
         onChange(value);
       });
     });
-    return () => value;
+    return { get: () => value, set: setValue };
   }
 
   // ---------- Transfers ----------
@@ -484,14 +487,19 @@
   // ---------- Accommodation ----------
   function initAccommodation() {
     const hotelNames = Object.keys(state.hotels);
+    let childrenStepper;
 
     buildButtons(document.getElementById('hotelNameBtns'), hotelNames, 0, (i) => {
       state.hotel.name = hotelNames[i];
       state.hotel.weekIndex = 0;
       state.hotel.roomIndex = 0;
+      state.hotel.children = 0;
+      state.hotel.childRateIndexes = [];
+      if (childrenStepper) childrenStepper.set(0);
       renderHotelWeeks();
       renderHotelRooms();
       renderHotelNotes();
+      renderChildRates();
       updateHotelPrice();
     });
     state.hotel.name = hotelNames[0];
@@ -508,6 +516,21 @@
       10
     );
 
+    childrenStepper = setupStepper(
+      document.getElementById('hotelChildrenStepper'),
+      document.getElementById('hotelChildrenValue'),
+      (v) => {
+        state.hotel.children = v;
+        syncChildRateCount();
+        renderChildRates();
+        updateHotelPrice();
+      },
+      0,
+      6,
+      0
+    );
+
+    renderChildRates();
     updateHotelPrice();
 
     document.getElementById('hotelAddBtn').addEventListener('click', () => {
@@ -515,14 +538,115 @@
       if (!unitPrice) return;
       const hotel = state.hotels[state.hotel.name];
       const roomName = hotel.rooms[state.hotel.roomIndex];
-      const label = weekLabel(hotel.weeks[state.hotel.weekIndex]);
+      const week = hotel.weeks[state.hotel.weekIndex];
+      const label = weekLabel(week);
+      const nights = hotelNights(week);
+
       addToBasket({
         id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}`,
-        name: `${state.hotel.name} — ${roomName}, ${label}`,
+        name: `${state.hotel.name} — ${roomName}, ${label} (${state.hotel.guests} adult${state.hotel.guests > 1 ? 's' : ''})`,
         unitPrice,
         qty: state.hotel.guests
       });
+
+      if (state.hotel.children > 0) {
+        const policy = hotel.childPolicy;
+        if (!policy || policy.length === 0) {
+          addToBasket({
+            id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}-children`,
+            name: `${state.hotel.name} — ${roomName}, ${label} (${state.hotel.children} child${state.hotel.children > 1 ? 'ren' : ''}, standard rate)`,
+            unitPrice,
+            qty: state.hotel.children
+          });
+        } else {
+          const counts = {};
+          state.hotel.childRateIndexes.forEach((idx) => { counts[idx] = (counts[idx] || 0) + 1; });
+          Object.entries(counts).forEach(([idxStr, qty]) => {
+            const idx = Number(idxStr);
+            const tier = policy[idx] || policy[0];
+            const cost = childTierCost(tier, unitPrice, nights);
+            addToBasket({
+              id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}-child-${idx}`,
+              name: `${state.hotel.name} — ${roomName}, ${label} (Child: ${tier.label})`,
+              unitPrice: cost,
+              qty
+            });
+          });
+        }
+      }
     });
+  }
+
+  function syncChildRateCount() {
+    const arr = state.hotel.childRateIndexes;
+    while (arr.length < state.hotel.children) arr.push(0);
+    arr.length = state.hotel.children;
+  }
+
+  function renderChildRates() {
+    const container = document.getElementById('hotelChildRates');
+    const hotel = state.hotels[state.hotel.name];
+    const policy = hotel.childPolicy;
+    container.innerHTML = '';
+    if (state.hotel.children === 0) return;
+
+    if (!policy || policy.length === 0) {
+      const note = document.createElement('p');
+      note.className = 'child-rate-note';
+      note.textContent = 'No child discount at this property — children are charged at the standard adult rate.';
+      container.appendChild(note);
+      return;
+    }
+
+    for (let i = 0; i < state.hotel.children; i++) {
+      const row = document.createElement('div');
+      row.className = 'child-rate-row';
+      const label = document.createElement('span');
+      label.textContent = `Child ${i + 1}:`;
+      const select = document.createElement('select');
+      policy.forEach((tier, idx) => {
+        const opt = document.createElement('option');
+        opt.value = String(idx);
+        opt.textContent = tier.label;
+        select.appendChild(opt);
+      });
+      select.value = String(state.hotel.childRateIndexes[i] || 0);
+      select.addEventListener('change', () => {
+        state.hotel.childRateIndexes[i] = Number(select.value);
+        updateHotelPrice();
+      });
+      row.appendChild(label);
+      row.appendChild(select);
+      container.appendChild(row);
+    }
+  }
+
+  function childTierCost(tier, unitPrice, nights) {
+    switch (tier.mode) {
+      case 'free': return 0;
+      case 'flatPerNight': return tier.amount * nights;
+      case 'percentOff': return unitPrice * (1 - tier.amount / 100);
+      default: return unitPrice;
+    }
+  }
+
+  function currentHotelChildrenCost(unitPrice) {
+    if (state.hotel.children === 0) return 0;
+    const hotel = state.hotels[state.hotel.name];
+    const week = hotel.weeks[state.hotel.weekIndex];
+    const policy = hotel.childPolicy;
+    if (!policy || policy.length === 0) return unitPrice * state.hotel.children;
+    const nights = hotelNights(week);
+    return state.hotel.childRateIndexes.reduce(
+      (sum, idx) => sum + childTierCost(policy[idx] || policy[0], unitPrice, nights),
+      0
+    );
+  }
+
+  function hotelNights(week) {
+    const start = new Date(`${week.arrival}T00:00:00`);
+    const end = new Date(`${week.departure}T00:00:00`);
+    return Math.round((end - start) / 86400000);
   }
 
   function renderHotelWeeks() {
@@ -564,7 +688,8 @@
       addBtn.disabled = true;
       note.style.display = 'block';
     } else {
-      priceEl.textContent = fmt(unitPrice * state.hotel.guests);
+      const total = unitPrice * state.hotel.guests + currentHotelChildrenCost(unitPrice);
+      priceEl.textContent = fmt(total);
       addBtn.disabled = false;
       note.style.display = 'none';
     }

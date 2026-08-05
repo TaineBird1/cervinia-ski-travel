@@ -198,6 +198,10 @@
         "\u2022 Third Bed: discount of 20% for children under 12",
         "\u2022 Third Bed: discount of 10% for children over 12"
       ],
+      "childPolicy": [
+        { "label": "Under 12 (3rd bed) \u2014 20% off", "mode": "percentOff", "amount": 20 },
+        { "label": "12+ (3rd bed) \u2014 10% off", "mode": "percentOff", "amount": 10 }
+      ],
       "weeks": [
         {
           "arrival": "2026-12-05",
@@ -386,6 +390,13 @@
         "\u2022 Children 5-7 years old in 3rd bed \u20ac40 per day",
         "\u2022 Children 8-11 years old in 3rd bed - 40% reduction",
         "\u2022 Single supplement \u20ac50 per night"
+      ],
+      "childPolicy": [
+        { "label": "0\u20134 yrs, sharing bed with parents \u2014 Free", "mode": "free", "amount": 0 },
+        { "label": "0\u20134 yrs, in cot / 3rd bed \u2014 \u20ac30/night", "mode": "flatPerNight", "amount": 30 },
+        { "label": "5\u20137 yrs, 3rd bed \u2014 \u20ac40/night", "mode": "flatPerNight", "amount": 40 },
+        { "label": "8\u201311 yrs, 3rd bed \u2014 40% off", "mode": "percentOff", "amount": 40 },
+        { "label": "12+ yrs \u2014 standard adult rate", "mode": "standard", "amount": 0 }
       ],
       "weeks": [
         {
@@ -605,6 +616,11 @@
         "\u2022 From 29 to 16 days: we keep 30% of the stay.",
         "\u2022 From 15 till 7 days: we keep 50% of the stay.",
         "\u2022 From 6 to the day of arrival: we keep the full amount of the stay."
+      ],
+      "childPolicy": [
+        { "label": "0\u20133 yrs, in cot \u2014 \u20ac20/night (+ meals)", "mode": "flatPerNight", "amount": 20 },
+        { "label": "4\u20136 yrs \u2014 50% off", "mode": "percentOff", "amount": 50 },
+        { "label": "7+ yrs (3rd/4th bed) \u2014 35% off", "mode": "percentOff", "amount": 35 }
       ],
       "weeks": [
         {

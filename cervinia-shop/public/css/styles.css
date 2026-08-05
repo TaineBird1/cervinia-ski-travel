@@ -101,6 +101,15 @@ header{
 }
 .check-row input{width:18px; height:18px; accent-color:var(--blue); cursor:pointer; flex-shrink:0;}
 
+.child-rates{margin-top:14px; display:flex; flex-direction:column; gap:10px;}
+.child-rate-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.child-rate-row span{font-size:0.85rem; font-weight:700; color:var(--ink); flex-shrink:0;}
+.child-rate-row select{
+  flex:1; min-width:200px; padding:10px 12px; border-radius:10px; border:1.5px solid var(--line);
+  background:#fff; font-family:inherit; font-size:0.85rem; font-weight:600; color:var(--ink);
+}
+.child-rate-note{font-size:0.82rem; color:var(--slate); font-weight:600; background:var(--bg-alt); border-radius:10px; padding:12px 14px; margin:0;}
+
 .stepper{
   display:inline-flex; align-items:center; gap:16px; background:#fff; border:2px solid var(--line);
   border-radius:12px; padding:6px 18px; font-weight:800;
