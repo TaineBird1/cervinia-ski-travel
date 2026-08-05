@@ -118,7 +118,7 @@
       const opt = currentTransferOption();
       const unitPrice = currentTransferPrice();
       if (!opt || unitPrice == null) return;
-      const typeLabel = state.transfer.type === 'shared' ? 'Shared Shuttle' : 'Private Transfer';
+      const typeLabel = state.transfer.type === 'shared' ? 'Shared Shuttle' : 'Scheduled Transfer';
       addToBasket({
         id: `transfer-${state.transfer.type}-${opt.airport}-${state.transfer.guests}`,
         name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${state.transfer.guests} pax)`,
