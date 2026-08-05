@@ -220,7 +220,7 @@ header.site-nav {
 
 .stat-strip {
   position: relative; z-index: 1;
-  margin-top: -34px;
+  margin-top: 40px;
   background: rgba(255,255,255,.72);
   backdrop-filter: blur(16px) saturate(1.4);
   -webkit-backdrop-filter: blur(16px) saturate(1.4);
