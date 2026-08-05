@@ -15,10 +15,11 @@ app.use('/webhook', webhookRoutes);
 // Regular JSON parsing for everything else
 app.use(express.json());
 
-// Marketing site (../site — hero, resort info, gallery, contact) at "/".
-// Only this specific folder is exposed, never the parent project directory,
-// so cervinia-shop's own source and .env are never reachable over HTTP.
-app.use(express.static(path.join(__dirname, '..', 'site')));
+// Marketing site (site/ — hero, resort info, gallery, contact) at "/".
+// Kept inside this directory (not a sibling) so it stays within Render's
+// configured root directory; still only this specific folder is exposed,
+// never the rest of cervinia-shop's source or .env.
+app.use(express.static(path.join(__dirname, 'site')));
 
 // Shop frontend (public/index.html, css, js, success.html, cancel.html) at "/shop".
 app.use('/shop', express.static(path.join(__dirname, 'public')));

@@ -1,4 +1,4 @@
-$root = Join-Path $PSScriptRoot "site"
+$root = Join-Path $PSScriptRoot "cervinia-shop/site"
 $port = 8080
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
