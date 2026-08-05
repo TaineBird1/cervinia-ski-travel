@@ -1,58 +1,74 @@
 {
-  "_source": "Imported from Website - Ski_Hire_Pass_Lessons.xlsx (transfers still placeholder \u2014 no transfer rates supplied yet)",
+  "_source": "Imported from Website - Ski_Hire_Pass_Lessons.xlsx (transfers still placeholder — no transfer rates supplied yet)",
   "currency": "EUR",
   "transfers": {
-    "_status": "PLACEHOLDER \u2014 replace with real figures from your spreadsheet",
-    "options": [
-      {
-        "id": "malpensa-shared",
-        "airport": "Milan Malpensa",
-        "type": "Shared Shuttle",
-        "pricePerPerson": 65
-      },
-      {
-        "id": "malpensa-private",
-        "airport": "Milan Malpensa",
-        "type": "Private Transfer",
-        "pricePerPerson": 180
-      },
-      {
-        "id": "linate-shared",
-        "airport": "Milan Linate",
-        "type": "Shared Shuttle",
-        "pricePerPerson": 70
-      },
-      {
-        "id": "linate-private",
-        "airport": "Milan Linate",
-        "type": "Private Transfer",
-        "pricePerPerson": 190
-      },
-      {
-        "id": "bergamo-shared",
-        "airport": "Bergamo Orio",
-        "type": "Shared Shuttle",
-        "pricePerPerson": 75
-      },
-      {
-        "id": "bergamo-private",
-        "airport": "Bergamo Orio",
-        "type": "Private Transfer",
-        "pricePerPerson": 200
-      },
-      {
-        "id": "turin-shared",
-        "airport": "Turin Caselle",
-        "type": "Shared Shuttle",
-        "pricePerPerson": 55
-      },
-      {
-        "id": "turin-private",
-        "airport": "Turin Caselle",
-        "type": "Private Transfer",
-        "pricePerPerson": 150
-      }
-    ]
+    "notes": "One-way rates, price per group (not per person). Shared shuttles run Saturdays only.",
+    "shared": {
+      "options": [
+        {
+          "airport": "Milan Malpensa Airport",
+          "travelTime": "02h15",
+          "notes": "Saturdays only; price per group",
+          "pricesByPax": {
+            "1": 110,
+            "2": 154,
+            "3": 231,
+            "4": 308,
+            "5": 385,
+            "6": 462,
+            "7": 539,
+            "8": 616
+          }
+        },
+        {
+          "airport": "Turin Caselle Airport",
+          "travelTime": "01h45",
+          "notes": "Saturdays only; price per group",
+          "pricesByPax": {
+            "1": 88,
+            "2": 110,
+            "3": 165,
+            "4": 220,
+            "5": 275,
+            "6": 330,
+            "7": 385,
+            "8": 440
+          }
+        }
+      ]
+    },
+    "private": {
+      "options": [
+        {
+          "airport": "Bergamo Airport",
+          "travelTime": "03h15",
+          "notes": "Price per group",
+          "price1to2": 584.1,
+          "price3to8": 1113.2
+        },
+        {
+          "airport": "Milan Linate Airport",
+          "travelTime": "03h00",
+          "notes": "Price per group",
+          "price1to2": 521.4,
+          "price3to8": 558.8
+        },
+        {
+          "airport": "Milan Malpensa Airport",
+          "travelTime": "02h15",
+          "notes": "Price per group",
+          "price1to2": 473,
+          "price3to8": 517
+        },
+        {
+          "airport": "Turin Caselle Airport",
+          "travelTime": "01h45",
+          "notes": "Price per group",
+          "price1to2": 330,
+          "price3to8": 363
+        }
+      ]
+    }
   },
   "equipment": {
     "categories": [
@@ -1008,13 +1024,13 @@
     "group": [
       {
         "id": "group-3day",
-        "label": "Group Lesson \u2014 3 Days (Mon\u2013Fri 10:00\u201312:30)",
+        "label": "Group Lesson — 3 Days (Mon–Fri 10:00–12:30)",
         "low": 189,
         "high": 205
       },
       {
         "id": "group-5day",
-        "label": "Group Lesson \u2014 5 Days (Mon\u2013Fri 10:00\u201312:30)",
+        "label": "Group Lesson — 5 Days (Mon–Fri 10:00–12:30)",
         "low": 210,
         "high": 273
       }

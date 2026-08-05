@@ -48,15 +48,18 @@
   <section class="cat-section" id="transfers">
     <div class="wrap">
       <h2>Airport Transfers</h2>
-      <p class="section-sub">Shared or private transfers from your arrival airport.</p>
+      <p class="section-sub" id="transferNote">One-way rates, price per group. Shared shuttles run Saturdays only.</p>
 
+      <div class="config-group">
+        <label class="config-label">Transfer type</label>
+        <div class="btn-group" id="transferTypeBtns">
+          <button type="button" class="opt-btn active" data-type="shared">Shared Shuttle</button>
+          <button type="button" class="opt-btn" data-type="private">Private Transfer</button>
+        </div>
+      </div>
       <div class="config-group">
         <label class="config-label">Airport</label>
         <div class="btn-group" id="transferAirportBtns"></div>
-      </div>
-      <div class="config-group">
-        <label class="config-label">Transfer type</label>
-        <div class="btn-group" id="transferTypeBtns"></div>
       </div>
       <div class="config-group">
         <label class="config-label">Guests</label>
@@ -71,6 +74,8 @@
         <div class="price-display">Total: <strong id="transferPrice">€0</strong></div>
         <button class="add-btn" id="transferAddBtn">Add to Basket</button>
       </div>
+      <p class="tiny-note" id="transferTravelTime"></p>
+      <p class="unavailable-note" id="transferUnavailable">Not offered for that group size — please choose 8 or fewer guests, or contact us directly for a larger group.</p>
     </div>
   </section>
 

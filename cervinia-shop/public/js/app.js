@@ -84,54 +84,92 @@
   }
 
   // ---------- Transfers ----------
+  // Rates are PER GROUP, not per person: shared shuttles are priced per
+  // headcount (1-8), private transfers are priced per group in two tiers
+  // (1-2 pax / 3-8 pax). "Guests" selects which price applies rather than
+  // multiplying a per-person rate.
   function initTransfers() {
-    const options = state.pricing.transfers.options;
-    const airports = [...new Set(options.map((o) => o.airport))];
-    const airportBtns = document.getElementById('transferAirportBtns');
-    const typeBtns = document.getElementById('transferTypeBtns');
+    document.getElementById('transferNote').textContent = state.pricing.transfers.notes || '';
 
-    function renderTypesFor(airport) {
-      const types = options.filter((o) => o.airport === airport).map((o) => o.type);
-      buildButtons(typeBtns, types, 0, (i) => {
-        state.transfer.type = types[i];
+    document.getElementById('transferTypeBtns').querySelectorAll('.opt-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById('transferTypeBtns').querySelectorAll('.opt-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.transfer.type = btn.dataset.type;
+        state.transfer.airport = null;
+        renderTransferAirports();
         updateTransferPrice();
       });
-      state.transfer.type = types[0];
-    }
-
-    buildButtons(airportBtns, airports, 0, (i) => {
-      state.transfer.airport = airports[i];
-      renderTypesFor(airports[i]);
-      updateTransferPrice();
     });
-    state.transfer.airport = airports[0];
-    renderTypesFor(airports[0]);
+    state.transfer.type = 'shared';
+    renderTransferAirports();
 
     setupStepper(
       document.getElementById('transferGuestsStepper'),
       document.getElementById('transferGuestsValue'),
-      (v) => { state.transfer.guests = v; updateTransferPrice(); }
+      (v) => { state.transfer.guests = v; updateTransferPrice(); },
+      1,
+      8
     );
 
     updateTransferPrice();
 
     document.getElementById('transferAddBtn').addEventListener('click', () => {
-      const opt = options.find((o) => o.airport === state.transfer.airport && o.type === state.transfer.type);
-      if (!opt) return;
+      const opt = currentTransferOption();
+      const unitPrice = currentTransferPrice();
+      if (!opt || unitPrice == null) return;
+      const typeLabel = state.transfer.type === 'shared' ? 'Shared Shuttle' : 'Private Transfer';
       addToBasket({
-        id: `transfer-${opt.id}`,
-        name: `Airport Transfer — ${opt.airport} (${opt.type})`,
-        unitPrice: opt.pricePerPerson,
-        qty: state.transfer.guests
+        id: `transfer-${state.transfer.type}-${opt.airport}-${state.transfer.guests}`,
+        name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${state.transfer.guests} pax)`,
+        unitPrice,
+        qty: 1
       });
     });
   }
 
+  function renderTransferAirports() {
+    const list = state.pricing.transfers[state.transfer.type].options;
+    const airports = list.map((o) => o.airport);
+    buildButtons(document.getElementById('transferAirportBtns'), airports, 0, (i) => {
+      state.transfer.airport = airports[i];
+      updateTransferPrice();
+    });
+    state.transfer.airport = airports[0];
+  }
+
+  function currentTransferOption() {
+    const list = state.pricing.transfers[state.transfer.type].options;
+    return list.find((o) => o.airport === state.transfer.airport) || null;
+  }
+
+  function currentTransferPrice() {
+    const opt = currentTransferOption();
+    if (!opt) return null;
+    if (state.transfer.type === 'shared') {
+      const price = opt.pricesByPax[String(state.transfer.guests)];
+      return price == null ? null : price;
+    }
+    return state.transfer.guests <= 2 ? opt.price1to2 : opt.price3to8;
+  }
+
   function updateTransferPrice() {
-    const options = state.pricing.transfers.options;
-    const opt = options.find((o) => o.airport === state.transfer.airport && o.type === state.transfer.type);
-    const total = opt ? opt.pricePerPerson * state.transfer.guests : 0;
-    document.getElementById('transferPrice').textContent = fmt(total);
+    const opt = currentTransferOption();
+    const price = currentTransferPrice();
+    const addBtn = document.getElementById('transferAddBtn');
+    const note = document.getElementById('transferUnavailable');
+    const timeNote = document.getElementById('transferTravelTime');
+
+    if (price == null) {
+      document.getElementById('transferPrice').textContent = '—';
+      addBtn.disabled = true;
+      note.style.display = 'block';
+    } else {
+      document.getElementById('transferPrice').textContent = fmt(price);
+      addBtn.disabled = false;
+      note.style.display = 'none';
+    }
+    timeNote.textContent = opt && opt.travelTime ? `Travel time: approx. ${opt.travelTime.replace('h', 'h ')}` : '';
   }
 
   // ---------- Equipment ----------

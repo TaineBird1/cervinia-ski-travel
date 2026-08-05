@@ -3,8 +3,8 @@
  * data/pricing.json and data/hotels.json.
  *
  * Usage:
- *   node scripts/importPricingFromExcel.js "Website - Ski_Hire_Pass_Lessons.xlsx" "Website - Cervinia_Hotel_Rates.xlsx"
- *   (either argument can be omitted if you only want to update one of the two)
+ *   node scripts/importPricingFromExcel.js "Website - Ski_Hire_Pass_Lessons.xlsx" "Website - Cervinia_Hotel_Rates.xlsx" "Website - Airport Tranfer Rates.xlsx"
+ *   (any argument can be omitted — pass "" as a placeholder — if you only want to update some of the three)
  *
  * This matches the ACTUAL workbook layout the client sent, not a made-up
  * template:
@@ -25,6 +25,13 @@
  *      <room type columns...>" header, one row per 7-night week, and a notes
  *      column on the right (tourist tax, board basis, cancellation policy…)
  *
+ *  "Website - Airport Tranfer Rates.xlsx"
+ *    - Sheet "Rates Long": columns Transfer Type | Route | PAX / Group Size |
+ *      New Rate EUR | Travel Time | Notes. "Shared Shuttle" rows are one per
+ *      PAX count 1-8 (price is per GROUP, not per person); "Private Transfer"
+ *      rows are one per "1-2 Pax" / "3-8 Pax" tier (also per group). Route is
+ *      "<Airport> / Cervinia".
+ *
  * Re-run this any time you get an updated workbook in the same layout.
  */
 
@@ -32,11 +39,11 @@ const path = require('path');
 const fs = require('fs');
 const XLSX = require('xlsx');
 
-const [, , skiFile, hotelFile] = process.argv;
+const [, , skiFile, hotelFile, transferFile] = process.argv;
 
-if (!skiFile && !hotelFile) {
+if (!skiFile && !hotelFile && !transferFile) {
   console.error('Provide at least one workbook to import.');
-  console.error('Example: node scripts/importPricingFromExcel.js "Ski_Hire_Pass_Lessons.xlsx" "Hotel_Rates.xlsx"');
+  console.error('Example: node scripts/importPricingFromExcel.js "Ski_Hire_Pass_Lessons.xlsx" "Hotel_Rates.xlsx" "Airport_Transfer_Rates.xlsx"');
   process.exit(1);
 }
 
@@ -250,5 +257,61 @@ function toISODate(value) {
   return String(value);
 }
 
+// ---------------- Airport transfer rates ----------------
+function importTransferFile(filePath) {
+  const resolved = path.resolve(filePath);
+  if (!fs.existsSync(resolved)) {
+    console.error(`File not found: ${resolved}`);
+    return;
+  }
+  const wb = XLSX.readFile(resolved, { cellDates: true });
+  const pricing = fs.existsSync(PRICING_PATH) ? JSON.parse(fs.readFileSync(PRICING_PATH, 'utf8')) : {};
+
+  const rows = loadSheetRows(wb, 'Rates Long');
+  if (!rows) {
+    console.warn('Sheet "Rates Long" not found — transfer pricing left untouched.');
+    return;
+  }
+
+  const sharedByAirport = new Map();
+  const privateByAirport = new Map();
+
+  rows.slice(1).filter((r) => !isBlankRow(r)).forEach((r) => {
+    const [type, route, size, price, travelTime, notes] = r;
+    if (!type || !route || price == null) return;
+    const airport = String(route).split('/')[0].trim();
+
+    if (/shared/i.test(type)) {
+      if (!sharedByAirport.has(airport)) sharedByAirport.set(airport, { travelTime, notes, pricesByPax: {} });
+      sharedByAirport.get(airport).pricesByPax[String(size)] = price;
+    } else if (/private/i.test(type)) {
+      if (!privateByAirport.has(airport)) privateByAirport.set(airport, { travelTime, notes });
+      const entry = privateByAirport.get(airport);
+      if (/1-2/.test(String(size))) entry.price1to2 = price;
+      else entry.price3to8 = price;
+    }
+  });
+
+  pricing.transfers = {
+    notes: 'One-way rates, price per group (not per person). Shared shuttles run Saturdays only.',
+    shared: {
+      options: [...sharedByAirport.entries()].map(([airport, v]) => ({
+        airport, travelTime: v.travelTime, notes: v.notes, pricesByPax: v.pricesByPax
+      }))
+    },
+    private: {
+      options: [...privateByAirport.entries()].map(([airport, v]) => ({
+        airport, travelTime: v.travelTime, notes: v.notes, price1to2: v.price1to2, price3to8: v.price3to8
+      }))
+    }
+  };
+
+  pricing.currency = pricing.currency || 'EUR';
+  fs.writeFileSync(PRICING_PATH, JSON.stringify(pricing, null, 2));
+  console.log(`✅ Transfers: imported ${sharedByAirport.size} shared-shuttle route(s), ${privateByAirport.size} private-transfer route(s)`);
+  console.log(`Saved ${PRICING_PATH}`);
+}
+
 if (skiFile) importSkiFile(skiFile);
 if (hotelFile) importHotelFile(hotelFile);
+if (transferFile) importTransferFile(transferFile);
