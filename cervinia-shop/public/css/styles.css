@@ -189,6 +189,8 @@ header{
 
 footer{background:var(--ink); color:#b7cbd8; padding:26px 0; margin-top:20px;}
 .footer-inner{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-size:0.85rem;}
+.footer-inner a{text-decoration:underline; text-underline-offset:2px;}
+.footer-inner a:hover{color:#fff;}
 
 .wa-float{
   position:fixed; bottom:26px; right:26px; z-index:220;
