@@ -1,7 +1,8 @@
 const express = require('express');
 const stripe = require('../lib/stripeClient');
 const orderStore = require('../lib/orderStore');
-const { generateInvoicePDF } = require('../lib/invoice');
+const { generateInvoicePDF, invoicePath } = require('../lib/invoice');
+const { sendInvoiceEmail } = require('../lib/email');
 
 const router = express.Router();
 
@@ -48,6 +49,7 @@ router.post('/', express.raw({ type: 'application/json' }), async (req, res) => 
       orderStore.save(order);
       await generateInvoicePDF(order);
       console.log(`✅ Payment confirmed and invoice generated for ${order.id}`);
+      await sendInvoiceEmail(order, invoicePath(order.id));
     } catch (err) {
       console.error('Error processing checkout.session.completed:', err);
     }

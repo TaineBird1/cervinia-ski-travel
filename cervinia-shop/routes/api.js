@@ -5,6 +5,7 @@ const path = require('path');
 const stripe = require('../lib/stripeClient');
 const orderStore = require('../lib/orderStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
+const { sendInvoiceEmail } = require('../lib/email');
 
 const router = express.Router();
 
@@ -88,6 +89,7 @@ router.get('/order/:sessionId', async (req, res) => {
       const order = await buildOrderFromSession(session);
       orderStore.save(order);
       await generateInvoicePDF(order);
+      await sendInvoiceEmail(order, invoicePath(order.id));
       return res.json({ status: 'paid', order });
     }
 

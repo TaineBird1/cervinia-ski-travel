@@ -139,10 +139,28 @@ Code — the data is already clean and ready to build against.
    Stripe Checkout Session and redirects the customer to Stripe's own secure
    payment page (so this app never touches card details).
 4. On success, Stripe redirects to `/success.html`, and the webhook (step 3)
-   confirms the payment, saves the order to `data/orders.json`, and generates
-   `invoices/{orderId}.pdf`.
+   confirms the payment, saves the order to `data/orders.json`, generates
+   `invoices/{orderId}.pdf`, and emails it to the customer via Resend
+   (see step 6).
 5. `/success.html` polls `/api/order/:sessionId` until the order appears, then
-   shows a "Download Invoice" button.
+   shows a "Download Invoice" button — useful as a backup even once email is
+   set up, e.g. if the customer mistypes their email at checkout.
+
+## 6. Email delivery (optional)
+
+Invoices are emailed automatically via [Resend](https://resend.com) once
+`RESEND_API_KEY` is set — until then, checkout still works fine and the
+invoice is just a manual download from the success page (no crash either
+way; `lib/email.js` skips silently if the key or the customer's email is
+missing).
+
+1. Sign up at [resend.com](https://resend.com) and create an API key
+   (Dashboard → API Keys)
+2. Add `RESEND_API_KEY` to your `.env` (or Render environment variables)
+3. `RESEND_FROM_EMAIL` defaults to `onboarding@resend.dev`, which works
+   immediately with no setup — good enough to start. Once you've verified
+   your own domain in Resend, switch it to something like
+   `Cervinia Travel Services <bookings@cerviniatravelservices.com>` instead.
 
 ## Notes on what's simplified
 
@@ -150,7 +168,3 @@ Code — the data is already clean and ready to build against.
   small operation; swap in a real database if volume grows.
 - No tax/VAT line is applied — add one in `routes/api.js` /
   `lib/invoice.js` if you need to charge it.
-- No email delivery is wired up — the invoice is a downloadable PDF from the
-  success page. Ask Claude Code to add email delivery (e.g. via
-  [Resend](https://resend.com) or Stripe's own invoice emailing) if you'd
-  like that instead.
