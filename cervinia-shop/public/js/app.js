@@ -616,6 +616,43 @@
     document.getElementById('basketTotal').textContent = fmt(total);
     const count = state.basket.reduce((sum, i) => sum + i.qty, 0);
     document.getElementById('basketCount').textContent = count;
+
+    renderBasketNudge();
+  }
+
+  // "Complete your trip" nudge — shows which categories are already in the
+  // basket and lets the customer jump straight to any they haven't added.
+  const TRIP_CATEGORIES = [
+    { prefix: 'transfer-', label: 'Transfer', target: 'transfers' },
+    { prefix: 'equip-', label: 'Equipment', target: 'equipment' },
+    { prefix: 'pass-', label: 'Lift Pass', target: 'passes' },
+    { prefix: 'lesson-', label: 'Lessons', target: 'lessons' },
+    { prefix: 'hotel-', label: 'Stay', target: 'accommodation' }
+  ];
+
+  function renderBasketNudge() {
+    const el = document.getElementById('basketNudge');
+    if (!el) return;
+    if (state.basket.length === 0) {
+      el.innerHTML = '';
+      return;
+    }
+
+    const chips = TRIP_CATEGORIES.map((cat) => {
+      const has = state.basket.some((item) => item.id.startsWith(cat.prefix));
+      return has
+        ? `<span class="nudge-chip done">✓ ${cat.label}</span>`
+        : `<button type="button" class="nudge-chip missing" data-target="${cat.target}">+ ${cat.label}</button>`;
+    }).join('');
+
+    el.innerHTML = `<div class="basket-nudge-label">Complete your trip</div><div class="nudge-chips">${chips}</div>`;
+
+    el.querySelectorAll('.nudge-chip.missing').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        closeBasket();
+        document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
   }
 
   function openBasket() {

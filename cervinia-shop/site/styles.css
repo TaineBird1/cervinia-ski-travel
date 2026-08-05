@@ -336,6 +336,22 @@ header.site-nav {
 .info-card h4 { font-size: 15.5px; margin-bottom: 8px; }
 .info-card p { color: var(--muted); font-size: 13px; margin: 0; }
 
+/* ---------- FAQ ---------- */
+.faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
+.faq-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 4px 24px; }
+.faq-item summary {
+  cursor: pointer; list-style: none;
+  padding: 20px 0;
+  font-family: var(--font-head); font-weight: 600; font-size: 16px; color: var(--ink);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+"; font-size: 22px; font-weight: 400; color: var(--brand); flex-shrink: 0; line-height: 1;
+}
+.faq-item[open] summary::after { content: "\2212"; }
+.faq-item p { color: var(--muted); font-size: 14.5px; line-height: 1.7; padding-bottom: 22px; margin: 0; }
+
 /* ---------- CTA banner ---------- */
 .cta-banner {
   position: relative; overflow: hidden;

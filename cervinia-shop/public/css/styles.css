@@ -154,6 +154,20 @@ header{
 .basket-item-right{text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:6px;}
 .basket-item-price{font-weight:800;}
 .basket-item-remove{background:none; border:none; color:#d64545; font-size:0.78rem; font-weight:700;}
+
+.basket-nudge{padding:0 22px 18px;}
+.basket-nudge-label{font-size:0.76rem; font-weight:700; color:var(--slate); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:10px;}
+.nudge-chips{display:flex; flex-wrap:wrap; gap:6px;}
+.nudge-chip{
+  display:inline-flex; align-items:center; gap:4px;
+  padding:5px 10px; border-radius:999px; font-size:0.76rem; font-weight:700;
+  border:1.5px solid var(--line); background:#fff; color:var(--slate);
+  font-family:inherit;
+}
+.nudge-chip.done{background:#eafbf1; border-color:#b9ecce; color:#189c4c;}
+.nudge-chip.missing{cursor:pointer; color:var(--blue-dark); border-color:var(--line); background:var(--bg-alt); transition:border-color .15s ease;}
+.nudge-chip.missing:hover{border-color:var(--blue);}
+
 .basket-footer{padding:18px 22px 22px; border-top:1px solid var(--line);}
 .basket-total-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:1.05rem;}
 .basket-total-row strong{font-size:1.35rem; color:var(--blue-dark);}
