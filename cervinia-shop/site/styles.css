@@ -468,4 +468,15 @@ footer { padding: 56px 0 28px; background: var(--bg-soft); border-top: 1px solid
   .hero-actions .btn, .cta-banner .btn { width: 100%; justify-content: center; }
   .hero-actions, .cta-banner .hero-actions { flex-direction: column; }
   .nav-top { flex-wrap: wrap; }
+
+  .nav-buttons {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 16px;
+  }
+  .nav-buttons::-webkit-scrollbar { display: none; }
+  .nav-buttons a { flex-shrink: 0; }
 }

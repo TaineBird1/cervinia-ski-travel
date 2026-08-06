@@ -221,7 +221,32 @@ footer{background:var(--ink); color:#b7cbd8; padding:26px 0; margin-top:20px;}
 .wa-float:hover{transform:scale(1.1); box-shadow:0 18px 40px -8px rgba(37,211,102,0.7);}
 
 @media (max-width:768px){
-  .cat-nav{order:3; width:100%; justify-content:center;}
   .header-inner{justify-content:center;}
   .basket-drawer{width:100vw;}
+
+  .cat-nav{
+    order:3; width:100%;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    justify-content:flex-start;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:4px;
+  }
+  .cat-nav::-webkit-scrollbar{display:none;}
+  .cat-btn, .cat-nav .dropdown{flex-shrink:0;}
+
+  .dropdown-toggle{display:none;}
+  .dropdown-menu{
+    display:flex !important;
+    position:static;
+    flex-wrap:nowrap;
+    background:none; border:none; box-shadow:none; padding:0; margin:0;
+    gap:8px;
+  }
+  .dropdown-menu a{
+    display:inline-flex; align-items:center; white-space:nowrap;
+    border:2px solid var(--line); background:var(--bg-alt); color:var(--ink);
+    padding:10px 18px; border-radius:999px; font-weight:700; font-size:0.9rem;
+  }
 }
