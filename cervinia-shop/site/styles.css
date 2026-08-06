@@ -399,7 +399,8 @@ header.site-nav {
 .contact-card.brand { background: var(--grad-brand); border-color: transparent; box-shadow: var(--shadow-brand); }
 .contact-card .cc-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: var(--muted-soft); margin-bottom: 8px; }
 .contact-card.brand .cc-label { color: rgba(255,255,255,.7); }
-.contact-card .cc-value { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+.contact-card .cc-value { display: block; font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+.contact-card a.cc-value:hover { text-decoration: underline; }
 .contact-card.brand .cc-value { color: #fff; }
 .contact-card .cc-value:last-child { margin-bottom: 0; }
 .process-mini { display: flex; flex-direction: column; gap: 16px; }
