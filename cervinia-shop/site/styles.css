@@ -462,12 +462,13 @@ footer { padding: 56px 0 28px; background: var(--bg-soft); border-top: 1px solid
   .services-grid, .hotel-grid, .data-grid, .info-strip { grid-template-columns: 1fr; }
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(2n) { border-right: none; }
-  .timeline { grid-template-columns: 1fr 1fr; }
+  .timeline { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr; }
   .footer-cols { gap: 32px; }
   .hero-actions .btn, .cta-banner .btn { width: 100%; justify-content: center; }
   .hero-actions, .cta-banner .hero-actions { flex-direction: column; }
   .nav-top { flex-wrap: wrap; }
+  .cta-banner { padding: 64px 0; }
 
   .nav-buttons {
     flex-wrap: nowrap;
