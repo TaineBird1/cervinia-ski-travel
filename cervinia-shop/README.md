@@ -157,10 +157,15 @@ missing).
 1. Sign up at [resend.com](https://resend.com) and create an API key
    (Dashboard → API Keys)
 2. Add `RESEND_API_KEY` to your `.env` (or Render environment variables)
-3. `RESEND_FROM_EMAIL` defaults to `onboarding@resend.dev`, which works
-   immediately with no setup — good enough to start. Once you've verified
-   your own domain in Resend, switch it to something like
-   `Cervinia Travel Services <bookings@cerviniatravelservices.com>` instead.
+3. `RESEND_FROM_EMAIL` defaults to `onboarding@resend.dev`. **This only
+   works for sending to the email address that owns the Resend account** —
+   Resend rejects any other recipient from that shared sender. Real
+   customer bookings will silently fail to email (the failure is caught
+   and logged server-side only; checkout itself still succeeds). To send
+   to real customers, verify your own domain in Resend (Dashboard →
+   Domains — a few DNS records at your registrar) and switch
+   `RESEND_FROM_EMAIL` to something like
+   `Cervinia Travel Services <bookings@cerviniatravelservices.com>`.
 
 ## Notes on what's simplified
 
