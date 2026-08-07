@@ -187,6 +187,7 @@
     "Hotel Lyskamm": {
       "title": "HOTEL LYSKAMM RATES 2026/2027",
       "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "minNights": 7,
       "rooms": [
         "Standard Room",
         "Superior Room"
@@ -376,6 +377,7 @@
     "Hotel Da Compagnoni": {
       "title": "HOTEL DA COMPAGNONI RATES 2026/2027",
       "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "minNights": 7,
       "rooms": [
         "Comfort room 1-2 persons",
         "Deluxe room 2-3 persons",
@@ -593,6 +595,7 @@
     "Hotel Bucaneve": {
       "title": "HOTEL BUCANEVE RATES 2026/2027",
       "priceBasis": "Prices in \u20ac Per Person for 7 nights Bed & Breakfast",
+      "minNights": 7,
       "rooms": [
         "Superior Room BB",
         "Deluxe Room BB",
@@ -817,6 +820,7 @@
     "Hotel Miravidi": {
       "title": "HOTEL MIRAVIDI RATES 2026/2027",
       "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "minNights": 7,
       "rooms": [
         "Classic Double HB",
         "Classic Double B&B",
@@ -1089,6 +1093,7 @@
     "Chambres Mont Cervin": {
       "title": "CHAMBRES MONT CERVIN RATES 2026/2027",
       "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
+      "minNights": 7,
       "rooms": [
         "Standard Room B&B",
         "Suite Room B&B"

@@ -216,8 +216,21 @@
         <div class="btn-group" id="hotelNameBtns"></div>
       </div>
       <div class="config-group">
-        <label class="config-label">Arrival week (7 nights)</label>
-        <div class="btn-group btn-group-scroll" id="hotelWeekBtns"></div>
+        <label class="config-label">Check-in &amp; check-out dates</label>
+        <div class="date-calendar" id="hotelCalendar">
+          <div class="cal-header">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month">‹</button>
+            <span id="calMonthLabel"></span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Next month">›</button>
+          </div>
+          <div class="cal-weekdays">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <p class="cal-selection" id="calSelectionSummary"></p>
+        <p class="tiny-note">Nightly rate calculated from each hotel's quoted weekly price — see "Rates &amp; policy details" below for the source figures.</p>
+        <p class="unavailable-note" id="hotelMinNightsNote"></p>
       </div>
       <div class="config-group">
         <label class="config-label">Room type</label>
@@ -245,7 +258,7 @@
         <div class="price-display">Total: <strong id="hotelPrice">€0</strong></div>
         <button class="add-btn" id="hotelAddBtn">Add to Basket</button>
       </div>
-      <p class="unavailable-note" id="hotelUnavailable">Not available for that week — please choose another.</p>
+      <p class="unavailable-note" id="hotelUnavailable">This date range isn't available — please choose different dates.</p>
 
       <details class="hotel-notes-details">
         <summary>Rates &amp; policy details</summary>

@@ -16,7 +16,10 @@
       groupSeason: 'low',
       groupGuests: 1
     },
-    hotel: { name: null, weekIndex: 0, roomIndex: 0, guests: 1, children: 0, childRateIndexes: [] }
+    hotel: {
+      name: null, roomIndex: 0, guests: 1, children: 0, childRateIndexes: [],
+      checkIn: null, checkOut: null, calMonth: null
+    }
   };
 
   const fmt = (n) => `€${Number(n).toFixed(2)}`;
@@ -485,18 +488,25 @@
   }
 
   // ---------- Accommodation ----------
+  // Hotels quote fixed weekly package rates (see notes: several require a
+  // minimum 7-night stay). The calendar below lets guests pick any check-in/
+  // check-out date, so nightly rates are derived by dividing each quoted
+  // week's price by 7 and summing across the selected range — that nightly
+  // figure was never quoted by the hotel directly.
   function initAccommodation() {
     const hotelNames = Object.keys(state.hotels);
     let childrenStepper;
 
     buildButtons(document.getElementById('hotelNameBtns'), hotelNames, 0, (i) => {
       state.hotel.name = hotelNames[i];
-      state.hotel.weekIndex = 0;
       state.hotel.roomIndex = 0;
+      state.hotel.checkIn = null;
+      state.hotel.checkOut = null;
+      state.hotel.calMonth = null;
       state.hotel.children = 0;
       state.hotel.childRateIndexes = [];
       if (childrenStepper) childrenStepper.set(0);
-      renderHotelWeeks();
+      renderHotelCalendar();
       renderHotelRooms();
       renderHotelNotes();
       renderChildRates();
@@ -504,9 +514,12 @@
     });
     state.hotel.name = hotelNames[0];
 
-    renderHotelWeeks();
+    renderHotelCalendar();
     renderHotelRooms();
     renderHotelNotes();
+
+    document.getElementById('calPrev').addEventListener('click', () => shiftCalMonth(-1));
+    document.getElementById('calNext').addEventListener('click', () => shiftCalMonth(1));
 
     setupStepper(
       document.getElementById('hotelGuestsStepper'),
@@ -534,18 +547,21 @@
     updateHotelPrice();
 
     document.getElementById('hotelAddBtn').addEventListener('click', () => {
-      const unitPrice = currentHotelUnitPrice();
-      if (!unitPrice) return;
       const hotel = state.hotels[state.hotel.name];
+      const { checkIn, checkOut } = state.hotel;
+      if (!checkIn || !checkOut) return;
+      const nights = dateDiffNights(checkIn, checkOut);
+      const minNights = hotel.minNights || 1;
+      const adultUnitTotal = rangeAdultUnitTotal(hotel, state.hotel.roomIndex, checkIn, checkOut);
+      if (adultUnitTotal == null || nights < minNights) return;
+
       const roomName = hotel.rooms[state.hotel.roomIndex];
-      const week = hotel.weeks[state.hotel.weekIndex];
-      const label = weekLabel(week);
-      const nights = hotelNights(week);
+      const label = `${fmtDate(checkIn)} – ${fmtDate(checkOut)} (${nights} night${nights > 1 ? 's' : ''})`;
 
       addToBasket({
-        id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}`,
+        id: `hotel-${state.hotel.name}-${checkIn}-${checkOut}-${state.hotel.roomIndex}`,
         name: `${state.hotel.name} — ${roomName}, ${label} (${state.hotel.guests} adult${state.hotel.guests > 1 ? 's' : ''})`,
-        unitPrice,
+        unitPrice: adultUnitTotal,
         qty: state.hotel.guests
       });
 
@@ -553,9 +569,9 @@
         const policy = hotel.childPolicy;
         if (!policy || policy.length === 0) {
           addToBasket({
-            id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}-children`,
+            id: `hotel-${state.hotel.name}-${checkIn}-${checkOut}-${state.hotel.roomIndex}-children`,
             name: `${state.hotel.name} — ${roomName}, ${label} (${state.hotel.children} child${state.hotel.children > 1 ? 'ren' : ''}, standard rate)`,
-            unitPrice,
+            unitPrice: adultUnitTotal,
             qty: state.hotel.children
           });
         } else {
@@ -564,9 +580,9 @@
           Object.entries(counts).forEach(([idxStr, qty]) => {
             const idx = Number(idxStr);
             const tier = policy[idx] || policy[0];
-            const cost = childTierCost(tier, unitPrice, nights);
+            const cost = childTierCost(tier, adultUnitTotal, nights);
             addToBasket({
-              id: `hotel-${state.hotel.name}-${state.hotel.weekIndex}-${state.hotel.roomIndex}-child-${idx}`,
+              id: `hotel-${state.hotel.name}-${checkIn}-${checkOut}-${state.hotel.roomIndex}-child-${idx}`,
               name: `${state.hotel.name} — ${roomName}, ${label} (Child: ${tier.label})`,
               unitPrice: cost,
               qty
@@ -621,41 +637,155 @@
     }
   }
 
-  function childTierCost(tier, unitPrice, nights) {
+  function childTierCost(tier, adultUnitTotal, nights) {
     switch (tier.mode) {
       case 'free': return 0;
       case 'flatPerNight': return tier.amount * nights;
-      case 'percentOff': return unitPrice * (1 - tier.amount / 100);
-      default: return unitPrice;
+      case 'percentOff': return adultUnitTotal * (1 - tier.amount / 100);
+      default: return adultUnitTotal;
     }
   }
 
-  function currentHotelChildrenCost(unitPrice) {
+  function currentHotelChildrenCost(adultUnitTotal, nights) {
     if (state.hotel.children === 0) return 0;
     const hotel = state.hotels[state.hotel.name];
-    const week = hotel.weeks[state.hotel.weekIndex];
     const policy = hotel.childPolicy;
-    if (!policy || policy.length === 0) return unitPrice * state.hotel.children;
-    const nights = hotelNights(week);
+    if (!policy || policy.length === 0) return adultUnitTotal * state.hotel.children;
     return state.hotel.childRateIndexes.reduce(
-      (sum, idx) => sum + childTierCost(policy[idx] || policy[0], unitPrice, nights),
+      (sum, idx) => sum + childTierCost(policy[idx] || policy[0], adultUnitTotal, nights),
       0
     );
   }
 
-  function hotelNights(week) {
-    const start = new Date(`${week.arrival}T00:00:00`);
-    const end = new Date(`${week.departure}T00:00:00`);
-    return Math.round((end - start) / 86400000);
+  // ---- date / calendar helpers ----
+  function hotelSeasonRange(hotel) {
+    const weeks = hotel.weeks;
+    return { min: weeks[0].arrival, max: weeks[weeks.length - 1].departure };
   }
 
-  function renderHotelWeeks() {
+  function addDays(dateStr, days) {
+    const d = new Date(`${dateStr}T00:00:00`);
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function dateDiffNights(checkIn, checkOut) {
+    const a = new Date(`${checkIn}T00:00:00`);
+    const b = new Date(`${checkOut}T00:00:00`);
+    return Math.round((b - a) / 86400000);
+  }
+
+  function isoMonth(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
+  }
+
+  function fmtDate(dateStr) {
+    return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+
+  function nightlyRateForDate(hotel, roomIndex, dateStr) {
+    const week = hotel.weeks.find((w) => dateStr >= w.arrival && dateStr < w.departure);
+    if (!week) return null;
+    const weekPrice = week.prices[roomIndex];
+    return weekPrice == null ? null : weekPrice / 7;
+  }
+
+  function rangeAdultUnitTotal(hotel, roomIndex, checkIn, checkOut) {
+    const n = dateDiffNights(checkIn, checkOut);
+    if (n <= 0) return null;
+    let total = 0;
+    let cursor = checkIn;
+    for (let i = 0; i < n; i++) {
+      const rate = nightlyRateForDate(hotel, roomIndex, cursor);
+      if (rate == null) return null;
+      total += rate;
+      cursor = addDays(cursor, 1);
+    }
+    return total;
+  }
+
+  function shiftCalMonth(delta) {
     const hotel = state.hotels[state.hotel.name];
-    const labels = hotel.weeks.map(weekLabel);
-    buildButtons(document.getElementById('hotelWeekBtns'), labels, state.hotel.weekIndex, (i) => {
-      state.hotel.weekIndex = i;
-      updateHotelPrice();
-    });
+    const { min, max } = hotelSeasonRange(hotel);
+    const d = new Date(`${state.hotel.calMonth}T00:00:00`);
+    d.setMonth(d.getMonth() + delta);
+    const next = isoMonth(d);
+    if (next < min.slice(0, 7) + '-01' || next > max.slice(0, 7) + '-01') return;
+    state.hotel.calMonth = next;
+    renderHotelCalendar();
+  }
+
+  function renderHotelCalendar() {
+    const hotel = state.hotels[state.hotel.name];
+    const { min, max } = hotelSeasonRange(hotel);
+    if (!state.hotel.calMonth) state.hotel.calMonth = min.slice(0, 7) + '-01';
+
+    const monthDate = new Date(`${state.hotel.calMonth}T00:00:00`);
+    document.getElementById('calMonthLabel').textContent =
+      monthDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+
+    const year = monthDate.getFullYear();
+    const monthIdx = monthDate.getMonth();
+    const firstOfMonth = new Date(year, monthIdx, 1);
+    const startWeekday = (firstOfMonth.getDay() + 6) % 7; // Monday = 0
+    const daysInMonth = new Date(year, monthIdx + 1, 0).getDate();
+
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+    for (let i = 0; i < startWeekday; i++) {
+      grid.appendChild(document.createElement('span'));
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${String(monthIdx + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cal-day';
+      btn.textContent = d;
+
+      const inSeason = dateStr >= min && dateStr <= max;
+      if (!inSeason) {
+        btn.disabled = true;
+      } else {
+        btn.addEventListener('click', () => selectCalendarDay(dateStr));
+      }
+
+      if (state.hotel.checkIn === dateStr) btn.classList.add('cal-checkin');
+      if (state.hotel.checkOut === dateStr) btn.classList.add('cal-checkout');
+      if (state.hotel.checkIn && state.hotel.checkOut && dateStr > state.hotel.checkIn && dateStr < state.hotel.checkOut) {
+        btn.classList.add('cal-in-range');
+      }
+
+      grid.appendChild(btn);
+    }
+
+    document.getElementById('calPrev').disabled = state.hotel.calMonth <= min.slice(0, 7) + '-01';
+    document.getElementById('calNext').disabled = state.hotel.calMonth >= max.slice(0, 7) + '-01';
+  }
+
+  function selectCalendarDay(dateStr) {
+    if (!state.hotel.checkIn || state.hotel.checkOut) {
+      state.hotel.checkIn = dateStr;
+      state.hotel.checkOut = null;
+    } else if (dateStr > state.hotel.checkIn) {
+      state.hotel.checkOut = dateStr;
+    } else {
+      state.hotel.checkIn = dateStr;
+      state.hotel.checkOut = null;
+    }
+    renderHotelCalendar();
+    updateHotelPrice();
+  }
+
+  function renderCalSelectionSummary() {
+    const el = document.getElementById('calSelectionSummary');
+    if (!state.hotel.checkIn) {
+      el.textContent = 'Select your check-in date.';
+    } else if (!state.hotel.checkOut) {
+      el.textContent = `Check-in: ${fmtDate(state.hotel.checkIn)} — now select your check-out date.`;
+    } else {
+      const n = dateDiffNights(state.hotel.checkIn, state.hotel.checkOut);
+      el.textContent = `${fmtDate(state.hotel.checkIn)} → ${fmtDate(state.hotel.checkOut)} · ${n} night${n > 1 ? 's' : ''}`;
+    }
   }
 
   function renderHotelRooms() {
@@ -672,34 +802,48 @@
     document.getElementById('hotelNotesList').innerHTML = hotel.notes.map((n) => `<p>${escapeHtml(n)}</p>`).join('');
   }
 
-  function currentHotelUnitPrice() {
-    const hotel = state.hotels[state.hotel.name];
-    const week = hotel.weeks[state.hotel.weekIndex];
-    return week ? week.prices[state.hotel.roomIndex] || null : null;
-  }
-
   function updateHotelPrice() {
-    const unitPrice = currentHotelUnitPrice();
+    const hotel = state.hotels[state.hotel.name];
     const priceEl = document.getElementById('hotelPrice');
     const addBtn = document.getElementById('hotelAddBtn');
     const note = document.getElementById('hotelUnavailable');
-    if (!unitPrice) {
+    const minNightsNote = document.getElementById('hotelMinNightsNote');
+    renderCalSelectionSummary();
+
+    const { checkIn, checkOut } = state.hotel;
+    if (!checkIn || !checkOut) {
+      priceEl.textContent = '—';
+      addBtn.disabled = true;
+      note.style.display = 'none';
+      minNightsNote.style.display = 'none';
+      return;
+    }
+
+    const nights = dateDiffNights(checkIn, checkOut);
+    const adultUnitTotal = rangeAdultUnitTotal(hotel, state.hotel.roomIndex, checkIn, checkOut);
+
+    if (adultUnitTotal == null) {
       priceEl.textContent = '—';
       addBtn.disabled = true;
       note.style.display = 'block';
-    } else {
-      const total = unitPrice * state.hotel.guests + currentHotelChildrenCost(unitPrice);
-      priceEl.textContent = fmt(total);
-      addBtn.disabled = false;
-      note.style.display = 'none';
+      minNightsNote.style.display = 'none';
+      return;
     }
-  }
+    note.style.display = 'none';
 
-  function weekLabel(week) {
-    const opts = { day: 'numeric', month: 'short' };
-    const start = new Date(`${week.arrival}T00:00:00`).toLocaleDateString('en-GB', opts);
-    const end = new Date(`${week.departure}T00:00:00`).toLocaleDateString('en-GB', opts);
-    return `${start} – ${end}`;
+    const minNights = hotel.minNights || 1;
+    if (nights < minNights) {
+      priceEl.textContent = '—';
+      addBtn.disabled = true;
+      minNightsNote.textContent = `This hotel requires a minimum stay of ${minNights} nights — please select a longer date range.`;
+      minNightsNote.style.display = 'block';
+      return;
+    }
+    minNightsNote.style.display = 'none';
+
+    const total = adultUnitTotal * state.hotel.guests + currentHotelChildrenCost(adultUnitTotal, nights);
+    priceEl.textContent = fmt(total);
+    addBtn.disabled = false;
   }
 
   function escapeHtml(str) {
