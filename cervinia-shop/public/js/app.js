@@ -3,7 +3,7 @@
     pricing: null,
     hotels: null,
     basket: JSON.parse(localStorage.getItem('cervinia_basket') || '[]'),
-    transfer: { airport: null, type: null, guests: 1 },
+    transfer: { airport: null, type: null, guests: 1, address: '', contact: '', luggagePax: 0, equipmentPax: 0 },
     equip: { catIndex: 0, itemIndex: 0, days: 1 },
     pass: { tierIndex: 0, days: 1, guests: 1, childFree: false },
     lesson: {
@@ -118,6 +118,31 @@
       8
     );
 
+    document.getElementById('transferAddress').addEventListener('input', (e) => {
+      state.transfer.address = e.target.value;
+    });
+    document.getElementById('transferContact').addEventListener('input', (e) => {
+      state.transfer.contact = e.target.value;
+    });
+
+    setupStepper(
+      document.getElementById('transferLuggageStepper'),
+      document.getElementById('transferLuggageValue'),
+      (v) => { state.transfer.luggagePax = v; },
+      0,
+      8,
+      0
+    );
+
+    setupStepper(
+      document.getElementById('transferEquipStepper'),
+      document.getElementById('transferEquipValue'),
+      (v) => { state.transfer.equipmentPax = v; },
+      0,
+      8,
+      0
+    );
+
     updateTransferPrice();
 
     document.getElementById('transferAddBtn').addEventListener('click', () => {
@@ -125,9 +150,17 @@
       const unitPrice = currentTransferPrice();
       if (!opt || unitPrice == null) return;
       const typeLabel = state.transfer.type === 'shared' ? 'Shared Shuttle' : 'Scheduled Transfer';
+
+      const details = [];
+      if (state.transfer.address.trim()) details.push(`Staying at: ${state.transfer.address.trim()}`);
+      if (state.transfer.contact.trim()) details.push(`Contact: ${state.transfer.contact.trim()}`);
+      if (state.transfer.luggagePax > 0) details.push(`${state.transfer.luggagePax} pax w/ luggage`);
+      if (state.transfer.equipmentPax > 0) details.push(`${state.transfer.equipmentPax} pax w/ ski/board equipment`);
+      const detailsSuffix = details.length ? ` — ${details.join(', ')}` : '';
+
       addToBasket({
         id: `transfer-${state.transfer.type}-${opt.airport}-${state.transfer.guests}`,
-        name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${state.transfer.guests} pax)`,
+        name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${state.transfer.guests} pax)${detailsSuffix}`,
         unitPrice,
         qty: 1
       });

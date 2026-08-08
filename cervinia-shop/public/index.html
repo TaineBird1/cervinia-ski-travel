@@ -69,6 +69,30 @@
           <button type="button" class="step-btn" data-step="1">+</button>
         </div>
       </div>
+      <div class="config-group">
+        <label class="config-label" for="transferAddress">Where are you staying? (flat / apartment name &amp; address)</label>
+        <input type="text" id="transferAddress" class="text-input" placeholder="e.g. Residence Bontadini, Via Guido Rey 15">
+      </div>
+      <div class="config-group">
+        <label class="config-label" for="transferContact">Contact number for the driver</label>
+        <input type="tel" id="transferContact" class="text-input" placeholder="e.g. +44 7911 123456">
+      </div>
+      <div class="config-group">
+        <label class="config-label">Passengers with luggage</label>
+        <div class="stepper" id="transferLuggageStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="transferLuggageValue">0</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Passengers with ski/snowboard equipment</label>
+        <div class="stepper" id="transferEquipStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="transferEquipValue">0</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
 
       <div class="price-row">
         <div class="price-display">Total: <strong id="transferPrice">€0</strong></div>

@@ -93,6 +93,12 @@ header{
 .opt-btn:hover{border-color:var(--blue);}
 .opt-btn.active{background:var(--ink); border-color:var(--ink); color:#fff;}
 
+.text-input{
+  width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
+  background:var(--bg-alt); font-family:inherit; font-size:0.94rem; color:var(--ink);
+}
+.text-input:focus{outline:2px solid var(--blue); background:#fff;}
+
 .check-row{
   display:flex; align-items:center; gap:10px; cursor:pointer;
   font-weight:700; font-size:0.85rem; color:var(--ink);
