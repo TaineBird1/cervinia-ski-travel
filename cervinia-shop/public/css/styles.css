@@ -1,8 +1,8 @@
 :root{
   --blue:#1c86ff;
   --blue-dark:#0d63cc;
-  --orange:#ff7a3d;
-  --orange-dark:#e8631f;
+  --accent:#0f4c81;
+  --accent-dark:#0a3861;
   --yellow:#ffc93c;
   --green:#1fb959;
   --ink:#12202e;
@@ -58,11 +58,11 @@ header{
 .dropdown-menu a:hover{background:var(--bg-alt);}
 
 .basket-btn{
-  background:var(--orange); color:#fff; border:none; padding:11px 20px; border-radius:999px;
+  background:var(--accent); color:#fff; border:none; padding:11px 20px; border-radius:999px;
   font-weight:800; font-size:0.9rem; display:flex; align-items:center; gap:8px;
   transition:background .15s ease;
 }
-.basket-btn:hover{background:var(--orange-dark);}
+.basket-btn:hover{background:var(--accent-dark);}
 .basket-count{
   background:rgba(255,255,255,0.25); border-radius:999px; padding:1px 9px; font-size:0.8rem;
 }

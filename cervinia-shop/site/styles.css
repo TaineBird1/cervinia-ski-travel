@@ -16,8 +16,8 @@
   --brand: #166086;
   --brand-dark: #0f4a68;
   --brand-light: #e8f2f8;
-  --sun: #f5a623;
-  --sun-dark: #de8f10;
+  --accent: #3fa9dc;
+  --accent-dark: #1f7fae;
 
   --whatsapp: #25d366;
 
@@ -27,8 +27,8 @@
   --radius-xl: 1.75rem;
 
   --grad-brand: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
-  --grad-sun: linear-gradient(135deg, var(--sun) 0%, var(--sun-dark) 100%);
-  --grad-text: linear-gradient(100deg, var(--brand) 20%, #2f9bc9 55%, var(--sun) 100%);
+  --grad-accent: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+  --grad-text: linear-gradient(100deg, var(--brand) 20%, #2f9bc9 55%, var(--accent) 100%);
   --shadow-brand: 0 20px 45px -20px rgba(22,96,134,.35);
   --shadow-brand-lg: 0 30px 70px -25px rgba(22,96,134,.4);
 
@@ -61,7 +61,7 @@ body::before {
   position: fixed;
   top: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--brand), #2f9bc9, var(--sun));
+  background: linear-gradient(90deg, var(--brand), #2f9bc9, var(--accent));
   z-index: 200;
 }
 
@@ -94,7 +94,7 @@ button { font-family: inherit; cursor: pointer; }
 .eyebrow::before {
   content: "";
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--grad-sun);
+  background: var(--grad-accent);
   display: inline-block;
 }
 
@@ -143,8 +143,8 @@ h2.section-title {
 .btn-ghost { background: #fff; color: var(--brand); border-color: var(--border); box-shadow: 0 8px 20px -14px rgba(22,96,134,.25); }
 .btn-ghost:hover { background: var(--brand-light); border-color: var(--brand); transform: translateY(-2px); }
 
-.btn-sun { background: var(--grad-sun); color: #4a2e00; box-shadow: 0 12px 28px -10px rgba(222,143,16,.5); }
-.btn-sun:hover { box-shadow: 0 16px 36px -10px rgba(222,143,16,.6); transform: translateY(-2px); }
+.btn-accent { background: var(--grad-accent); color: #fff; box-shadow: 0 12px 28px -10px rgba(31,127,174,.5); }
+.btn-accent:hover { box-shadow: 0 16px 36px -10px rgba(31,127,174,.6); transform: translateY(-2px); }
 
 .btn-sm { padding: 10px 18px; font-size: 13.5px; }
 
@@ -249,7 +249,7 @@ header.site-nav {
   font-size: 13.5px; font-weight: 500;
   padding: 9px 16px; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--ink);
 }
-.tag::before { content: "● "; color: var(--sun); font-size: 9px; }
+.tag::before { content: "● "; color: var(--accent); font-size: 9px; }
 
 /* ---------- data grid (resort stats) ---------- */
 .data-grid {
@@ -280,7 +280,7 @@ header.site-nav {
   margin-bottom: 18px;
   box-shadow: 0 10px 20px -10px rgba(22,96,134,.55);
 }
-.service-card .cat { font-size: 12px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--sun-dark); margin-bottom: 8px; }
+.service-card .cat { font-size: 12px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 8px; }
 .service-card h3 { font-size: 20px; margin-bottom: 10px; }
 .service-card p { color: var(--muted); font-size: 14.5px; margin: 0 0 18px; }
 .service-card .link { font-family: var(--font-head); font-size: 13.5px; font-weight: 600; color: var(--brand); display: inline-flex; align-items: center; gap: 6px; }
