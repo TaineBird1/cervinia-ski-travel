@@ -325,7 +325,7 @@ header.site-nav {
 
 /* ---------- good to know strip ---------- */
 .info-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-.info-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 22px; background: #fff; transition: box-shadow .2s ease, transform .2s ease; }
+.info-card { display: block; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 22px; background: #fff; transition: box-shadow .2s ease, transform .2s ease; }
 .info-card:hover { box-shadow: var(--shadow-brand); transform: translateY(-4px); }
 .info-card .icon {
   width: 48px; height: 48px; border-radius: 14px;
