@@ -183,6 +183,7 @@ header.site-nav {
   transition: background .2s ease, color .2s ease;
 }
 .nav-buttons a:hover, .nav-buttons a.active { background: var(--brand); color: #fff; }
+.nav-buttons a:last-child { font-weight: 800; }
 
 /* ---------- hero ---------- */
 .hero { padding: 56px 0 0; position: relative; }
