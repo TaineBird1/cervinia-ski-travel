@@ -4,6 +4,7 @@ const express = require('express');
 
 const apiRoutes = require('./routes/api');
 const webhookRoutes = require('./routes/webhook');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,10 @@ app.use('/shop', express.static(path.join(__dirname, 'public')));
 
 // API routes (pricing, checkout session, order lookup, invoice download)
 app.use('/api', apiRoutes);
+
+// Admin dashboard API (revenue/booking stats) — password-protected, see lib/adminAuth.js
+app.use('/api/admin', adminRoutes);
+app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
 app.listen(PORT, () => {
   console.log(`Cervinia Travel Services shop running at http://localhost:${PORT}`);

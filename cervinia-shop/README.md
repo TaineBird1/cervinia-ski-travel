@@ -167,6 +167,29 @@ missing).
    `RESEND_FROM_EMAIL` to something like
    `Cervinia Travel Services <bookings@cerviniatravelservices.com>`.
 
+## 7. Admin dashboard
+
+Every paid booking is already captured automatically — no manual entry
+anywhere. The Stripe webhook (`routes/webhook.js`) saves each order to
+`data/orders.json` the moment payment is confirmed. The admin dashboard
+just reads that same file and shows the numbers.
+
+1. Set `ADMIN_PASSWORD` in your `.env` (or Render environment variables) to
+   a strong password — this is a single shared password, not a full user
+   system, so treat it like the key to your revenue data.
+2. Optionally set `ADMIN_SESSION_SECRET` to a random string (falls back to
+   `STRIPE_SECRET_KEY` if unset).
+3. Visit `/admin` and log in. You'll see:
+   - Total revenue and total bookings, all-time
+   - Unique customers (deduplicated by email)
+   - Revenue and bookings in the last 30 days
+   - Revenue broken down by category (Transfers, Equipment, Lift Passes,
+     Lessons, Accommodation)
+   - The 20 most recent bookings, with customer and total
+
+Nothing needs to be re-entered or synced — it's the same order data the
+invoice system already uses.
+
 ## Notes on what's simplified
 
 - Orders are stored in a single JSON file (`data/orders.json`) — fine for a

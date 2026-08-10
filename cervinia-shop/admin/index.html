@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Cervinia Travel Services</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root{
+    --blue:#1c86ff; --blue-dark:#0d63cc; --accent:#0f4c81; --accent-dark:#0a3861;
+    --green:#1fb959; --ink:#12202e; --slate:#5b6b78; --bg:#ffffff; --bg-alt:#f3f9ff;
+    --line:#e3edf5; --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Segoe UI', Arial, sans-serif; color:var(--ink); background:var(--bg-alt); line-height:1.6;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px;}
+  a{color:inherit;}
+
+  header{background:#fff; border-bottom:1px solid var(--line); padding:18px 0;}
+  .header-inner{display:flex; align-items:center; justify-content:space-between; max-width:1080px; margin:0 auto; padding:0 24px;}
+  .logo{font-size:1.1rem; font-weight:800;}
+  .logo span{color:var(--blue);}
+  .logout-btn{background:none; border:1.5px solid var(--line); color:var(--slate); padding:9px 16px; border-radius:999px; font-weight:700; font-size:0.85rem; cursor:pointer;}
+  .logout-btn:hover{border-color:var(--blue); color:var(--blue);}
+
+  /* login */
+  .login-wrap{max-width:360px; margin:96px auto; padding:0 24px;}
+  .login-card{background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:32px; text-align:center;}
+  .login-card h1{font-size:1.2rem; margin-bottom:6px;}
+  .login-card p{color:var(--slate); font-size:0.88rem; margin-bottom:22px;}
+  .login-card input{
+    width:100%; padding:13px 14px; border-radius:10px; border:1.5px solid var(--line);
+    background:var(--bg-alt); font-family:inherit; font-size:0.95rem; margin-bottom:14px;
+  }
+  .login-card input:focus{outline:2px solid var(--blue); background:#fff;}
+  .login-card button{
+    width:100%; background:var(--blue); color:#fff; border:none; padding:13px; border-radius:10px;
+    font-weight:800; font-size:0.95rem; cursor:pointer;
+  }
+  .login-card button:hover{background:var(--blue-dark);}
+  .login-error{color:#d64545; font-size:0.85rem; margin-top:12px; display:none;}
+
+  /* dashboard */
+  main{padding:36px 0 64px;}
+  .stat-grid{display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:32px;}
+  .stat-card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:22px 20px;}
+  .stat-card .label{font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--slate); margin-bottom:8px;}
+  .stat-card .value{font-size:1.7rem; font-weight:800; color:var(--ink);}
+  .stat-card .sub{font-size:0.78rem; color:var(--slate); margin-top:4px;}
+
+  section.panel{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:24px;}
+  section.panel h2{font-size:1.05rem; margin-bottom:18px;}
+
+  .cat-row{display:flex; align-items:center; gap:14px; margin-bottom:14px;}
+  .cat-row:last-child{margin-bottom:0;}
+  .cat-row .cat-name{width:120px; font-size:0.85rem; font-weight:700; flex-shrink:0;}
+  .cat-row .cat-bar-track{flex:1; height:10px; background:var(--bg-alt); border-radius:999px; overflow:hidden;}
+  .cat-row .cat-bar-fill{height:100%; background:var(--blue); border-radius:999px;}
+  .cat-row .cat-value{width:90px; text-align:right; font-size:0.85rem; font-weight:700; flex-shrink:0;}
+
+  table{width:100%; border-collapse:collapse; font-size:0.88rem;}
+  th{text-align:left; color:var(--slate); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.4px; padding:0 10px 10px; border-bottom:1px solid var(--line);}
+  td{padding:12px 10px; border-bottom:1px solid var(--line);}
+  tr:last-child td{border-bottom:none;}
+  .empty-note{color:var(--slate); font-size:0.88rem; text-align:center; padding:24px 0;}
+
+  #dashboard{display:none;}
+
+  @media (max-width:860px){
+    .stat-grid{grid-template-columns:repeat(2, 1fr);}
+  }
+  @media (max-width:560px){
+    .stat-grid{grid-template-columns:1fr;}
+    table{display:block; overflow-x:auto;}
+  }
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <h1>Admin Dashboard</h1>
+    <p>Cervinia Travel Services — revenue &amp; bookings</p>
+    <form id="loginForm">
+      <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" required>
+      <button type="submit">Log In</button>
+      <p class="login-error" id="loginError"></p>
+    </form>
+  </div>
+</div>
+
+<div id="dashboard">
+  <header>
+    <div class="header-inner">
+      <span class="logo">Cervinia <span>Admin</span></span>
+      <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="label">Total Revenue</div>
+        <div class="value" id="statTotalRevenue">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Total Bookings</div>
+        <div class="value" id="statTotalBookings">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Unique Customers</div>
+        <div class="value" id="statUniqueCustomers">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Last 30 Days</div>
+        <div class="value" id="statRevenue30d">—</div>
+        <div class="sub" id="statBookings30d"></div>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h2>Revenue by Category</h2>
+      <div id="categoryBreakdown"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Bookings</h2>
+      <div id="recentOrdersWrap"></div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const fmt = (n) => `€${Number(n || 0).toFixed(2)}`;
+  const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+  const loginScreen = document.getElementById('loginScreen');
+  const dashboard = document.getElementById('dashboard');
+  const loginError = document.getElementById('loginError');
+
+  function showDashboard() {
+    loginScreen.style.display = 'none';
+    dashboard.style.display = 'block';
+    loadStats();
+  }
+
+  function showLogin(message) {
+    dashboard.style.display = 'none';
+    loginScreen.style.display = 'block';
+    if (message) {
+      loginError.textContent = message;
+      loginError.style.display = 'block';
+    }
+  }
+
+  async function loadStats() {
+    const res = await fetch('/api/admin/stats', { credentials: 'include' });
+    if (res.status === 401) return showLogin();
+    const data = await res.json();
+
+    document.getElementById('statTotalRevenue').textContent = fmt(data.totalRevenue);
+    document.getElementById('statTotalBookings').textContent = data.totalBookings;
+    document.getElementById('statUniqueCustomers').textContent = data.uniqueCustomers;
+    document.getElementById('statRevenue30d').textContent = fmt(data.revenueLast30d);
+    document.getElementById('statBookings30d').textContent = `${data.bookingsLast30d} booking${data.bookingsLast30d === 1 ? '' : 's'}`;
+
+    const catEl = document.getElementById('categoryBreakdown');
+    const entries = Object.entries(data.categoryTotals).sort((a, b) => b[1] - a[1]);
+    if (entries.length === 0) {
+      catEl.innerHTML = '<p class="empty-note">No bookings yet.</p>';
+    } else {
+      const max = Math.max(...entries.map(([, v]) => v));
+      catEl.innerHTML = entries.map(([name, value]) => `
+        <div class="cat-row">
+          <span class="cat-name">${name}</span>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${max ? (value / max * 100) : 0}%"></div></div>
+          <span class="cat-value">${fmt(value)}</span>
+        </div>
+      `).join('');
+    }
+
+    const ordersEl = document.getElementById('recentOrdersWrap');
+    if (data.recentOrders.length === 0) {
+      ordersEl.innerHTML = '<p class="empty-note">No bookings yet — they\'ll show up here as soon as a customer checks out.</p>';
+    } else {
+      ordersEl.innerHTML = `
+        <table>
+          <thead><tr><th>Date</th><th>Customer</th><th>Items</th><th>Total</th></tr></thead>
+          <tbody>
+            ${data.recentOrders.map((o) => `
+              <tr>
+                <td>${fmtDate(o.createdAt)}</td>
+                <td>${o.customerName || 'Guest'}${o.customerEmail ? `<br><span style="color:var(--slate);font-size:0.78rem;">${o.customerEmail}</span>` : ''}</td>
+                <td>${o.itemCount} item${o.itemCount === 1 ? '' : 's'}</td>
+                <td>${fmt(o.total)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.style.display = 'none';
+    const password = document.getElementById('passwordInput').value;
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ password })
+    });
+    if (res.ok) {
+      document.getElementById('passwordInput').value = '';
+      showDashboard();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      loginError.textContent = data.error || 'Login failed.';
+      loginError.style.display = 'block';
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
+    showLogin();
+  });
+
+  // On load, check if there's already a valid session.
+  fetch('/api/admin/session', { credentials: 'include' })
+    .then((res) => { if (res.ok) showDashboard(); })
+    .catch(() => {});
+</script>
+</body>
+</html>
