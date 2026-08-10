@@ -176,13 +176,13 @@ header.site-nav {
 .nav-buttons a {
   font-family: var(--font-head);
   font-size: 13.5px; font-weight: 600;
-  color: var(--brand);
-  background: var(--brand-light);
+  color: #fff;
+  background: var(--brand);
   padding: 9px 16px;
   border-radius: 999px;
   transition: background .2s ease, color .2s ease;
 }
-.nav-buttons a:hover, .nav-buttons a.active { background: var(--brand); color: #fff; }
+.nav-buttons a:hover, .nav-buttons a.active { background: var(--brand-dark); color: #fff; }
 .nav-buttons a:last-child { font-weight: 800; }
 
 /* ---------- hero ---------- */
