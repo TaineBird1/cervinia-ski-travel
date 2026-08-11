@@ -344,10 +344,13 @@
     });
   }
 
+  const PASS_SURCHARGE = 2;
+
   function currentPassUnitPrice() {
     if (state.pass.childFree) return 0;
     const row = state.pricing.liftPasses.pricesByDays[String(state.pass.days)];
-    return row ? row[state.pass.tierIndex] : null;
+    const base = row ? row[state.pass.tierIndex] : null;
+    return base == null ? null : base + PASS_SURCHARGE;
   }
 
   function updatePassPrice() {
