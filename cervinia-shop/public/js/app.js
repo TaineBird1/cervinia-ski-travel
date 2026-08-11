@@ -533,7 +533,10 @@
     const hotelNames = Object.keys(state.hotels);
     let childrenStepper;
 
-    buildButtons(document.getElementById('hotelNameBtns'), hotelNames, 0, (i) => {
+    const requestedHotel = new URLSearchParams(window.location.search).get('hotel');
+    const initialIndex = requestedHotel && hotelNames.includes(requestedHotel) ? hotelNames.indexOf(requestedHotel) : 0;
+
+    buildButtons(document.getElementById('hotelNameBtns'), hotelNames, initialIndex, (i) => {
       state.hotel.name = hotelNames[i];
       state.hotel.roomIndex = 0;
       state.hotel.checkIn = null;
@@ -548,7 +551,7 @@
       renderChildRates();
       updateHotelPrice();
     });
-    state.hotel.name = hotelNames[0];
+    state.hotel.name = hotelNames[initialIndex];
 
     renderHotelCalendar();
     renderHotelRooms();
@@ -581,6 +584,10 @@
 
     renderChildRates();
     updateHotelPrice();
+
+    if (requestedHotel && hotelNames.includes(requestedHotel)) {
+      document.getElementById('accommodation').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     document.getElementById('hotelAddBtn').addEventListener('click', () => {
       const hotel = state.hotels[state.hotel.name];

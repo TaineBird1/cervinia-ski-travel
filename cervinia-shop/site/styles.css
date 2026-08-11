@@ -295,14 +295,19 @@ header.site-nav {
 /* ---------- accommodation ---------- */
 .hotel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .hotel-card {
-  border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 26px 22px;
+  border: 2px solid var(--brand); border-radius: var(--radius-lg); overflow: hidden;
   background: #fff; box-shadow: var(--shadow-brand); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 .hotel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-brand-lg); border-color: var(--brand-dark); }
+.hotel-photo { aspect-ratio: 4 / 3; background: var(--brand-light); }
+.hotel-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hotel-card-body { padding: 22px; }
 .hotel-card .hn { font-size: 12px; font-weight: 600; color: var(--muted-soft); text-transform: uppercase; letter-spacing: .4px; }
 .hotel-card h4 { font-size: 17px; margin: 12px 0 6px; }
 .hotel-card p { color: var(--muted); font-size: 13.5px; margin: 0; }
 .hotel-card .season { display:inline-block; margin-top:14px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--brand); background: var(--brand-light); border-radius: 999px; padding: 4px 12px; }
+.hotel-price-link { display: block; margin-top: 16px; font-size: 13.5px; font-weight: 700; color: var(--brand); text-decoration: none; }
+.hotel-price-link:hover { color: var(--brand-dark); text-decoration: underline; }
 
 /* ---------- gallery ---------- */
 .gallery-grid {
