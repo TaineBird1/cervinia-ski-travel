@@ -222,20 +222,17 @@ header.site-nav {
 .stat-strip {
   position: relative; z-index: 1;
   margin-top: 40px;
-  background: rgba(255,255,255,.72);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid rgba(255,255,255,.6);
+  background: var(--brand);
   border-radius: var(--radius-lg);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   overflow: hidden;
   box-shadow: var(--shadow-brand-lg);
 }
-.stat { padding: 22px 18px; text-align: center; border-right: 1px solid var(--border); }
+.stat { padding: 22px 18px; text-align: center; border-right: 1px solid rgba(255,255,255,.15); }
 .stat:last-child { border-right: none; }
-.stat .num { font-family: var(--font-head); font-size: clamp(19px, 2.1vw, 26px); font-weight: 700; color: var(--brand); }
-.stat .label { font-size: 11px; letter-spacing: .4px; text-transform: uppercase; color: var(--muted-soft); margin-top: 5px; }
+.stat .num { font-family: var(--font-head); font-size: clamp(19px, 2.1vw, 26px); font-weight: 700; color: #bfe3f7; }
+.stat .label { font-size: 11px; letter-spacing: .4px; text-transform: uppercase; color: rgba(255,255,255,.7); margin-top: 5px; }
 
 /* ---------- village / two-col ---------- */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
