@@ -1004,6 +1004,9 @@
     const errorEl = document.getElementById('checkoutError');
     errorEl.style.display = 'none';
     const customerName = document.getElementById('customerName').value.trim();
+    const customerEmail = document.getElementById('customerEmail').value.trim();
+    const customerPhone = document.getElementById('customerPhone').value.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (state.basket.length === 0) {
       errorEl.textContent = 'Your basket is empty.';
@@ -1012,6 +1015,11 @@
     }
     if (!customerName) {
       errorEl.textContent = 'Please enter a name for the booking.';
+      errorEl.style.display = 'block';
+      return;
+    }
+    if (!customerEmail || !emailPattern.test(customerEmail)) {
+      errorEl.textContent = 'Please enter a valid email address.';
       errorEl.style.display = 'block';
       return;
     }
@@ -1024,7 +1032,7 @@
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerName, items: state.basket })
+        body: JSON.stringify({ customerName, customerEmail, customerPhone, items: state.basket })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Checkout failed');

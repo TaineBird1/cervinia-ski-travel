@@ -219,6 +219,7 @@ header{
 .basket-total-row strong{font-size:1.35rem; color:var(--blue-dark);}
 .field{margin-bottom:14px;}
 .field label{display:block; font-size:0.82rem; font-weight:700; margin-bottom:6px;}
+.field-optional{font-weight:400; color:var(--slate);}
 .field input{
   width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
   background:var(--bg-alt); font-family:inherit; font-size:0.94rem;

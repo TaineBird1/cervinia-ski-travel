@@ -44,6 +44,7 @@ function generateInvoicePDF(order) {
   doc.fillColor('#5b6b78').fontSize(10).font('Helvetica')
     .text(order.customerName || 'Guest')
     .text(order.customerEmail || '');
+  if (order.customerPhone) doc.text(order.customerPhone);
 
   doc.moveDown(1.5);
 

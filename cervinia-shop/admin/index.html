@@ -133,6 +133,7 @@
 <script>
   const fmt = (n) => `€${Number(n || 0).toFixed(2)}`;
   const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  const escapeHtml = (s) => String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   const loginScreen = document.getElementById('loginScreen');
   const dashboard = document.getElementById('dashboard');
@@ -190,7 +191,7 @@
             ${data.recentOrders.map((o) => `
               <tr>
                 <td>${fmtDate(o.createdAt)}</td>
-                <td>${o.customerName || 'Guest'}${o.customerEmail ? `<br><span style="color:var(--slate);font-size:0.78rem;">${o.customerEmail}</span>` : ''}</td>
+                <td>${escapeHtml(o.customerName) || 'Guest'}${o.customerEmail ? `<br><span style="color:var(--slate);font-size:0.78rem;">${escapeHtml(o.customerEmail)}</span>` : ''}${o.customerPhone ? `<br><span style="color:var(--slate);font-size:0.78rem;">${escapeHtml(o.customerPhone)}</span>` : ''}</td>
                 <td>${o.itemCount} item${o.itemCount === 1 ? '' : 's'}</td>
                 <td>${fmt(o.total)}</td>
               </tr>

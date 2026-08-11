@@ -74,6 +74,7 @@ router.get('/stats', requireAdmin, (req, res) => {
       id: o.id,
       customerName: o.customerName,
       customerEmail: o.customerEmail,
+      customerPhone: o.customerPhone,
       total: o.total,
       itemCount: (o.items || []).length,
       createdAt: o.createdAt

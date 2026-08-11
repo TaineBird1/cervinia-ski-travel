@@ -25,16 +25,20 @@ router.get('/hotels', (req, res) => {
 });
 
 // POST /api/create-checkout-session
-// body: { customerName, items: [{ id, name, unitPrice, qty }] }
+// body: { customerName, customerEmail, customerPhone, items: [{ id, name, unitPrice, qty }] }
 router.post('/create-checkout-session', async (req, res) => {
   try {
-    const { customerName, items } = req.body;
+    const { customerName, customerEmail, customerPhone, items } = req.body;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: 'Your basket is empty.' });
     }
     if (!customerName || !customerName.trim()) {
       return res.status(400).json({ error: 'Please enter a name for the booking.' });
+    }
+    if (!customerEmail || !emailPattern.test(customerEmail.trim())) {
+      return res.status(400).json({ error: 'Please enter a valid email address.' });
     }
 
     const line_items = items.map((item) => ({
@@ -51,10 +55,12 @@ router.post('/create-checkout-session', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
+      customer_email: customerEmail.trim(),
       success_url: `${domain}/shop/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${domain}/shop/cancel.html`,
       metadata: {
         customerName: customerName.trim(),
+        customerPhone: (customerPhone || '').trim().slice(0, 40),
         // Stripe metadata values must be strings and are capped at 500 chars,
         // so we keep a compact copy of the basket for invoice generation.
         basket: JSON.stringify(items).slice(0, 490)
@@ -124,7 +130,8 @@ async function buildOrderFromSession(session) {
     sessionId: session.id,
     paymentIntentId: typeof session.payment_intent === 'object' ? session.payment_intent.id : session.payment_intent,
     customerName: session.metadata?.customerName || session.customer_details?.name || 'Guest',
-    customerEmail: session.customer_details?.email || '',
+    customerEmail: session.customer_details?.email || session.customer_email || '',
+    customerPhone: session.metadata?.customerPhone || '',
     items,
     subtotal: total,
     total,
