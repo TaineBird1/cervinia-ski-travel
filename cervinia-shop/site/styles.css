@@ -165,7 +165,7 @@ header.site-nav {
   gap: 20px;
 }
 .logo { display: flex; align-items: center; }
-.logo img { height: 46px; width: auto; }
+.logo img { height: 58px; width: auto; }
 
 .nav-cta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
@@ -402,7 +402,7 @@ header.site-nav {
 
 /* ---------- footer ---------- */
 footer { padding: 56px 0 28px; background: var(--brand-dark); }
-.footer-logo-chip { background: #fff; padding: 10px 16px; border-radius: var(--radius-md); }
+.footer-logo-chip { background: #fff; padding: 12px 18px; border-radius: var(--radius-md); }
 .footer-top { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 40px; flex-wrap: wrap; gap: 36px; }
 .footer-tagline { max-width: 320px; color: rgba(255,255,255,.75); font-size: 14px; margin-top: 16px; }
 .footer-cols { display: flex; gap: 60px; flex-wrap: wrap; }
