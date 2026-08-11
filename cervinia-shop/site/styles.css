@@ -266,8 +266,8 @@ header.site-nav {
 
 /* ---------- services grid ---------- */
 .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.service-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease; }
-.service-card:hover { box-shadow: var(--shadow-brand); transform: translateY(-5px); border-color: rgba(22,96,134,.25); }
+.service-card { background: #fff; border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 32px 28px; box-shadow: var(--shadow-brand); transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease; }
+.service-card:hover { box-shadow: var(--shadow-brand-lg); transform: translateY(-5px); border-color: var(--brand-dark); }
 .service-card .idx {
   width: 40px; height: 40px; border-radius: 12px; background: var(--grad-brand); color: #fff;
   display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 700; font-size: 15px;
@@ -281,8 +281,8 @@ header.site-nav {
 
 /* ---------- process timeline ---------- */
 .timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
-.tl-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 22px; transition: box-shadow .2s ease, transform .2s ease; }
-.tl-item:hover { box-shadow: var(--shadow-brand); transform: translateY(-4px); }
+.tl-item { background: #fff; border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 26px 22px; box-shadow: var(--shadow-brand); transition: box-shadow .2s ease, transform .2s ease; }
+.tl-item:hover { box-shadow: var(--shadow-brand-lg); transform: translateY(-4px); }
 .tl-num {
   width: 36px; height: 36px; border-radius: 999px; background: var(--grad-brand); color: #fff;
   display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 700; font-size: 15px;
@@ -295,10 +295,10 @@ header.site-nav {
 /* ---------- accommodation ---------- */
 .hotel-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .hotel-card {
-  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 22px;
-  background: #fff; transition: transform .2s ease, box-shadow .2s ease;
+  border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 26px 22px;
+  background: #fff; box-shadow: var(--shadow-brand); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
-.hotel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-brand); border-color: rgba(22,96,134,.2); }
+.hotel-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-brand-lg); border-color: var(--brand-dark); }
 .hotel-card .hn { font-size: 12px; font-weight: 600; color: var(--muted-soft); text-transform: uppercase; letter-spacing: .4px; }
 .hotel-card h4 { font-size: 17px; margin: 12px 0 6px; }
 .hotel-card p { color: var(--muted); font-size: 13.5px; margin: 0; }
@@ -319,14 +319,14 @@ header.site-nav {
 
 /* ---------- good to know strip ---------- */
 .info-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-.info-card { display: block; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 26px 22px; background: #fff; transition: box-shadow .2s ease, transform .2s ease; }
-.info-card:hover { box-shadow: var(--shadow-brand); transform: translateY(-4px); }
+.info-card { display: block; border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 26px 22px; background: #fff; box-shadow: var(--shadow-brand); transition: box-shadow .2s ease, transform .2s ease; }
+.info-card:hover { box-shadow: var(--shadow-brand-lg); transform: translateY(-4px); }
 .info-card h4 { font-size: 15.5px; margin-bottom: 8px; }
 .info-card p { color: var(--muted); font-size: 13px; margin: 0; }
 
 /* ---------- FAQ ---------- */
 .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
-.faq-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 4px 24px; }
+.faq-item { background: #fff; border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 4px 24px; box-shadow: var(--shadow-brand); }
 .faq-item summary {
   cursor: pointer; list-style: none;
   padding: 20px 0;
@@ -365,8 +365,8 @@ header.site-nav {
 /* ---------- contact ---------- */
 .intake-wrap { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: start; }
 .card-panel {
-  border: 1px solid var(--border); border-radius: var(--radius-xl); background: #fff; padding: 36px 32px;
-  box-shadow: 0 30px 60px -35px rgba(22,96,134,.3);
+  border: 2px solid var(--brand); border-radius: var(--radius-xl); background: #fff; padding: 36px 32px;
+  box-shadow: var(--shadow-brand-lg);
 }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .field { display: flex; flex-direction: column; gap: 7px; }
@@ -383,7 +383,7 @@ header.site-nav {
 .form-foot .note { font-size: 13px; color: var(--muted-soft); }
 
 .contact-side { display: flex; flex-direction: column; gap: 16px; }
-.contact-card { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; background: #fff; }
+.contact-card { border: 2px solid var(--brand); border-radius: var(--radius-lg); padding: 24px; background: #fff; box-shadow: var(--shadow-brand); }
 .contact-card.brand { background: var(--grad-brand); border-color: transparent; box-shadow: var(--shadow-brand); }
 .contact-card .cc-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; color: var(--muted-soft); margin-bottom: 8px; }
 .contact-card.brand .cc-label { color: rgba(255,255,255,.7); }
