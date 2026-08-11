@@ -248,8 +248,12 @@ header.site-nav {
   gap: 14px;
   margin-top: 8px;
 }
-.data-cell { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 20px; transition: box-shadow .2s ease, transform .2s ease; }
-.data-cell:hover { box-shadow: var(--shadow-brand); transform: translateY(-3px); }
+.data-cell {
+  background: #fff; border: 1.5px solid rgba(22,96,134,.18); border-radius: var(--radius-md); padding: 22px 20px;
+  box-shadow: 0 6px 18px -10px rgba(22,96,134,.25);
+  transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+.data-cell:hover { box-shadow: var(--shadow-brand); transform: translateY(-3px); border-color: rgba(22,96,134,.35); }
 .data-cell .num { font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--brand); }
 .data-cell .label { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
