@@ -954,12 +954,10 @@
 
   function renderBasket() {
     const container = document.getElementById('basketItems');
-    const emptyMsg = document.getElementById('basketEmpty');
     container.innerHTML = '';
 
     if (state.basket.length === 0) {
-      container.appendChild(emptyMsg);
-      emptyMsg.style.display = 'block';
+      container.innerHTML = '<p class="basket-empty" id="basketEmpty">Your basket is empty — add some items to get started.</p>';
     } else {
       state.basket.forEach((item) => {
         const row = document.createElement('div');
