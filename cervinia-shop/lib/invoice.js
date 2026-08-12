@@ -5,16 +5,26 @@ const PDFDocument = require('pdfkit');
 const INVOICES_DIR = path.join(__dirname, '..', 'invoices');
 if (!fs.existsSync(INVOICES_DIR)) fs.mkdirSync(INVOICES_DIR, { recursive: true });
 
+const LOGO_PATH = path.join(__dirname, '..', 'site', 'logo.png');
+
 const BUSINESS = {
   name: process.env.BUSINESS_NAME || 'Cervinia Travel Services',
-  email: process.env.BUSINESS_EMAIL || 'info@cerviniatravelservices.com',
+  website: process.env.BUSINESS_WEBSITE || 'www.CerviniaTravelServices.com',
+  email: process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com',
   whatsapp: process.env.BUSINESS_WHATSAPP || '+39 366 879 4487',
   address: process.env.BUSINESS_ADDRESS || 'Breuil-Cervinia, Aosta Valley, Italy'
 };
 
+const INK = '#0c2438';
+const SLATE = '#5b6b78';
+const LINE = '#e2ecf2';
+const LEFT = 50;
+const RIGHT = 545;
+const WIDTH = RIGHT - LEFT;
+
 /**
  * Generates a PDF invoice for a paid order and saves it to /invoices/{order.id}.pdf
- * @param {object} order - { id, sessionId, customerName, customerEmail, items, subtotal, total, currency, createdAt, paymentIntentId }
+ * @param {object} order - { id, sessionId, customerName, customerEmail, customerPhone, items, subtotal, total, currency, createdAt, paymentIntentId }
  * @returns {string} absolute path to the generated PDF
  */
 function generateInvoicePDF(order) {
@@ -25,33 +35,55 @@ function generateInvoicePDF(order) {
 
   const currencySymbol = (order.currency || 'EUR').toUpperCase() === 'EUR' ? '€' : order.currency;
 
-  // Header
-  doc.fillColor('#0c2438').fontSize(22).font('Helvetica-Bold').text(BUSINESS.name, 50, 50);
-  doc.fillColor('#5b6b78').fontSize(10).font('Helvetica')
-    .text(BUSINESS.address)
-    .text(`Email: ${BUSINESS.email}`)
-    .text(`WhatsApp: ${BUSINESS.whatsapp}`);
+  // ---------- Header: logo left, business contact block right ----------
+  if (fs.existsSync(LOGO_PATH)) {
+    doc.image(LOGO_PATH, LEFT, 44, { width: 72 });
+  }
 
-  doc.moveDown(1.5);
-  doc.fillColor('#0c2438').fontSize(16).font('Helvetica-Bold').text('INVOICE', { align: 'right' });
-  doc.fillColor('#5b6b78').fontSize(10).font('Helvetica')
-    .text(`Invoice #: ${order.id}`, { align: 'right' })
-    .text(`Date: ${new Date(order.createdAt).toLocaleDateString('en-GB')}`, { align: 'right' })
-    .text(`Payment ref: ${order.paymentIntentId || order.sessionId}`, { align: 'right' });
+  doc.fillColor(INK).fontSize(11).font('Helvetica-Bold').text(BUSINESS.name, 300, 48, { width: 245, align: 'right' });
+  doc.fillColor(SLATE).fontSize(9).font('Helvetica')
+    .text(`Web: ${BUSINESS.website}`, 300, 64, { width: 245, align: 'right' })
+    .text(`Whatsapp: ${BUSINESS.whatsapp}`, 300, 77, { width: 245, align: 'right' })
+    .text(`Email: ${BUSINESS.email}`, 300, 90, { width: 245, align: 'right' });
 
-  doc.moveDown(1.5);
-  doc.fillColor('#0c2438').fontSize(11).font('Helvetica-Bold').text('Bill To');
-  doc.fillColor('#5b6b78').fontSize(10).font('Helvetica')
-    .text(order.customerName || 'Guest')
-    .text(order.customerEmail || '');
-  if (order.customerPhone) doc.text(order.customerPhone);
+  // ---------- "Invoice | Statement" box + date/booking ref ----------
+  const boxTop = 130;
+  const boxWidth = 280;
+  const boxHeight = 96;
 
-  doc.moveDown(1.5);
+  doc.rect(LEFT, boxTop, boxWidth, boxHeight).strokeColor(LINE).lineWidth(1).stroke();
+  doc.moveTo(LEFT, boxTop + 26).lineTo(LEFT + boxWidth, boxTop + 26).strokeColor(LINE).stroke();
+  doc.fillColor(INK).fontSize(13).font('Helvetica-Bold').text('Invoice | Statement', LEFT + 10, boxTop + 6);
 
-  // Table header
-  const tableTop = doc.y + 10;
-  const col = { desc: 50, qty: 340, unit: 400, total: 470 };
-  doc.fillColor('#ffffff').rect(50, tableTop, 495, 24).fill('#0c2438');
+  doc.fillColor(INK).fontSize(10).font('Helvetica');
+  const clientLines = [
+    order.customerName || 'Guest',
+    order.customerEmail || '',
+    order.customerPhone || ''
+  ].filter(Boolean);
+  let clientY = boxTop + 36;
+  clientLines.forEach((line) => {
+    doc.text(line, LEFT + 10, clientY, { width: boxWidth - 20 });
+    clientY += 16;
+  });
+
+  const metaX = LEFT + boxWidth + 20;
+  const metaWidth = RIGHT - metaX;
+  doc.fillColor(SLATE).fontSize(9).font('Helvetica').text('Date:', metaX, boxTop, { width: metaWidth - 90, align: 'right' });
+  doc.fillColor(INK).fontSize(10).font('Helvetica-Bold')
+    .text(new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), metaX, boxTop, { width: metaWidth, align: 'right' });
+
+  doc.fillColor(SLATE).fontSize(9).font('Helvetica-Oblique').text('Booking Ref:', metaX, boxTop + 18, { width: metaWidth, align: 'right' });
+  doc.fillColor(INK).fontSize(9).font('Helvetica-Bold').text(order.id, metaX, boxTop + 30, { width: metaWidth, align: 'right' });
+
+  doc.fillColor(SLATE).fontSize(9).font('Helvetica-Oblique').text('Payment ref:', metaX, boxTop + 50, { width: metaWidth, align: 'right' });
+  doc.fillColor(INK).fontSize(8).font('Helvetica').text(order.paymentIntentId || order.sessionId, metaX, boxTop + 62, { width: metaWidth, align: 'right' });
+
+  // ---------- Itemized table ----------
+  const tableTop = boxTop + boxHeight + 24;
+  const col = { desc: LEFT, qty: LEFT + 290, unit: LEFT + 345, total: LEFT + 420 };
+
+  doc.rect(LEFT, tableTop, WIDTH, 24).fill(INK);
   doc.fillColor('#ffffff').fontSize(10).font('Helvetica-Bold');
   doc.text('Description', col.desc + 8, tableTop + 7);
   doc.text('Qty', col.qty, tableTop + 7);
@@ -59,38 +91,50 @@ function generateInvoicePDF(order) {
   doc.text('Total', col.total, tableTop + 7);
 
   let y = tableTop + 24;
-  doc.font('Helvetica').fontSize(10);
+  const descWidth = col.qty - col.desc - 16;
+  doc.font('Helvetica').fontSize(9.5);
   order.items.forEach((item, i) => {
-    const rowHeight = 22;
+    const textHeight = doc.heightOfString(item.name, { width: descWidth });
+    const rowHeight = Math.max(22, textHeight + 12);
     if (i % 2 === 0) {
-      doc.fillColor('#f2f8fb').rect(50, y, 495, rowHeight).fill();
+      doc.fillColor('#f2f8fb').rect(LEFT, y, WIDTH, rowHeight).fill();
     }
-    doc.fillColor('#0c2438');
-    doc.text(item.name, col.desc + 8, y + 6, { width: 280 });
+    doc.fillColor(INK);
+    doc.text(item.name, col.desc + 8, y + 6, { width: descWidth });
     doc.text(String(item.qty), col.qty, y + 6);
     doc.text(`${currencySymbol}${item.unitPrice.toFixed(2)}`, col.unit, y + 6);
     doc.text(`${currencySymbol}${item.total.toFixed(2)}`, col.total, y + 6);
     y += rowHeight;
   });
 
-  y += 10;
-  doc.moveTo(50, y).lineTo(545, y).strokeColor('#e2ecf2').stroke();
-  y += 12;
+  doc.rect(LEFT, tableTop, WIDTH, y - tableTop).strokeColor(LINE).lineWidth(1).stroke();
 
-  doc.font('Helvetica').fontSize(10).fillColor('#5b6b78');
-  doc.text('Subtotal', col.unit, y);
-  doc.fillColor('#0c2438').text(`${currencySymbol}${order.subtotal.toFixed(2)}`, col.total, y);
-  y += 18;
+  // Totals + footer need ~180pt; start a fresh page if that won't fit.
+  if (y > 720 - 180) {
+    doc.addPage();
+    y = 50;
+  }
 
-  doc.fillColor('#5b6b78').text('Total Paid', col.unit, y);
-  doc.fillColor('#0c2438').font('Helvetica-Bold').text(`${currencySymbol}${order.total.toFixed(2)}`, col.total, y);
+  y += 14;
+  doc.font('Helvetica').fontSize(10).fillColor(SLATE);
+  doc.text('Sub-total', col.unit, y);
+  doc.fillColor(INK).text(`${currencySymbol}${order.subtotal.toFixed(2)}`, col.total, y);
+  y += 20;
+
+  doc.fillColor(SLATE).font('Helvetica-Bold').text('Total Paid', col.unit, y);
+  doc.fillColor(INK).text(`${currencySymbol}${order.total.toFixed(2)}`, col.total, y);
   y += 26;
 
-  doc.fillColor('#1fb959').font('Helvetica-Bold').fontSize(11).text('PAID', col.unit, y);
+  doc.fillColor('#1fb959').font('Helvetica-Bold').fontSize(11).text('PAID IN FULL', col.unit, y);
 
-  doc.moveDown(4);
-  doc.fillColor('#5b6b78').font('Helvetica').fontSize(9)
-    .text('Thank you for booking with Cervinia Travel Services — we don\'t just go there, we are there.', 50, 720, { width: 495, align: 'center' });
+  // ---------- Footer ----------
+  const footerLineY = Math.max(740, y + 40);
+  doc.moveTo(LEFT, footerLineY).lineTo(RIGHT, footerLineY).strokeColor(LINE).stroke();
+  doc.fillColor(SLATE).font('Helvetica').fontSize(9)
+    .text('Thank you for booking with Cervinia Travel Services — we don\'t just go there, we are there.', LEFT, footerLineY + 10, { width: WIDTH, align: 'center' });
+  doc.fillColor('#1f7fae').font('Helvetica-Oblique').fontSize(9)
+    .text(`Cervinia Travel Services WhatsApp: ${BUSINESS.whatsapp}`, LEFT, footerLineY + 26, { width: WIDTH, align: 'center' })
+    .text(BUSINESS.website, LEFT, footerLineY + 40, { width: WIDTH, align: 'center' });
 
   doc.end();
 
