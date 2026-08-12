@@ -3,8 +3,8 @@
     pricing: null,
     hotels: null,
     basket: JSON.parse(localStorage.getItem('cervinia_basket') || '[]'),
-    transfer: { airport: null, type: null, guests: 1, address: '', contact: '', luggagePax: 0, equipmentPax: 0 },
-    equip: { catIndex: 0, itemIndex: 0, days: 1 },
+    transfer: { airport: null, type: null, direction: 'oneway', guests: 1, address: '', contact: '', luggagePax: 0, equipmentPax: 0 },
+    equip: { catIndex: 0, itemIndex: 0, days: 1, people: 1 },
     pass: { tierIndex: 0, days: 1, guests: 1, childFree: false },
     lesson: {
       type: 'private',
@@ -94,6 +94,8 @@
   // headcount (1-8), private transfers are priced per group in two tiers
   // (1-2 pax / 3-8 pax). "Guests" selects which price applies rather than
   // multiplying a per-person rate.
+  const TRANSFER_BOOKING_FEE = 16;
+
   function initTransfers() {
     document.getElementById('transferNote').textContent = state.pricing.transfers.notes || '';
 
@@ -109,6 +111,15 @@
     });
     state.transfer.type = 'shared';
     renderTransferAirports();
+
+    document.getElementById('transferDirectionBtns').querySelectorAll('.opt-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.getElementById('transferDirectionBtns').querySelectorAll('.opt-btn').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.transfer.direction = btn.dataset.direction;
+        updateTransferPrice();
+      });
+    });
 
     setupStepper(
       document.getElementById('transferGuestsStepper'),
@@ -150,6 +161,7 @@
       const unitPrice = currentTransferPrice();
       if (!opt || unitPrice == null) return;
       const typeLabel = state.transfer.type === 'shared' ? 'Shared Shuttle' : 'Scheduled Transfer';
+      const directionLabel = state.transfer.direction === 'return' ? 'Return' : 'One-way';
 
       const details = [];
       if (state.transfer.address.trim()) details.push(`Staying at: ${state.transfer.address.trim()}`);
@@ -158,10 +170,18 @@
       if (state.transfer.equipmentPax > 0) details.push(`${state.transfer.equipmentPax} pax w/ ski/board equipment`);
       const detailsSuffix = details.length ? ` — ${details.join(', ')}` : '';
 
+      const itemId = `transfer-${state.transfer.type}-${opt.airport}-${state.transfer.guests}-${state.transfer.direction}`;
+
       addToBasket({
-        id: `transfer-${state.transfer.type}-${opt.airport}-${state.transfer.guests}`,
-        name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${state.transfer.guests} pax)${detailsSuffix}`,
+        id: itemId,
+        name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${directionLabel}, ${state.transfer.guests} pax)${detailsSuffix}`,
         unitPrice,
+        qty: 1
+      });
+      addToBasket({
+        id: `${itemId}-fee`,
+        name: `Transfer Booking Fee — ${opt.airport}`,
+        unitPrice: TRANSFER_BOOKING_FEE,
         qty: 1
       });
     });
@@ -185,11 +205,14 @@
   function currentTransferPrice() {
     const opt = currentTransferOption();
     if (!opt) return null;
+    let price;
     if (state.transfer.type === 'shared') {
-      const price = opt.pricesByPax[String(state.transfer.guests)];
-      return price == null ? null : price;
+      price = opt.pricesByPax[String(state.transfer.guests)];
+    } else {
+      price = state.transfer.guests <= 2 ? opt.price1to2 : opt.price3to8;
     }
-    return state.transfer.guests <= 2 ? opt.price1to2 : opt.price3to8;
+    if (price == null) return null;
+    return state.transfer.direction === 'return' ? price * 2 : price;
   }
 
   function updateTransferPrice() {
@@ -226,6 +249,14 @@
     renderEquipDays();
     updateEquipPrice();
 
+    setupStepper(
+      document.getElementById('equipPeopleStepper'),
+      document.getElementById('equipPeopleValue'),
+      (v) => { state.equip.people = v; },
+      1,
+      10
+    );
+
     document.getElementById('equipAddBtn').addEventListener('click', () => {
       const price = currentEquipPrice();
       if (price == null) return;
@@ -235,7 +266,7 @@
         id: `equip-${state.equip.catIndex}-${state.equip.itemIndex}-${state.equip.days}`,
         name: `${cat} — ${item} — ${state.equip.days} day${state.equip.days > 1 ? 's' : ''}`,
         unitPrice: price,
-        qty: 1
+        qty: state.equip.people
       });
     });
   }
@@ -961,11 +992,11 @@
   // "Complete your trip" nudge — shows which categories are already in the
   // basket and lets the customer jump straight to any they haven't added.
   const TRIP_CATEGORIES = [
+    { prefix: 'hotel-', label: 'Stay', target: 'accommodation' },
     { prefix: 'transfer-', label: 'Transfer', target: 'transfers' },
     { prefix: 'equip-', label: 'Equipment', target: 'equipment' },
     { prefix: 'pass-', label: 'Lift Pass', target: 'passes' },
-    { prefix: 'lesson-', label: 'Lessons', target: 'lessons' },
-    { prefix: 'hotel-', label: 'Stay', target: 'accommodation' }
+    { prefix: 'lesson-', label: 'Lessons', target: 'lessons' }
   ];
 
   function renderBasketNudge() {
@@ -1078,7 +1109,7 @@
     });
   });
 
-  const sections = ['transfers', 'equipment', 'passes', 'lessons', 'accommodation'].map((id) => document.getElementById(id));
+  const sections = ['accommodation', 'transfers', 'equipment', 'passes', 'lessons'].map((id) => document.getElementById(id));
   const navObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {

@@ -13,11 +13,11 @@
   <div class="wrap header-inner">
     <a href="/" class="logo">Cervinia <span>Travel Services</span></a>
     <nav class="cat-nav" aria-label="Categories">
-      <button class="cat-btn active" data-target="transfers">🚐 Transfers</button>
+      <button class="cat-btn active" data-target="accommodation">🏨 Stay</button>
+      <button class="cat-btn" data-target="transfers">🚐 Transfers</button>
       <button class="cat-btn" data-target="equipment">🎿 Equipment</button>
       <button class="cat-btn" data-target="passes">🎫 Lift Passes</button>
       <button class="cat-btn" data-target="lessons">🧑‍🏫 Lessons</button>
-      <button class="cat-btn" data-target="accommodation">🏨 Stay</button>
       <div class="dropdown" id="infoDropdown">
         <button class="cat-btn dropdown-toggle" id="infoDropdownBtn" aria-haspopup="true" aria-expanded="false">
           🗺️ Resort Info <span class="caret">▾</span>
@@ -45,16 +45,84 @@
     </div>
   </section>
 
-  <section class="cat-section" id="transfers">
+  <section class="cat-section" id="accommodation">
+    <div class="wrap">
+      <h2>Accommodation – Hand Picked</h2>
+      <p class="section-sub" id="hotelPriceBasisNote">Real weekly rates, per person, from our partner hotels.</p>
+
+      <div class="config-group">
+        <label class="config-label">Hotel</label>
+        <div class="btn-group" id="hotelNameBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Check-in &amp; check-out dates</label>
+        <div class="date-calendar" id="hotelCalendar">
+          <div class="cal-header">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month">‹</button>
+            <span id="calMonthLabel"></span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Next month">›</button>
+          </div>
+          <div class="cal-weekdays">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <p class="cal-selection" id="calSelectionSummary"></p>
+        <p class="tiny-note">Nightly rate calculated from each hotel's quoted weekly price — see "Rates &amp; policy details" below for the source figures.</p>
+        <p class="unavailable-note" id="hotelMinNightsNote"></p>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Room type</label>
+        <div class="btn-group" id="hotelRoomBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Adults</label>
+        <div class="stepper" id="hotelGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="hotelGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Children</label>
+        <div class="stepper" id="hotelChildrenStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="hotelChildrenValue">0</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+        <div id="hotelChildRates" class="child-rates"></div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Total: <strong id="hotelPrice">€0</strong></div>
+        <button class="add-btn" id="hotelAddBtn">Add to Basket</button>
+      </div>
+      <p class="unavailable-note" id="hotelUnavailable">This date range isn't available — please choose different dates.</p>
+
+      <details class="hotel-notes-details">
+        <summary>Rates &amp; policy details</summary>
+        <div id="hotelNotesList"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="cat-section alt" id="transfers">
     <div class="wrap">
       <h2>Airport Transfers</h2>
-      <p class="section-sub" id="transferNote">One-way rates, price per group. Shared shuttles run Saturdays only.</p>
+      <p class="section-sub" id="transferNote">One-way rates, price per group. Shared shuttles run Saturdays only. A €16 booking fee applies per transfer.</p>
 
       <div class="config-group">
         <label class="config-label">Transfer type</label>
         <div class="btn-group" id="transferTypeBtns">
           <button type="button" class="opt-btn active" data-type="shared">Shared Shuttle (Sat Only)</button>
           <button type="button" class="opt-btn" data-type="private">Scheduled Transfer</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Direction</label>
+        <div class="btn-group" id="transferDirectionBtns">
+          <button type="button" class="opt-btn active" data-direction="oneway">One-way</button>
+          <button type="button" class="opt-btn" data-direction="return">Return</button>
         </div>
       </div>
       <div class="config-group">
@@ -99,11 +167,12 @@
         <button class="add-btn" id="transferAddBtn">Add to Basket</button>
       </div>
       <p class="tiny-note" id="transferTravelTime"></p>
+      <p class="tiny-note">+ €16 booking fee, added as a separate line when you add this to your basket.</p>
       <p class="unavailable-note" id="transferUnavailable">Not offered for that group size — please choose 8 or fewer guests, or contact us directly for a larger group.</p>
     </div>
   </section>
 
-  <section class="cat-section alt" id="equipment">
+  <section class="cat-section" id="equipment">
     <div class="wrap">
       <h2>Equipment Hire</h2>
       <p class="section-sub">Discounted ski &amp; snowboard hire, priced by number of days — 25/26 rate card.</p>
@@ -120,6 +189,14 @@
         <label class="config-label">Number of days</label>
         <div class="btn-group" id="equipDaysBtns"></div>
       </div>
+      <div class="config-group">
+        <label class="config-label">Number of people</label>
+        <div class="stepper" id="equipPeopleStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="equipPeopleValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
 
       <div class="price-row">
         <div class="price-display">Total: <strong id="equipPrice">€0</strong></div>
@@ -129,7 +206,7 @@
     </div>
   </section>
 
-  <section class="cat-section" id="passes">
+  <section class="cat-section alt" id="passes">
     <div class="wrap">
       <h2>Ski Lift Passes</h2>
       <p class="section-sub" id="passSeasonNote">Local Italian side pass — Breuil-Cervinia &amp; Valtournenche.</p>
@@ -165,7 +242,7 @@
     </div>
   </section>
 
-  <section class="cat-section alt" id="lessons">
+  <section class="cat-section" id="lessons">
     <div class="wrap">
       <h2>Ski &amp; Snowboard Lessons</h2>
       <p class="section-sub" id="lessonSeasonNote">We'll match you with the right instructor.</p>
@@ -227,67 +304,6 @@
         <button class="add-btn" id="lessonAddBtn">Add to Basket</button>
       </div>
       <p class="unavailable-note" id="lessonUnavailable">Not offered for this combination — try a different duration, season or time.</p>
-    </div>
-  </section>
-
-  <section class="cat-section alt" id="accommodation">
-    <div class="wrap">
-      <h2>Accommodation</h2>
-      <p class="section-sub" id="hotelPriceBasisNote">Real weekly rates, per person, from our partner hotels.</p>
-
-      <div class="config-group">
-        <label class="config-label">Hotel</label>
-        <div class="btn-group" id="hotelNameBtns"></div>
-      </div>
-      <div class="config-group">
-        <label class="config-label">Check-in &amp; check-out dates</label>
-        <div class="date-calendar" id="hotelCalendar">
-          <div class="cal-header">
-            <button type="button" class="cal-nav" id="calPrev" aria-label="Previous month">‹</button>
-            <span id="calMonthLabel"></span>
-            <button type="button" class="cal-nav" id="calNext" aria-label="Next month">›</button>
-          </div>
-          <div class="cal-weekdays">
-            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-          </div>
-          <div class="cal-grid" id="calGrid"></div>
-        </div>
-        <p class="cal-selection" id="calSelectionSummary"></p>
-        <p class="tiny-note">Nightly rate calculated from each hotel's quoted weekly price — see "Rates &amp; policy details" below for the source figures.</p>
-        <p class="unavailable-note" id="hotelMinNightsNote"></p>
-      </div>
-      <div class="config-group">
-        <label class="config-label">Room type</label>
-        <div class="btn-group" id="hotelRoomBtns"></div>
-      </div>
-      <div class="config-group">
-        <label class="config-label">Adults</label>
-        <div class="stepper" id="hotelGuestsStepper">
-          <button type="button" class="step-btn" data-step="-1">−</button>
-          <span id="hotelGuestsValue">1</span>
-          <button type="button" class="step-btn" data-step="1">+</button>
-        </div>
-      </div>
-      <div class="config-group">
-        <label class="config-label">Children</label>
-        <div class="stepper" id="hotelChildrenStepper">
-          <button type="button" class="step-btn" data-step="-1">−</button>
-          <span id="hotelChildrenValue">0</span>
-          <button type="button" class="step-btn" data-step="1">+</button>
-        </div>
-        <div id="hotelChildRates" class="child-rates"></div>
-      </div>
-
-      <div class="price-row">
-        <div class="price-display">Total: <strong id="hotelPrice">€0</strong></div>
-        <button class="add-btn" id="hotelAddBtn">Add to Basket</button>
-      </div>
-      <p class="unavailable-note" id="hotelUnavailable">This date range isn't available — please choose different dates.</p>
-
-      <details class="hotel-notes-details">
-        <summary>Rates &amp; policy details</summary>
-        <div id="hotelNotesList"></div>
-      </details>
     </div>
   </section>
 
