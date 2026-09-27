@@ -24,7 +24,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,300&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <script type="application/ld+json">
 {
@@ -60,7 +60,7 @@
     </a>
     <div class="nav-cta">
       <a href="https://wa.me/393668794487" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">WhatsApp Us</a>
-      <a href="/shop" class="btn btn-primary btn-sm">❄️ Book &amp; Pay</a>
+      <a href="/shop" class="btn btn-primary btn-sm">Book &amp; Pay</a>
     </div>
   </div>
   <div class="wrap nav-buttons">
@@ -70,6 +70,7 @@
     <a href="#services">Services</a>
     <a href="#process">How It Works</a>
     <a href="#stay">Where To Stay</a>
+    <a href="#reviews">Reviews</a>
     <a href="#gallery">Gallery</a>
     <a href="#contact">Contact Us</a>
   </div>
@@ -79,33 +80,32 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-bg">
-      <img src="https://i0.wp.com/cerviniatravelservices.com/wp-content/uploads/2022/08/chris-linnett-L9kx2A3XhC0-unsplash-scaled.jpg?ssl=1&amp;w=1920&amp;quality=75" alt="The Matterhorn above Cervinia">
-      <div class="hero-bg-overlay"></div>
+    <div class="hero-mountains" aria-hidden="true">
+      <svg viewBox="0 0 1440 360" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="0,360 0,260 220,180 420,240 620,140 780,220 1000,150 1220,250 1440,190 1440,360" fill="#16273d" opacity="0.55"/>
+        <polygon points="0,360 0,300 180,260 360,300 520,210 640,120 700,100 760,120 900,230 1080,270 1260,220 1440,280 1440,360" fill="#0e1a2b" opacity="0.85"/>
+      </svg>
     </div>
-    <div class="wrap hero-content reveal">
+    <div class="wrap hero-content">
       <span class="eyebrow">Local Ski Specialists · Cervinia, Italy</span>
-      <h1>Your gateway to <span>Cervinia's</span> slopes.</h1>
-      <p class="hero-sub">We live here. One-stop planning for transfers, equipment, lift passes, lessons and stays — direct prices, local knowledge, zero hassle. We don't just go there, we are there.</p>
+      <h1>We live under<br>the <em>Matterhorn</em>.</h1>
+      <p class="hero-sub">One-stop planning for transfers, equipment, lift passes, lessons and stays — direct prices, local knowledge, zero hassle. We don't just go there, we are there.</p>
       <div class="hero-actions">
         <a href="/shop" class="btn btn-primary">Book &amp; Pay Online</a>
         <a href="#village" class="btn btn-ghost">Explore The Resort</a>
       </div>
     </div>
-    <div class="wrap">
-      <div class="stat-strip reveal">
-        <div class="stat"><div class="num">2050M</div><div class="label">Village Height</div></div>
-        <div class="stat"><div class="num">23KM</div><div class="label">Longest Run</div></div>
-        <div class="stat"><div class="num">2190M</div><div class="label">Vertical Drop</div></div>
-        <div class="stat"><div class="num">350KM</div><div class="label">Ski Area w/ Zermatt</div></div>
-        <div class="stat"><div class="num">57</div><div class="label">Lifts</div></div>
-      </div>
+    <div class="stat-strip">
+      <div class="stat"><div class="num">2,050m</div><div class="label">Village Height</div></div>
+      <div class="stat"><div class="num">3,899m</div><div class="label">Highest Lift-Served Point</div></div>
+      <div class="stat"><div class="num">350km</div><div class="label">Ski Area w/ Zermatt</div></div>
+      <div class="stat"><div class="num">Oct–May</div><div class="label">Ski Season</div></div>
     </div>
   </section>
 
   <!-- VILLAGE -->
   <section class="band" id="village">
-    <div class="wrap split reveal">
+    <div class="wrap split">
       <div>
         <span class="eyebrow">The Village</span>
         <h2 class="section-title">A car-free alpine gem beneath the Matterhorn.</h2>
@@ -127,7 +127,7 @@
 
   <!-- SKI AREA -->
   <section class="band band-soft" id="ski-area">
-    <div class="wrap split reverse reveal">
+    <div class="wrap split reverse">
       <div>
         <span class="eyebrow">The Ski Area</span>
         <h2 class="section-title">One of Europe's highest, snow-sure resorts.</h2>
@@ -138,10 +138,10 @@
         <img src="https://i0.wp.com/cerviniatravelservices.com/wp-content/uploads/2022/08/matt_214-XaO85rDDtQw-unsplash-scaled.jpg?ssl=1&amp;w=1200&amp;quality=80" alt="Cervinia ski slopes" loading="lazy">
       </div>
     </div>
-    <div class="wrap reveal">
+    <div class="wrap">
       <div class="data-grid">
         <div class="data-cell"><div class="num">1600M</div><div class="label">Bottom Lift</div></div>
-        <div class="data-cell"><div class="num">3990M</div><div class="label">Highest Lift</div></div>
+        <div class="data-cell"><div class="num">3899M</div><div class="label">Highest Lift</div></div>
         <div class="data-cell"><div class="num">350KM</div><div class="label">Marked Piste (Int'l Pass)</div></div>
         <div class="data-cell"><div class="num">20KM</div><div class="label">Cross Country</div></div>
         <div class="data-cell"><div class="num">40KM</div><div class="label">Summer Glacier Skiing</div></div>
@@ -157,49 +157,43 @@
 
   <!-- SERVICES -->
   <section class="band" id="services">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">Our Services</span>
       <h2 class="section-title">Everything booked, before you land.</h2>
       <p class="section-sub">Choose all of our services, or just the ones you need — direct prices, no obligation to bundle.</p>
       <div class="services-grid">
         <div class="service-card">
-          <div class="idx">1</div>
-          <div class="cat">Where You Sleep</div>
+          <div class="cat">01 · Where You Sleep</div>
           <h3>Accommodation</h3>
           <p>Hotels &amp; apartments we know and trust — chosen for location, cleanliness and service, not just price.</p>
           <a href="/shop#accommodation" class="link">Book Now →</a>
         </div>
         <div class="service-card">
-          <div class="idx">2</div>
-          <div class="cat">Getting There</div>
+          <div class="cat">02 · Getting There</div>
           <h3>Airport Transfers</h3>
           <p>Scheduled and shared shuttles from Milan Malpensa, Milan Linate, Bergamo Orio &amp; Turin Caselle. Shared runs weekends, scheduled any day.</p>
           <a href="/shop" class="link">Book Now →</a>
         </div>
         <div class="service-card">
-          <div class="idx">3</div>
-          <div class="cat">Gear Sorted</div>
+          <div class="cat">03 · Gear Sorted</div>
           <h3>Equipment Hire</h3>
           <p>Ski &amp; snowboard hire at 20–50% off, pre-booked so it's waiting when you land. Economy, Evolution or Performance tiers.</p>
           <a href="/shop" class="link">Book Now →</a>
         </div>
         <div class="service-card">
-          <div class="idx">4</div>
-          <div class="cat">On The Mountain</div>
+          <div class="cat">04 · On The Mountain</div>
           <h3>Ski Lift Passes</h3>
           <p>Local Italian-side or International passes, keycard and optional ski-pass insurance arranged for you.</p>
           <a href="/shop" class="link">Book Now →</a>
         </div>
         <div class="service-card">
-          <div class="idx">5</div>
-          <div class="cat">Skill Building</div>
+          <div class="cat">05 · Skill Building</div>
           <h3>Ski &amp; Snowboard Lessons</h3>
           <p>The right instructor for your level — pre-booked so you're not left waiting. For beginners and powder addicts alike.</p>
           <a href="/shop" class="link">Book Now →</a>
         </div>
         <div class="service-card">
-          <div class="idx">6</div>
-          <div class="cat">Beyond Skiing</div>
+          <div class="cat">06 · Beyond Skiing</div>
           <h3>Activities &amp; Excursions</h3>
           <p>Husky sledding, heli-skiing, mountain hut dinners, Aosta shopping days and more — just send us a WhatsApp.</p>
           <a href="#contact" class="link">Get Quote →</a>
@@ -210,32 +204,32 @@
 
   <!-- PROCESS -->
   <section class="band band-soft" id="process">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">How We Work</span>
       <h2 class="section-title">From first message to first turn.</h2>
       <div class="timeline">
         <div class="tl-item">
-          <div class="tl-num">1</div>
+          <div class="tl-num">01</div>
           <h3>Share Your Plans</h3>
           <p>Arrival &amp; departure dates, group size, and what you need — no obligation.</p>
         </div>
         <div class="tl-item">
-          <div class="tl-num">2</div>
+          <div class="tl-num">02</div>
           <h3>We Build Your Package</h3>
           <p>Start with accommodation, then mix in transfers, equipment, passes and lessons — one estimate.</p>
         </div>
         <div class="tl-item">
-          <div class="tl-num">3</div>
+          <div class="tl-num">03</div>
           <h3>We Handle Bookings</h3>
           <p>Direct prices, trusted local partners, everything confirmed before you fly.</p>
         </div>
         <div class="tl-item">
-          <div class="tl-num">4</div>
+          <div class="tl-num">04</div>
           <h3>Free WhatsApp Care Group</h3>
           <p>Need a mountain hut dinner or an excursion once you're here? We book it.</p>
         </div>
         <div class="tl-item">
-          <div class="tl-num">5</div>
+          <div class="tl-num">05</div>
           <h3>You Hit The Slopes</h3>
           <p>We're on the ground in Cervinia — we don't just go there, we are there.</p>
         </div>
@@ -245,7 +239,7 @@
 
   <!-- STAY -->
   <section class="band" id="stay">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">Where To Stay</span>
       <h2 class="section-title">Accommodation, chosen with care.</h2>
       <p class="section-sub">Good location matters — nobody wants to walk far in ski boots. We only work with hotels we know well and trust, for both winter skiing and summer glacier season. <a href="/shop#accommodation" style="color:var(--brand); font-weight:600;">See live weekly rates &amp; book →</a></p>
@@ -308,9 +302,35 @@
     </div>
   </section>
 
+  <!-- REVIEWS -->
+  <section class="band" id="reviews">
+    <div class="wrap">
+      <span class="eyebrow">What Guests Say</span>
+      <h2 class="section-title">Real trips, real feedback.</h2>
+      <p class="section-sub">Placeholder layout — to be replaced with real guest reviews (Google, TripAdvisor, WhatsApp feedback) before this goes live.</p>
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">[Placeholder — replace with a real guest review before launch]</p>
+          <div class="review-attrib"><strong>Guest Name</strong><span>Country</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">[Placeholder — replace with a real guest review before launch]</p>
+          <div class="review-attrib"><strong>Guest Name</strong><span>Country</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">[Placeholder — replace with a real guest review before launch]</p>
+          <div class="review-attrib"><strong>Guest Name</strong><span>Country</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- GOOD TO KNOW -->
   <section class="band band-soft" id="know">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">Good To Know</span>
       <h2 class="section-title">Handy details before you pack.</h2>
       <div class="info-strip">
@@ -324,7 +344,7 @@
 
   <!-- GALLERY -->
   <section class="band" id="gallery">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">Cervinia In Pictures</span>
       <h2 class="section-title">A glimpse of the mountain.</h2>
       <div class="gallery-grid">
@@ -344,7 +364,7 @@
 
   <!-- FAQ -->
   <section class="band band-soft" id="faq">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">Common Questions</span>
       <h2 class="section-title">Frequently asked questions.</h2>
       <div class="faq-list">
@@ -383,7 +403,7 @@
   <!-- CTA BANNER -->
   <section class="band">
     <div class="wrap">
-      <div class="cta-banner reveal">
+      <div class="cta-banner">
         <span class="eyebrow">Ready When You Are</span>
         <h2>Start your alpine season.</h2>
         <p>Send us your dates and group size — we'll put together a tailored estimate for transfers, gear, passes, lessons and stay, direct from the people who live here.</p>
@@ -397,21 +417,38 @@
 
   <!-- CONTACT -->
   <section class="band" id="contact">
-    <div class="wrap reveal">
+    <div class="wrap">
       <span class="eyebrow">Plan Your Trip</span>
       <h2 class="section-title">Get your tailored estimate.</h2>
-      <p class="section-sub">Booking transfers, equipment, lift passes or lessons? <a href="/shop" style="color:var(--brand); font-weight:600;">Book &amp; pay online instantly →</a><br>For accommodation, activities, or anything custom, send us the details below and we'll get back to you within 24 hours.</p>
+      <p class="section-sub">Booking transfers, equipment, lift passes or lessons? <a href="/shop" style="color:var(--accent-dark); font-weight:600;">Book &amp; pay online instantly →</a><br>For accommodation, activities, or anything custom, send us the details below and we'll get back to you within 24 hours.</p>
 
       <div class="intake-wrap">
+        <div class="trust-panel">
+          <span class="eyebrow">Personal Review, Not A Bot</span>
+          <h3>What happens after you hit submit.</h3>
+          <p>Every enquiry is read by our local team in Cervinia — we check real availability before quoting, so the number you get is one we can actually confirm.</p>
+          <div class="process-mini">
+            <div class="pm-item"><span class="pm-num">1</span><div><h5>Personal Review</h5><p>A real person reads every enquiry — never a bot.</p></div></div>
+            <div class="pm-item"><span class="pm-num">2</span><div><h5>We Check Availability</h5><p>Hotels, passes &amp; transfer times confirmed with our partners.</p></div></div>
+            <div class="pm-item"><span class="pm-num">3</span><div><h5>Final Estimate</h5><p>A tailored quote lands in your inbox within 24 hours.</p></div></div>
+          </div>
+          <div class="trust-contact">
+            <div class="cc-label">Email Us</div>
+            <a class="cc-value" href="mailto:info@cerviniatravelservices.com">info@cerviniatravelservices.com</a>
+            <div class="cc-label">WhatsApp Us</div>
+            <a class="cc-value" href="https://wa.me/393668794487" target="_blank" rel="noopener">+39 366 879 4487</a>
+          </div>
+        </div>
+
         <div class="card-panel">
           <form class="form-grid" id="quoteForm">
             <div class="field">
               <label for="fname">Full Name *</label>
-              <input type="text" id="fname" name="fname" required>
+              <input type="text" id="fname" name="fname" required placeholder="Jane Smith">
             </div>
             <div class="field">
               <label for="femail">Email *</label>
-              <input type="email" id="femail" name="femail" required>
+              <input type="email" id="femail" name="femail" required placeholder="jane@email.com">
             </div>
             <div class="field">
               <label for="arrival">Arrival Date *</label>
@@ -421,87 +458,36 @@
               <label for="departure">Departure Date *</label>
               <input type="date" id="departure" name="departure" required>
             </div>
-            <div class="field">
-              <label for="pax">No. Of PAX</label>
-              <select id="pax" name="pax">
-                <option>1</option><option>2</option><option>3</option><option>4</option>
-                <option>5</option><option>6</option><option>7</option><option>8</option>
-                <option>9</option><option>More than 10</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="hotel">Preferred Accommodation</label>
-              <select id="hotel" name="hotel">
-                <option value="">No preference</option>
-                <option>Hotel Da Compagnoni</option>
-                <option>Hotel Lyskamm</option>
-                <option>Hotel Perruquet</option>
-                <option>Hotel Bucaneve</option>
-                <option>Hotel Sertorelli</option>
-                <option>Hotel Miravidi</option>
-                <option>Hotel Chambres Mont Cervin</option>
-                <option>Casa Comos Apartments</option>
-              </select>
+            <div class="field full">
+              <label>Group Size</label>
+              <div class="chip-group" id="groupSizeChips">
+                <button type="button" class="chip active" data-value="2 people">2 people</button>
+                <button type="button" class="chip" data-value="4 people">4 people</button>
+                <button type="button" class="chip" data-value="6+ people">6+ people</button>
+                <button type="button" class="chip" data-value="Just me">Just me</button>
+              </div>
             </div>
             <div class="field full">
-              <label for="rooms">Room Configuration</label>
-              <input type="text" id="rooms" name="rooms" placeholder="e.g. 1 Double and 1 Twin">
-            </div>
-            <div class="field">
-              <label for="transfer">Airport Transfer</label>
-              <select id="transfer" name="transfer">
-                <option value="">Not needed</option>
-                <option>Bergamo Orio Airport</option>
-                <option>Milan Malpensa Airport</option>
-                <option>Milan Linate Airport</option>
-                <option>Turin Caselle Airport</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="pass">Lift Pass Type</label>
-              <select id="pass" name="pass">
-                <option value="">Not needed</option>
-                <option>Local Italian-Side Pass</option>
-                <option>International Pass (incl. Zermatt)</option>
-              </select>
-            </div>
-            <div class="field field-check full">
-              <input type="checkbox" id="equip" name="equip">
-              <label for="equip">I need ski / snowboard equipment hire</label>
-            </div>
-            <div class="field field-check full">
-              <input type="checkbox" id="lessons" name="lessons">
-              <label for="lessons">I'd like ski / snowboard lessons (please confirm names &amp; ages below)</label>
-            </div>
-            <div class="field field-check full">
-              <input type="checkbox" id="insurance" name="insurance">
-              <label for="insurance">Add ski accident insurance (€3 per day)</label>
+              <label>What Do You Need?</label>
+              <div class="chip-group" id="needsChips" data-multi="true">
+                <button type="button" class="chip" data-value="Accommodation">Accommodation</button>
+                <button type="button" class="chip" data-value="Transfers">Transfers</button>
+                <button type="button" class="chip" data-value="Equipment hire">Equipment hire</button>
+                <button type="button" class="chip" data-value="Lift pass">Lift pass</button>
+                <button type="button" class="chip" data-value="Lessons">Lessons</button>
+                <button type="button" class="chip" data-value="Excursions">Excursions</button>
+                <button type="button" class="chip" data-value="Ski accident insurance">Insurance</button>
+              </div>
             </div>
             <div class="field full">
-              <label for="notes">Activities, Excursions &amp; Anything Else</label>
-              <textarea id="notes" name="notes" rows="4" placeholder="Guest names &amp; ages for lessons, non-skiing activities, excursions, questions..."></textarea>
+              <label for="notes">Anything Else?</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Preferred hotel, room configuration, guest names &amp; ages for lessons, specific airport, questions..."></textarea>
             </div>
             <div class="form-foot">
-              <span class="note">* Required fields — response within 24 hours</span>
+              <span class="note">Response within 24 hours — WhatsApp us for anything urgent.</span>
               <button type="submit" class="btn btn-primary">Submit Request</button>
             </div>
           </form>
-        </div>
-
-        <div class="contact-side">
-          <div class="contact-card brand">
-            <div class="cc-label">Email Us</div>
-            <a class="cc-value" href="mailto:info@cerviniatravelservices.com">info@cerviniatravelservices.com</a>
-            <div class="cc-label">WhatsApp Us</div>
-            <a class="cc-value" href="https://wa.me/393668794487" target="_blank" rel="noopener">+39 366 879 4487</a>
-          </div>
-          <div class="contact-card">
-            <div class="process-mini">
-              <div class="pm-item"><span class="pm-num">1</span><div><h5>Personal Review</h5><p>Every enquiry is read by our local team — never a bot.</p></div></div>
-              <div class="pm-item"><span class="pm-num">2</span><div><h5>We Check Availability</h5><p>Hotels, passes &amp; transfer times confirmed directly with our partners.</p></div></div>
-              <div class="pm-item"><span class="pm-num">3</span><div><h5>Final Estimate</h5><p>You receive a tailored quote, ready to confirm.</p></div></div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
