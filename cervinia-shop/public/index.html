@@ -45,6 +45,13 @@
         </div>
       </div>
     </nav>
+    <div class="currency-select" title="Estimate only — you're always charged in EUR at checkout">
+      <select id="currencySelect" aria-label="Display currency">
+        <option value="EUR">EUR €</option>
+        <option value="GBP">GBP £</option>
+        <option value="USD">USD $</option>
+      </select>
+    </div>
     <button class="basket-btn" id="basketToggle">
       Basket <span class="basket-count" id="basketCount">0</span>
     </button>
@@ -342,6 +349,7 @@
       <span>Total</span>
       <strong id="basketTotal">€0.00</strong>
     </div>
+    <p class="fx-note" id="fxNote" style="display:none;"></p>
     <div class="field">
       <label for="customerName">Name for booking</label>
       <input type="text" id="customerName" placeholder="Jane Doe">

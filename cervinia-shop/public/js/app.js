@@ -19,10 +19,35 @@
     hotel: {
       name: null, roomIndex: 0, guests: 1, children: 0, childRateIndexes: [],
       checkIn: null, checkOut: null, calMonth: null
-    }
+    },
+    currency: 'EUR',
+    // Fallback rates (approximate) used only if the live rate fetch fails.
+    fxRates: { EUR: 1, GBP: 0.87, USD: 1.08 }
   };
 
-  const fmt = (n) => `€${Number(n).toFixed(2)}`;
+  const CURRENCY_SYMBOLS = { EUR: '€', GBP: '£', USD: '$' };
+
+  // All prices are stored and charged in EUR — this only converts what's
+  // DISPLAYED. Checkout always submits the original EUR amount to Stripe.
+  const fmt = (eur) => {
+    const amount = Number(eur) * (state.fxRates[state.currency] || 1);
+    return `${CURRENCY_SYMBOLS[state.currency]}${amount.toFixed(2)}`;
+  };
+
+  fetch('https://api.frankfurter.dev/v1/latest?base=EUR&symbols=GBP,USD')
+    .then((r) => r.json())
+    .then((data) => {
+      if (data && data.rates) {
+        state.fxRates = { EUR: 1, GBP: data.rates.GBP, USD: data.rates.USD };
+        // Re-render in case the visitor already switched currency before
+        // the live rate arrived (they'd have seen the fallback estimate).
+        if (state.currency !== 'EUR' && typeof refreshAllPrices === 'function') refreshAllPrices();
+      }
+    })
+    .catch(() => {
+      // Keep the hardcoded fallback rates — currency display is a
+      // convenience, not something worth failing loudly over.
+    });
 
   fetch('/api/pricing')
     .then((r) => r.json())
@@ -965,7 +990,7 @@
         row.innerHTML = `
           <div>
             <div class="basket-item-name">${item.name}</div>
-            <div class="basket-item-meta">${item.qty} × €${item.unitPrice.toFixed(2)}</div>
+            <div class="basket-item-meta">${item.qty} × ${fmt(item.unitPrice)}</div>
           </div>
           <div class="basket-item-right">
             <div class="basket-item-price">${fmt(item.unitPrice * item.qty)}</div>
@@ -984,7 +1009,24 @@
     const count = state.basket.reduce((sum, i) => sum + i.qty, 0);
     document.getElementById('basketCount').textContent = count;
 
+    const fxNote = document.getElementById('fxNote');
+    if (fxNote) {
+      if (state.currency === 'EUR') {
+        fxNote.style.display = 'none';
+      } else {
+        fxNote.style.display = 'block';
+        fxNote.textContent = `${state.currency} shown for reference — you'll be charged ${fmt2(total, 'EUR')} in EUR at checkout.`;
+      }
+    }
+
     renderBasketNudge();
+  }
+
+  // Formats a raw EUR amount in a specific currency, independent of the
+  // currently selected display currency (used for the "charged in EUR" note).
+  function fmt2(eur, currency) {
+    const amount = Number(eur) * (state.fxRates[currency] || 1);
+    return `${CURRENCY_SYMBOLS[currency]}${amount.toFixed(2)}`;
   }
 
   // "Complete your trip" nudge — shows which categories are already in the
@@ -1029,6 +1071,26 @@
   function closeBasket() {
     document.getElementById('basketDrawer').classList.remove('open');
     document.getElementById('basketOverlay').classList.remove('open');
+  }
+
+  // ---------- Currency display toggle (estimate only — checkout is always EUR) ----------
+  function refreshAllPrices() {
+    if (state.pricing) {
+      updateTransferPrice();
+      updateEquipPrice();
+      updatePassPrice();
+      updateLessonPrice();
+    }
+    if (state.hotels) updateHotelPrice();
+    renderBasket();
+  }
+
+  const currencySelect = document.getElementById('currencySelect');
+  if (currencySelect) {
+    currencySelect.addEventListener('change', () => {
+      state.currency = currencySelect.value;
+      refreshAllPrices();
+    });
   }
 
   document.getElementById('basketToggle').addEventListener('click', openBasket);
