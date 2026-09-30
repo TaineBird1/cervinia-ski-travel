@@ -120,6 +120,7 @@
   // (1-2 pax / 3-8 pax). "Guests" selects which price applies rather than
   // multiplying a per-person rate.
   const TRANSFER_BOOKING_FEE = 16;
+  const PASS_KEY_CARD_FEE = 2;
 
   function initTransfers() {
     document.getElementById('transferNote').textContent = state.pricing.transfers.notes || '';
@@ -900,7 +901,9 @@
 
   function renderHotelNotes() {
     const hotel = state.hotels[state.hotel.name];
-    document.getElementById('hotelPriceBasisNote').textContent = hotel.priceBasis;
+    const basisNote = document.getElementById('hotelPriceBasisNote');
+    basisNote.dataset.original = hotel.priceBasis;
+    basisNote.textContent = hotel.priceBasis.replace('€', CURRENCY_SYMBOLS[state.currency]);
     document.getElementById('hotelNotesList').innerHTML = hotel.notes.map((n) => `<p>${escapeHtml(n)}</p>`).join('');
   }
 
@@ -1074,6 +1077,19 @@
   }
 
   // ---------- Currency display toggle (estimate only — checkout is always EUR) ----------
+  function updateCurrencyNotes() {
+    const feeNote = document.getElementById('transferFeeNote');
+    if (feeNote) feeNote.textContent = `+ ${fmt(TRANSFER_BOOKING_FEE)} booking fee, added as a separate line when you add this to your basket.`;
+
+    const keyCardNote = document.getElementById('passKeyCardNote');
+    if (keyCardNote) keyCardNote.textContent = `Price includes a ${fmt(PASS_KEY_CARD_FEE)} key card charge (waived on free child passes).`;
+
+    const basisNote = document.getElementById('hotelPriceBasisNote');
+    if (basisNote && basisNote.dataset.original) {
+      basisNote.textContent = basisNote.dataset.original.replace('€', CURRENCY_SYMBOLS[state.currency]);
+    }
+  }
+
   function refreshAllPrices() {
     if (state.pricing) {
       updateTransferPrice();
@@ -1082,8 +1098,11 @@
       updateLessonPrice();
     }
     if (state.hotels) updateHotelPrice();
+    updateCurrencyNotes();
     renderBasket();
   }
+
+  updateCurrencyNotes();
 
   const currencySelect = document.getElementById('currencySelect');
   if (currencySelect) {
