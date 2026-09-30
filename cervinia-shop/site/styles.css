@@ -553,6 +553,7 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
   .hero-actions .btn, .cta-banner .btn { width: 100%; justify-content: center; }
   .hero-actions, .cta-banner .hero-actions { flex-direction: column; }
   .nav-top { flex-wrap: wrap; }
+  .nav-cta { flex-wrap: wrap; width: 100%; justify-content: flex-end; row-gap: 10px; }
   .cta-banner { padding: 64px 0; }
   .hero { min-height: 460px; padding-top: 90px; }
 
