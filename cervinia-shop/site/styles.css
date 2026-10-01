@@ -13,8 +13,8 @@
   --gold: #d9a653;
   --ice: #7fa8c9;
 
-  --bg: var(--snow);
-  --bg-soft: #f1f4f8;
+  --bg: #eef2f6;
+  --bg-soft: #e4eaf0;
   --card: #ffffff;
   --border: #e2e7ec;
 
@@ -346,6 +346,11 @@ header.site-nav {
 #process .eyebrow { background: rgba(247,249,251,.1); color: var(--ice); }
 #process .eyebrow::before { background: var(--ice); }
 #process .section-title { color: var(--snow); }
+
+#gallery.band { background: var(--ink-base); }
+#gallery .eyebrow { background: rgba(247,249,251,.1); color: var(--ice); }
+#gallery .eyebrow::before { background: var(--ice); }
+#gallery .section-title { color: var(--snow); }
 .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px 24px; }
 .tl-item { padding: 0; }
 .tl-num { font-family: var(--font-head); font-weight: 500; font-size: 34px; color: var(--gold); margin-bottom: 10px; line-height: 1; }
