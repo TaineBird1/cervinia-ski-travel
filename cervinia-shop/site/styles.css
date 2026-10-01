@@ -255,7 +255,7 @@ header.site-nav {
   line-height: 1.1;
   color: var(--snow);
 }
-.hero h1 em { color: var(--gold); font-weight: 300; }
+.hero h1 em { color: var(--gold); font-weight: 600; text-shadow: 0 2px 24px rgba(217,166,83,.5); }
 .hero-sub {
   margin-top: 22px;
   max-width: 480px;
