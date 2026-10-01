@@ -209,6 +209,7 @@ header.site-nav {
 .nav-buttons .dropdown-toggle {
   font-family: var(--font-head);
   font-size: 13.5px; font-weight: 600;
+  line-height: 1.65;
   color: #fff;
   background: var(--brand-dark);
   padding: 9px 16px;
