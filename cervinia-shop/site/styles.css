@@ -205,6 +205,34 @@ header.site-nav {
 .nav-buttons a:hover, .nav-buttons a.active { background: #0a3550; color: #fff; }
 .nav-buttons a:last-child { font-weight: 800; }
 
+/* ---------- resort info dropdown (nav) ---------- */
+.nav-buttons .dropdown { position: relative; }
+.nav-buttons .dropdown-toggle {
+  font-family: var(--font-head);
+  font-size: 13.5px; font-weight: 600;
+  color: #fff;
+  background: var(--brand-dark);
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: none;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: background .2s ease, color .2s ease;
+}
+.nav-buttons .dropdown-toggle:hover { background: #0a3550; }
+.nav-buttons .dropdown-toggle .caret { font-size: 10px; transition: transform .15s ease; }
+.nav-buttons .dropdown.open .dropdown-toggle .caret { transform: rotate(180deg); }
+.nav-buttons .dropdown-menu {
+  display: none; position: absolute; top: calc(100% + 8px); left: 0; min-width: 180px;
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px;
+  box-shadow: var(--shadow-brand-lg); z-index: 50;
+}
+.nav-buttons .dropdown.open .dropdown-menu { display: block; }
+.nav-buttons .dropdown-menu a {
+  display: block; background: none; color: var(--ink); font-weight: 600; font-size: 13.5px;
+  padding: 9px 12px; border-radius: 8px;
+}
+.nav-buttons .dropdown-menu a:hover { background: var(--bg-soft); color: var(--ink); }
+
 /* ---------- hero ---------- */
 .hero {
   position: relative; overflow: hidden;
@@ -560,4 +588,18 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
   }
   .nav-buttons::-webkit-scrollbar { display: none; }
   .nav-buttons a { flex-shrink: 0; }
+  .nav-buttons .dropdown { flex-shrink: 0; }
+  .nav-buttons .dropdown-toggle { display: none; }
+  .nav-buttons .dropdown-menu {
+    display: flex !important;
+    position: static;
+    flex-wrap: nowrap;
+    background: none; border: none; box-shadow: none; padding: 0; margin: 0;
+    gap: 8px;
+  }
+  .nav-buttons .dropdown-menu a {
+    display: inline-flex; align-items: center; white-space: nowrap;
+    background: var(--brand-dark); color: #fff;
+    padding: 9px 16px; border-radius: 999px; font-weight: 600; font-size: 13.5px;
+  }
 }

@@ -1162,23 +1162,6 @@
     }
   });
 
-  // ---------- Resort info dropdown ----------
-  const infoDropdown = document.getElementById('infoDropdown');
-  const infoDropdownBtn = document.getElementById('infoDropdownBtn');
-  if (infoDropdown && infoDropdownBtn) {
-    infoDropdownBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = infoDropdown.classList.toggle('open');
-      infoDropdownBtn.setAttribute('aria-expanded', String(isOpen));
-    });
-    document.addEventListener('click', (e) => {
-      if (!infoDropdown.contains(e.target)) {
-        infoDropdown.classList.remove('open');
-        infoDropdownBtn.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
   // ---------- Category nav ----------
   document.querySelectorAll('.cat-btn').forEach((btn) => {
     btn.addEventListener('click', () => {

@@ -1,5 +1,7 @@
-// Highlight the current section's nav button as the page scrolls
-const navButtons = document.querySelectorAll('.nav-buttons a');
+// Highlight the current section's nav button as the page scrolls.
+// Scoped to in-page anchors only — the Resort Info dropdown's links are
+// external URLs, not section hashes, so they're excluded here.
+const navButtons = document.querySelectorAll('.nav-buttons a[href^="#"]');
 const sections = Array.from(navButtons)
   .map(a => document.querySelector(a.getAttribute('href')))
   .filter(Boolean);
@@ -177,3 +179,20 @@ form.addEventListener('submit', (e) => {
       body.innerHTML = `<span class="ww-status">${t.error}</span>`;
     });
 })();
+
+// ---------- Resort info dropdown ----------
+const infoDropdown = document.getElementById('infoDropdown');
+const infoDropdownBtn = document.getElementById('infoDropdownBtn');
+if (infoDropdown && infoDropdownBtn) {
+  infoDropdownBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = infoDropdown.classList.toggle('open');
+    infoDropdownBtn.setAttribute('aria-expanded', String(isOpen));
+  });
+  document.addEventListener('click', (e) => {
+    if (!infoDropdown.contains(e.target)) {
+      infoDropdown.classList.remove('open');
+      infoDropdownBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
