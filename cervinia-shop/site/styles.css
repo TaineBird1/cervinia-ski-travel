@@ -314,7 +314,7 @@ header.site-nav {
   margin-top: 8px;
 }
 .data-cell {
-  background: var(--card); border: 2px solid var(--gold); border-radius: var(--radius-md); padding: 22px 20px;
+  background: #223a5c; border: 2px solid var(--gold); border-radius: var(--radius-md); padding: 22px 20px;
   box-shadow: var(--shadow-brand);
   transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
 }
@@ -339,7 +339,7 @@ header.site-nav {
 /* ---------- live mountain weather widget ---------- */
 .weather-widget {
   margin-top: 32px; padding: 22px 26px; border-radius: var(--radius-md);
-  background: var(--card); border: 2px solid var(--ice); box-shadow: var(--shadow-brand);
+  background: #223a5c; border: 2px solid var(--ice); box-shadow: var(--shadow-brand);
 }
 .ww-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .ww-dot {
