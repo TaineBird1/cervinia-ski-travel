@@ -315,6 +315,13 @@ header.site-nav {
 }
 .pass-note strong { color: var(--brand-dark); }
 
+.piste-map-block { margin-top: 32px; }
+.piste-map-block h3 { font-family: var(--font-head); font-weight: 500; font-size: 20px; margin-bottom: 14px; }
+.piste-map-block a { display: block; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-brand); border: 1px solid var(--border); }
+.piste-map-block img { width: 100%; height: auto; display: block; transition: transform .4s ease; }
+.piste-map-block a:hover img { transform: scale(1.02); }
+.piste-map-caption { margin-top: 12px; font-size: 13.5px; color: var(--muted-soft); }
+
 /* ---------- live mountain weather widget ---------- */
 .weather-widget {
   margin-top: 32px; padding: 22px 26px; border-radius: var(--radius-md);
