@@ -469,23 +469,23 @@ header.site-nav {
 .cta-banner {
   position: relative; overflow: hidden;
   text-align: center; padding: 88px 0;
-  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+  background: var(--paper);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-brand-lg);
 }
 .cta-banner::before, .cta-banner::after {
   content: ""; position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none;
 }
-.cta-banner::before { width: 320px; height: 320px; top: -140px; left: -60px; background: radial-gradient(circle, rgba(255,255,255,.18), rgba(255,255,255,0) 70%); }
-.cta-banner::after { width: 380px; height: 380px; bottom: -180px; right: -80px; background: radial-gradient(circle, rgba(225,86,122,.35), rgba(225,86,122,0) 70%); }
+.cta-banner::before { width: 320px; height: 320px; top: -140px; left: -60px; background: radial-gradient(circle, rgba(217,166,83,.25), rgba(217,166,83,0) 70%); }
+.cta-banner::after { width: 380px; height: 380px; bottom: -180px; right: -80px; background: radial-gradient(circle, rgba(225,86,122,.25), rgba(225,86,122,0) 70%); }
 .cta-banner > * { position: relative; z-index: 1; }
-.cta-banner .eyebrow { background: rgba(255,255,255,.15); color: #fff; justify-content: center; }
-.cta-banner .eyebrow::before { background: #fff; }
-.cta-banner h2 { font-size: clamp(30px, 5vw, 50px); line-height: 1.1; margin-bottom: 18px; color: #fff; }
-.cta-banner p { color: rgba(255,255,255,.85); max-width: 540px; margin: 0 auto 36px; font-size: 16.5px; }
+.cta-banner .eyebrow { background: rgba(15,30,61,.08); color: var(--paper-title); justify-content: center; }
+.cta-banner .eyebrow::before { background: var(--accent); }
+.cta-banner h2 { font-size: clamp(30px, 5vw, 50px); line-height: 1.1; margin-bottom: 18px; color: var(--paper-title); }
+.cta-banner p { color: var(--paper-body); max-width: 540px; margin: 0 auto 36px; font-size: 16.5px; }
 .cta-banner .hero-actions { justify-content: center; }
-.cta-banner .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.6); }
-.cta-banner .btn-ghost:hover { background: rgba(255,255,255,.12); }
+.cta-banner .btn-ghost { background: transparent; color: var(--paper-title); border-color: var(--paper-border); }
+.cta-banner .btn-ghost:hover { background: rgba(15,30,61,.06); }
 
 /* ---------- contact / booking form ---------- */
 .intake-wrap { display: grid; grid-template-columns: 1fr 1.3fr; gap: 0; align-items: stretch; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-brand-lg); }
@@ -511,25 +511,25 @@ header.site-nav {
 .trust-contact .cc-value:hover { color: var(--gold); }
 .trust-contact .cc-value:last-child { margin-bottom: 0; }
 
-.card-panel { border: none; border-radius: 0; background: var(--card); padding: 40px 36px; }
+.card-panel { border: none; border-radius: 0; background: var(--paper); padding: 40px 36px; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .field { display: flex; flex-direction: column; gap: 7px; }
 .field.full { grid-column: 1 / -1; }
-.field label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.field label { font-size: 13px; font-weight: 600; color: var(--paper-title); }
 .field input, .field select, .field textarea {
-  background: var(--bg-soft); border: 1px solid var(--border); border-radius: var(--radius-sm);
-  color: var(--ink); padding: 12px 14px; font-family: var(--font-sans); font-size: 14.5px;
+  background: #fff; border: 1px solid var(--paper-border); border-radius: var(--radius-sm);
+  color: var(--paper-title); padding: 12px 14px; font-family: var(--font-sans); font-size: 14.5px;
 }
-.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--alpenglow-deep); background: rgba(247,249,251,.06); }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--alpenglow-deep); background: #fff; }
 .field-check { flex-direction: row; align-items: center; gap: 10px; }
 .field-check label { font-weight: 400; font-size: 14px; }
 .form-foot { grid-column: 1/-1; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; flex-wrap: wrap; gap: 16px; }
-.form-foot .note { font-size: 13px; color: var(--muted-soft); }
+.form-foot .note { font-size: 13px; color: var(--paper-body); }
 
 .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip {
-  font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; color: var(--ink);
-  background: var(--bg-soft); border: 1.5px solid var(--border); border-radius: 999px; padding: 9px 16px;
+  font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; color: var(--paper-title);
+  background: #fff; border: 1.5px solid var(--paper-border); border-radius: 999px; padding: 9px 16px;
   transition: border-color .15s ease, color .15s ease, background .15s ease;
 }
 .chip:hover { border-color: var(--alpenglow-deep); }
