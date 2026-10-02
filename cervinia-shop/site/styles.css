@@ -292,6 +292,16 @@ header.site-nav {
 }
 .tag::before { content: "● "; color: var(--accent); font-size: 9px; }
 
+#village.band { background: var(--ink-base); }
+#village .eyebrow { background: rgba(247,249,251,.1); color: var(--ice); }
+#village .eyebrow::before { background: var(--ice); }
+#village .section-title { color: var(--snow); }
+#village .split p { color: rgba(247,249,251,.75); }
+#village .tag { background: rgba(247,249,251,.08); border-color: rgba(247,249,251,.18); color: var(--snow); }
+#village .tag::before { color: var(--gold); }
+.village-night-media { margin-top: 48px; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-brand-lg); max-width: 640px; margin-left: auto; margin-right: auto; }
+.village-night-media img { width: 100%; height: auto; display: block; }
+
 /* ---------- data grid (resort stats) ---------- */
 .data-grid {
   display: grid;
