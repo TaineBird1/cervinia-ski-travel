@@ -200,8 +200,16 @@
         "\u2022 Third Bed: discount of 10% for children over 12"
       ],
       "childPolicy": [
-        { "label": "Under 12 (3rd bed) \u2014 20% off", "mode": "percentOff", "amount": 20 },
-        { "label": "12+ (3rd bed) \u2014 10% off", "mode": "percentOff", "amount": 10 }
+        {
+          "label": "Under 12 (3rd bed) \u2014 20% off",
+          "mode": "percentOff",
+          "amount": 20
+        },
+        {
+          "label": "12+ (3rd bed) \u2014 10% off",
+          "mode": "percentOff",
+          "amount": 10
+        }
       ],
       "weeks": [
         {
@@ -374,224 +382,6 @@
         }
       ]
     },
-    "Hotel Da Compagnoni": {
-      "title": "HOTEL DA COMPAGNONI RATES 2026/2027",
-      "priceBasis": "Prices in \u20ac Per Person for 7 Nights",
-      "minNights": 7,
-      "rooms": [
-        "Comfort room 1-2 persons",
-        "Deluxe room 2-3 persons",
-        "Family room 2-3 adults or 2 adults and 2 children"
-      ],
-      "notes": [
-        "\u2022 Minimum stay 7 nights",
-        "\u2022 Bed and breakfast",
-        "\u2022 Tourist tax of \u20ac1-\u20ac2 per person per night not included (Pay hotel direct on arrival)",
-        "\u2022 Children 0-4 years old sharing bed with parents are free",
-        "\u2022 Children 0-4 years old in cot or using 3rd bed pay \u20ac30 per day",
-        "\u2022 Children 5-7 years old in 3rd bed \u20ac40 per day",
-        "\u2022 Children 8-11 years old in 3rd bed - 40% reduction",
-        "\u2022 Single supplement \u20ac50 per night"
-      ],
-      "childPolicy": [
-        { "label": "0\u20134 yrs, sharing bed with parents \u2014 Free", "mode": "free", "amount": 0 },
-        { "label": "0\u20134 yrs, in cot / 3rd bed \u2014 \u20ac30/night", "mode": "flatPerNight", "amount": 30 },
-        { "label": "5\u20137 yrs, 3rd bed \u2014 \u20ac40/night", "mode": "flatPerNight", "amount": 40 },
-        { "label": "8\u201311 yrs, 3rd bed \u2014 40% off", "mode": "percentOff", "amount": 40 },
-        { "label": "12+ yrs \u2014 standard adult rate", "mode": "standard", "amount": 0 }
-      ],
-      "weeks": [
-        {
-          "arrival": "2026-12-05",
-          "departure": "2026-12-12",
-          "prices": [
-            828,
-            903,
-            1016
-          ]
-        },
-        {
-          "arrival": "2026-12-12",
-          "departure": "2026-12-19",
-          "prices": [
-            828,
-            903,
-            1016
-          ]
-        },
-        {
-          "arrival": "2026-12-19",
-          "departure": "2026-12-26",
-          "prices": [
-            1097,
-            1172,
-            1285
-          ]
-        },
-        {
-          "arrival": "2026-12-26",
-          "departure": "2027-01-02",
-          "prices": [
-            1317,
-            1393,
-            1505
-          ]
-        },
-        {
-          "arrival": "2027-01-02",
-          "departure": "2027-01-09",
-          "prices": [
-            995,
-            1070,
-            1183
-          ]
-        },
-        {
-          "arrival": "2027-01-09",
-          "departure": "2027-01-16",
-          "prices": [
-            941,
-            1016,
-            1129
-          ]
-        },
-        {
-          "arrival": "2027-01-16",
-          "departure": "2027-01-23",
-          "prices": [
-            941,
-            1016,
-            1129
-          ]
-        },
-        {
-          "arrival": "2027-01-23",
-          "departure": "2027-01-30",
-          "prices": [
-            941,
-            1016,
-            1129
-          ]
-        },
-        {
-          "arrival": "2027-01-30",
-          "departure": "2027-02-06",
-          "prices": [
-            941,
-            1016,
-            1129
-          ]
-        },
-        {
-          "arrival": "2027-02-06",
-          "departure": "2027-02-13",
-          "prices": [
-            1129,
-            1204,
-            1317
-          ]
-        },
-        {
-          "arrival": "2027-02-13",
-          "departure": "2027-02-20",
-          "prices": [
-            1129,
-            1204,
-            1317
-          ]
-        },
-        {
-          "arrival": "2027-02-20",
-          "departure": "2027-02-27",
-          "prices": [
-            1129,
-            1204,
-            1317
-          ]
-        },
-        {
-          "arrival": "2027-02-27",
-          "departure": "2027-03-06",
-          "prices": [
-            1129,
-            1204,
-            1317
-          ]
-        },
-        {
-          "arrival": "2027-03-06",
-          "departure": "2027-03-13",
-          "prices": [
-            1129,
-            1204,
-            1317
-          ]
-        },
-        {
-          "arrival": "2027-03-13",
-          "departure": "2027-03-20",
-          "prices": [
-            1129,
-            1204,
-            1317
-          ]
-        },
-        {
-          "arrival": "2027-03-20",
-          "departure": "2027-03-27",
-          "prices": [
-            941,
-            1016,
-            1129
-          ]
-        },
-        {
-          "arrival": "2027-03-27",
-          "departure": "2027-04-03",
-          "prices": [
-            941,
-            1016,
-            1129
-          ]
-        },
-        {
-          "arrival": "2027-04-03",
-          "departure": "2027-04-10",
-          "prices": [
-            828,
-            903,
-            1016
-          ]
-        },
-        {
-          "arrival": "2027-04-10",
-          "departure": "2027-04-17",
-          "prices": [
-            844,
-            920,
-            1032
-          ]
-        },
-        {
-          "arrival": "2027-04-17",
-          "departure": "2027-04-24",
-          "prices": [
-            860,
-            936,
-            1049
-          ]
-        },
-        {
-          "arrival": "2027-04-24",
-          "departure": "2027-05-01",
-          "prices": [
-            753,
-            903,
-            1016
-          ]
-        }
-      ]
-    },
     "Hotel Bucaneve": {
       "title": "HOTEL BUCANEVE RATES 2026/2027",
       "priceBasis": "Prices in \u20ac Per Person for 7 nights Bed & Breakfast",
@@ -621,9 +411,21 @@
         "\u2022 From 6 to the day of arrival: we keep the full amount of the stay."
       ],
       "childPolicy": [
-        { "label": "0\u20133 yrs, in cot \u2014 \u20ac20/night (+ meals)", "mode": "flatPerNight", "amount": 20 },
-        { "label": "4\u20136 yrs \u2014 50% off", "mode": "percentOff", "amount": 50 },
-        { "label": "7+ yrs (3rd/4th bed) \u2014 35% off", "mode": "percentOff", "amount": 35 }
+        {
+          "label": "0\u20133 yrs, in cot \u2014 \u20ac20/night (+ meals)",
+          "mode": "flatPerNight",
+          "amount": 20
+        },
+        {
+          "label": "4\u20136 yrs \u2014 50% off",
+          "mode": "percentOff",
+          "amount": 50
+        },
+        {
+          "label": "7+ yrs (3rd/4th bed) \u2014 35% off",
+          "mode": "percentOff",
+          "amount": 35
+        }
       ],
       "weeks": [
         {
