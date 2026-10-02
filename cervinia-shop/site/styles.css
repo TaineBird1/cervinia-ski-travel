@@ -303,7 +303,7 @@ header.site-nav {
 .village-gallery .g-photo { height: 100%; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-brand-lg); }
 .village-gallery .g-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
 .village-gallery .g-photo:hover img { transform: scale(1.04); }
-.village-gallery .g-night { flex: 0.884; }
+.village-gallery .g-street { flex: 1; }
 .village-gallery .g-torch { flex: 1.333; }
 
 /* ---------- data grid (resort stats) ---------- */
@@ -592,6 +592,7 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
   .timeline { grid-template-columns: 1fr; }
   .village-gallery { flex-direction: column; height: auto; }
   .village-gallery .g-photo { height: auto; aspect-ratio: 4/3; }
+  .village-gallery .g-street { aspect-ratio: 1/1; }
   .form-grid { grid-template-columns: 1fr; }
   .footer-cols { gap: 32px; }
   .hero-actions .btn, .cta-banner .btn { width: 100%; justify-content: center; }
