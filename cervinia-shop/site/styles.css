@@ -247,7 +247,7 @@ header.site-nav {
 }
 .hero > .wrap { position: relative; z-index: 1; }
 .hero-content { max-width: 640px; }
-.hero-content .eyebrow { background: rgba(255,255,255,.1); color: var(--ice); }
+.hero-content .eyebrow { background: rgba(14,26,43,.55); backdrop-filter: blur(6px); color: var(--ice); text-shadow: 0 1px 3px rgba(0,0,0,.4); }
 .hero-content .eyebrow::before { background: var(--ice); }
 .hero h1 {
   font-weight: 500;
