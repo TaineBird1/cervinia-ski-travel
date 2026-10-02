@@ -241,7 +241,7 @@ header.site-nav {
   background:
     linear-gradient(180deg, rgba(8,16,28,.45) 0%, rgba(8,16,28,.15) 42%, rgba(8,16,28,.45) 75%, rgba(8,16,28,.82) 100%),
     radial-gradient(900px 600px at 82% 8%, rgba(225,86,122,.22) 0%, rgba(225,86,122,0) 55%),
-    url('/cervinia-hero-village-bluehour.jpg');
+    url('/cervinia-hero-village-wide.jpg');
   background-size: cover;
   background-position: center 34%;
 }
