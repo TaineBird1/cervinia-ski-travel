@@ -23,8 +23,8 @@ const RIGHT = 545;
 const WIDTH = RIGHT - LEFT;
 
 /**
- * Generates a PDF invoice for a paid order and saves it to /invoices/{order.id}.pdf
- * @param {object} order - { id, sessionId, customerName, customerEmail, customerPhone, items, subtotal, total, currency, createdAt, paymentIntentId }
+ * Generates a PDF quote for an enquiry and saves it to /invoices/{order.id}.pdf
+ * @param {object} order - { id, sessionId, customerName, customerEmail, customerPhone, items, subtotal, total, currency, createdAt }
  * @returns {string} absolute path to the generated PDF
  */
 function generateInvoicePDF(order) {
@@ -53,7 +53,7 @@ function generateInvoicePDF(order) {
 
   doc.rect(LEFT, boxTop, boxWidth, boxHeight).strokeColor(LINE).lineWidth(1).stroke();
   doc.moveTo(LEFT, boxTop + 26).lineTo(LEFT + boxWidth, boxTop + 26).strokeColor(LINE).stroke();
-  doc.fillColor(INK).fontSize(13).font('Helvetica-Bold').text('Invoice | Statement', LEFT + 10, boxTop + 6);
+  doc.fillColor(INK).fontSize(13).font('Helvetica-Bold').text('Quote Request', LEFT + 10, boxTop + 6);
 
   doc.fillColor(INK).fontSize(10).font('Helvetica');
   const clientLines = [
@@ -73,11 +73,11 @@ function generateInvoicePDF(order) {
   doc.fillColor(INK).fontSize(10).font('Helvetica-Bold')
     .text(new Date(order.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }), metaX, boxTop, { width: metaWidth, align: 'right' });
 
-  doc.fillColor(SLATE).fontSize(9).font('Helvetica-Oblique').text('Booking Ref:', metaX, boxTop + 18, { width: metaWidth, align: 'right' });
+  doc.fillColor(SLATE).fontSize(9).font('Helvetica-Oblique').text('Enquiry Ref:', metaX, boxTop + 18, { width: metaWidth, align: 'right' });
   doc.fillColor(INK).fontSize(9).font('Helvetica-Bold').text(order.id, metaX, boxTop + 30, { width: metaWidth, align: 'right' });
 
-  doc.fillColor(SLATE).fontSize(9).font('Helvetica-Oblique').text('Payment ref:', metaX, boxTop + 50, { width: metaWidth, align: 'right' });
-  doc.fillColor(INK).fontSize(8).font('Helvetica').text(order.paymentIntentId || order.sessionId, metaX, boxTop + 62, { width: metaWidth, align: 'right' });
+  doc.fillColor(SLATE).fontSize(9).font('Helvetica-Oblique').text('Status:', metaX, boxTop + 50, { width: metaWidth, align: 'right' });
+  doc.fillColor(INK).fontSize(9).font('Helvetica-Bold').text('Awaiting Confirmation', metaX, boxTop + 62, { width: metaWidth, align: 'right' });
 
   // ---------- Itemized table ----------
   const tableTop = boxTop + boxHeight + 24;
@@ -121,17 +121,17 @@ function generateInvoicePDF(order) {
   doc.fillColor(INK).text(`${currencySymbol}${order.subtotal.toFixed(2)}`, col.total, y);
   y += 20;
 
-  doc.fillColor(SLATE).font('Helvetica-Bold').text('Total Paid', col.unit, y);
+  doc.fillColor(SLATE).font('Helvetica-Bold').text('Estimated Total', col.unit, y);
   doc.fillColor(INK).text(`${currencySymbol}${order.total.toFixed(2)}`, col.total, y);
   y += 26;
 
-  doc.fillColor('#1fb959').font('Helvetica-Bold').fontSize(11).text('PAID IN FULL', col.unit, y);
+  doc.fillColor('#c87f0a').font('Helvetica-Bold').fontSize(11).text('NO PAYMENT TAKEN — QUOTE ONLY', col.unit, y);
 
   // ---------- Footer ----------
   const footerLineY = Math.max(740, y + 40);
   doc.moveTo(LEFT, footerLineY).lineTo(RIGHT, footerLineY).strokeColor(LINE).stroke();
   doc.fillColor(SLATE).font('Helvetica').fontSize(9)
-    .text('Thank you for booking with Cervinia Travel Services — we don\'t just go there, we are there.', LEFT, footerLineY + 10, { width: WIDTH, align: 'center' });
+    .text('Thank you for your enquiry with Cervinia Travel Services — we don\'t just go there, we are there.', LEFT, footerLineY + 10, { width: WIDTH, align: 'center' });
   doc.fillColor('#1f7fae').font('Helvetica-Oblique').fontSize(9)
     .text(`Cervinia Travel Services WhatsApp: ${BUSINESS.whatsapp}`, LEFT, footerLineY + 26, { width: WIDTH, align: 'center' })
     .text(BUSINESS.website, LEFT, footerLineY + 40, { width: WIDTH, align: 'center' });
@@ -151,11 +151,9 @@ function rule(doc) {
   doc.moveTo(LEFT, ruleY).lineTo(RIGHT, ruleY).strokeColor(LINE).stroke();
 }
 
-// Terms page appended to every invoice. Adapted from the client's reference
-// terms sheet — the payment-method wording there (bank transfer/EFT, "once
-// full payment received") assumed a manual bank-transfer booking, so it's
-// reworded here since this invoice is only ever generated after Stripe has
-// already collected full card payment.
+// Terms page appended to every quote. Adapted from the client's reference
+// terms sheet — reworded to make clear this document is an unpaid quote
+// generated from an enquiry, not a confirmed/paid booking.
 function addTermsPage(doc) {
   doc.addPage();
 
@@ -196,7 +194,7 @@ function addTermsPage(doc) {
 
   doc.moveDown(0.5);
   doc.font('Helvetica-Bold').fontSize(10).fillColor(INK)
-    .text('Full payment for this booking has been received — your travel documents can now be issued.', { align: 'center' });
+    .text('This is a price estimate, not a confirmed booking — our team will check availability and be in touch to confirm pricing and arrange payment.', { align: 'center' });
 
   doc.moveDown(0.8);
   rule(doc);

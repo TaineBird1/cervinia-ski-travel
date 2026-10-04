@@ -27,8 +27,8 @@
 
   const CURRENCY_SYMBOLS = { EUR: '€', GBP: '£', USD: '$' };
 
-  // All prices are stored and charged in EUR — this only converts what's
-  // DISPLAYED. Checkout always submits the original EUR amount to Stripe.
+  // All prices are stored and quoted in EUR — this only converts what's
+  // DISPLAYED. The enquiry always submits the original EUR amount.
   const fmt = (eur) => {
     const amount = Number(eur) * (state.fxRates[state.currency] || 1);
     return `${CURRENCY_SYMBOLS[state.currency]}${amount.toFixed(2)}`;
@@ -1018,7 +1018,7 @@
         fxNote.style.display = 'none';
       } else {
         fxNote.style.display = 'block';
-        fxNote.textContent = `${state.currency} shown for reference — you'll be charged ${fmt2(total, 'EUR')} in EUR at checkout.`;
+        fxNote.textContent = `${state.currency} shown for reference — your quote will be confirmed in ${fmt2(total, 'EUR')} EUR.`;
       }
     }
 
@@ -1143,22 +1143,22 @@
 
     const btn = document.getElementById('checkoutBtn');
     btn.disabled = true;
-    btn.textContent = 'Redirecting to secure checkout…';
+    btn.textContent = 'Sending your enquiry…';
 
     try {
-      const res = await fetch('/api/create-checkout-session', {
+      const res = await fetch('/api/inquire', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customerName, customerEmail, customerPhone, items: state.basket })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Checkout failed');
-      window.location.href = data.url;
+      if (!res.ok) throw new Error(data.error || 'Could not send your enquiry.');
+      window.location.href = `/shop/success.html?session_id=${encodeURIComponent(data.order.id)}`;
     } catch (err) {
       errorEl.textContent = err.message;
       errorEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Pay & Checkout';
+      btn.textContent = 'Send Enquiry';
     }
   });
 

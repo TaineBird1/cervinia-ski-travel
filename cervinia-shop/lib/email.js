@@ -2,17 +2,18 @@ const fs = require('fs');
 const resend = require('./emailClient');
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
+const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
 
 /**
- * Emails the generated invoice PDF to the customer. Skips silently if
+ * Emails the generated quote PDF to the customer. Skips silently if
  * RESEND_API_KEY isn't configured or the order has no customer email on
  * file — the PDF stays downloadable from the success page either way, so
- * a missing/misconfigured email setup never blocks a booking.
+ * a missing/misconfigured email setup never blocks an enquiry.
  */
 async function sendInvoiceEmail(order, pdfPath) {
   if (!resend) return;
   if (!order.customerEmail) {
-    console.warn(`No customer email on order ${order.id} — skipping invoice email.`);
+    console.warn(`No customer email on order ${order.id} — skipping quote email.`);
     return;
   }
 
@@ -20,22 +21,60 @@ async function sendInvoiceEmail(order, pdfPath) {
     await resend.emails.send({
       from: FROM_EMAIL,
       to: order.customerEmail,
-      subject: `Your Cervinia Travel Services booking — ${order.id}`,
+      subject: `Your Cervinia Travel Services quote — ${order.id}`,
       html: `
         <p>Hi ${order.customerName || 'there'},</p>
-        <p>Thanks for booking with Cervinia Travel Services! Your payment of €${order.total.toFixed(2)} has been received.</p>
-        <p>Your invoice is attached to this email.</p>
-        <p>Questions before your trip? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
-        <p>See you on the slopes — we don't just go there, we are there.</p>
+        <p>Thanks for your enquiry with Cervinia Travel Services! Here's a copy of your requested itinerary, totalling €${order.total.toFixed(2)}.</p>
+        <p>This is a price estimate based on current rates — no payment has been taken. Our local team will check availability and be in touch within 24 hours to confirm everything and arrange payment.</p>
+        <p>Your quote is attached to this email.</p>
+        <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
+        <p>We don't just go there, we are there.</p>
       `,
       attachments: [
-        { filename: `invoice-${order.id}.pdf`, content: fs.readFileSync(pdfPath).toString('base64') }
+        { filename: `quote-${order.id}.pdf`, content: fs.readFileSync(pdfPath).toString('base64') }
       ]
     });
-    console.log(`✅ Invoice emailed to ${order.customerEmail} for order ${order.id}`);
+    console.log(`✅ Quote emailed to ${order.customerEmail} for enquiry ${order.id}`);
   } catch (err) {
-    console.error(`Could not email invoice for order ${order.id}:`, err.message);
+    console.error(`Could not email quote for enquiry ${order.id}:`, err.message);
   }
 }
 
-module.exports = { sendInvoiceEmail };
+/**
+ * Notifies the business of a new enquiry — customer contact details plus
+ * the same itemized quote PDF, so no availability check is blind.
+ */
+async function sendEnquiryNotification(order, pdfPath) {
+  if (!resend) return;
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: BUSINESS_EMAIL,
+      subject: `New enquiry — ${order.customerName || 'Guest'} — €${order.total.toFixed(2)}`,
+      html: `
+        <p>New enquiry received from the website:</p>
+        <ul>
+          <li><strong>Name:</strong> ${order.customerName || '—'}</li>
+          <li><strong>Email:</strong> ${order.customerEmail || '—'}</li>
+          <li><strong>Phone:</strong> ${order.customerPhone || '—'}</li>
+          <li><strong>Reference:</strong> ${order.id}</li>
+          <li><strong>Estimated total:</strong> €${order.total.toFixed(2)}</li>
+        </ul>
+        <p><strong>Items requested:</strong></p>
+        <ul>
+          ${order.items.map((item) => `<li>${item.name} × ${item.qty} — €${item.total.toFixed(2)}</li>`).join('')}
+        </ul>
+        <p>The full itemized quote is attached as a PDF.</p>
+      `,
+      attachments: [
+        { filename: `quote-${order.id}.pdf`, content: fs.readFileSync(pdfPath).toString('base64') }
+      ]
+    });
+    console.log(`✅ Enquiry notification emailed to ${BUSINESS_EMAIL} for ${order.id}`);
+  } catch (err) {
+    console.error(`Could not email enquiry notification for ${order.id}:`, err.message);
+  }
+}
+
+module.exports = { sendInvoiceEmail, sendEnquiryNotification };

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Booking Confirmed | Cervinia Travel Services</title>
+<title>Enquiry Sent | Cervinia Travel Services</title>
 <link rel="stylesheet" href="/shop/css/styles.css">
 <style>
   .confirm-wrap{max-width:640px; margin:0 auto; padding:80px 24px; text-align:center;}
@@ -28,13 +28,14 @@
 
   <div class="confirm-wrap">
     <div class="confirm-icon">🎉</div>
-    <h1>Thank you — your booking is confirmed!</h1>
-    <p class="status-msg" id="statusMsg">Finalizing your order…</p>
+    <h1>Thank you — your enquiry is on its way!</h1>
+    <p class="status-msg" id="statusMsg">Finalizing your enquiry…</p>
 
     <div class="confirm-card" id="orderCard" style="display:none;"></div>
 
-    <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Download Invoice (PDF)</a>
-    <p style="margin-top:24px;"><a href="/shop" style="color:var(--blue); font-weight:700;">← Back to booking</a></p>
+    <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Download Your Quote (PDF)</a>
+    <p style="margin-top:20px; color:var(--slate); font-size:0.9rem;">No payment has been taken. We've emailed you a copy of this quote — our local team will check availability and be in touch within 24 hours.</p>
+    <p style="margin-top:24px;"><a href="/shop" style="color:var(--blue); font-weight:700;">← Back to itinerary builder</a></p>
   </div>
 
 <script>
@@ -45,7 +46,7 @@
   const downloadBtn = document.getElementById('downloadBtn');
 
   if (!sessionId) {
-    statusMsg.textContent = 'No order reference found.';
+    statusMsg.textContent = 'No enquiry reference found.';
   } else {
     localStorage.removeItem('cervinia_basket');
     poll(0);
@@ -58,19 +59,19 @@
         if (data.status === 'paid') {
           renderOrder(data.order);
         } else if (attempt < 10) {
-          statusMsg.textContent = 'Confirming payment…';
+          statusMsg.textContent = 'Preparing your quote…';
           setTimeout(() => poll(attempt + 1), 1500);
         } else {
-          statusMsg.textContent = 'Payment received — your invoice is being prepared. Refresh in a moment.';
+          statusMsg.textContent = 'Almost ready — refresh in a moment if this doesn\'t update.';
         }
       })
       .catch(() => {
-        statusMsg.textContent = 'Could not confirm your order automatically — check your email or contact us.';
+        statusMsg.textContent = 'Could not load your enquiry automatically — check your email or contact us.';
       });
   }
 
   function renderOrder(order) {
-    statusMsg.textContent = `Booking reference: ${order.id}`;
+    statusMsg.textContent = `Enquiry reference: ${order.id}`;
     orderCard.style.display = 'block';
     orderCard.innerHTML = order.items.map((item) => `
       <div class="confirm-row">
@@ -79,7 +80,7 @@
       </div>
     `).join('') + `
       <div class="confirm-row confirm-total">
-        <span>Total Paid</span>
+        <span>Estimated Total</span>
         <span>€${order.total.toFixed(2)}</span>
       </div>
     `;

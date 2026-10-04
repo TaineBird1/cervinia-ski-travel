@@ -5,7 +5,7 @@ const path = require('path');
 const stripe = require('../lib/stripeClient');
 const orderStore = require('../lib/orderStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
-const { sendInvoiceEmail } = require('../lib/email');
+const { sendInvoiceEmail, sendEnquiryNotification } = require('../lib/email');
 
 const router = express.Router();
 
@@ -22,6 +22,61 @@ router.get('/pricing', (req, res) => {
 router.get('/hotels', (req, res) => {
   const hotels = JSON.parse(fs.readFileSync(HOTELS_PATH, 'utf8'));
   res.json(hotels);
+});
+
+// POST /api/inquire
+// body: { customerName, customerEmail, customerPhone, items: [{ id, name, unitPrice, qty }] }
+// Builds a quote from the basket, emails a copy to the customer and a
+// notification (with the same quote attached) to the business — no
+// payment is taken. Replaces the old Stripe checkout flow below, which is
+// left in place but unused by the frontend.
+router.post('/inquire', async (req, res) => {
+  try {
+    const { customerName, customerEmail, customerPhone, items } = req.body;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Your basket is empty.' });
+    }
+    if (!customerName || !customerName.trim()) {
+      return res.status(400).json({ error: 'Please enter a name for the enquiry.' });
+    }
+    if (!customerEmail || !emailPattern.test(customerEmail.trim())) {
+      return res.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+
+    const normalizedItems = items.map((item) => {
+      const qty = Math.max(1, parseInt(item.qty, 10) || 1);
+      const unitPrice = Number(item.unitPrice) || 0;
+      return { name: item.name, qty, unitPrice, total: unitPrice * qty };
+    });
+    const total = normalizedItems.reduce((sum, item) => sum + item.total, 0);
+
+    const id = `inq_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const order = {
+      id,
+      sessionId: id,
+      status: 'enquiry',
+      customerName: customerName.trim(),
+      customerEmail: customerEmail.trim(),
+      customerPhone: (customerPhone || '').trim().slice(0, 40),
+      items: normalizedItems,
+      subtotal: total,
+      total,
+      currency: 'EUR',
+      createdAt: new Date().toISOString()
+    };
+
+    orderStore.save(order);
+    await generateInvoicePDF(order);
+    await sendInvoiceEmail(order, invoicePath(order.id));
+    await sendEnquiryNotification(order, invoicePath(order.id));
+
+    res.json({ ok: true, order });
+  } catch (err) {
+    console.error('inquire error:', err);
+    res.status(500).json({ error: 'Could not send your enquiry. Please try again or WhatsApp us directly.' });
+  }
 });
 
 // POST /api/create-checkout-session

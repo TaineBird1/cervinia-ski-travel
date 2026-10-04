@@ -80,7 +80,7 @@
 <div id="loginScreen" class="login-wrap">
   <div class="login-card">
     <h1>Admin Dashboard</h1>
-    <p>Cervinia Travel Services — revenue &amp; bookings</p>
+    <p>Cervinia Travel Services — enquiries &amp; quotes</p>
     <form id="loginForm">
       <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password" required>
       <button type="submit">Log In</button>
@@ -100,11 +100,11 @@
   <main class="wrap">
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="label">Total Revenue</div>
+        <div class="label">Total Quoted Value</div>
         <div class="value" id="statTotalRevenue">—</div>
       </div>
       <div class="stat-card">
-        <div class="label">Total Bookings</div>
+        <div class="label">Total Enquiries</div>
         <div class="value" id="statTotalBookings">—</div>
       </div>
       <div class="stat-card">
@@ -119,12 +119,12 @@
     </div>
 
     <section class="panel">
-      <h2>Revenue by Category</h2>
+      <h2>Quoted Value by Category</h2>
       <div id="categoryBreakdown"></div>
     </section>
 
     <section class="panel">
-      <h2>Recent Bookings</h2>
+      <h2>Recent Enquiries</h2>
       <div id="recentOrdersWrap"></div>
     </section>
   </main>
@@ -163,12 +163,12 @@
     document.getElementById('statTotalBookings').textContent = data.totalBookings;
     document.getElementById('statUniqueCustomers').textContent = data.uniqueCustomers;
     document.getElementById('statRevenue30d').textContent = fmt(data.revenueLast30d);
-    document.getElementById('statBookings30d').textContent = `${data.bookingsLast30d} booking${data.bookingsLast30d === 1 ? '' : 's'}`;
+    document.getElementById('statBookings30d').textContent = `${data.bookingsLast30d} enquir${data.bookingsLast30d === 1 ? 'y' : 'ies'}`;
 
     const catEl = document.getElementById('categoryBreakdown');
     const entries = Object.entries(data.categoryTotals).sort((a, b) => b[1] - a[1]);
     if (entries.length === 0) {
-      catEl.innerHTML = '<p class="empty-note">No bookings yet.</p>';
+      catEl.innerHTML = '<p class="empty-note">No enquiries yet.</p>';
     } else {
       const max = Math.max(...entries.map(([, v]) => v));
       catEl.innerHTML = entries.map(([name, value]) => `
@@ -182,7 +182,7 @@
 
     const ordersEl = document.getElementById('recentOrdersWrap');
     if (data.recentOrders.length === 0) {
-      ordersEl.innerHTML = '<p class="empty-note">No bookings yet — they\'ll show up here as soon as a customer checks out.</p>';
+      ordersEl.innerHTML = '<p class="empty-note">No enquiries yet — they\'ll show up here as soon as a customer sends one.</p>';
     } else {
       ordersEl.innerHTML = `
         <table>
