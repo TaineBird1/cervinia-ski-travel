@@ -370,6 +370,8 @@ header.site-nav {
 .ww-stat { display: flex; flex-direction: column; }
 .ww-stat-num { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--paper-title); }
 .ww-stat-label { font-size: 11.5px; color: var(--paper-body); margin-top: 2px; max-width: 130px; }
+.ww-webcam-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 16px; font-size: 13px; font-weight: 700; color: var(--alpenglow-deep); text-decoration: underline; text-underline-offset: 3px; }
+.ww-webcam-link:hover { color: var(--alpenglow); }
 
 @media (max-width: 720px) {
   .ww-body { gap: 16px; }
