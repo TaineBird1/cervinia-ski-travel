@@ -5,7 +5,7 @@ const path = require('path');
 const stripe = require('../lib/stripeClient');
 const orderStore = require('../lib/orderStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
-const { sendInvoiceEmail, sendEnquiryNotification } = require('../lib/email');
+const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment } = require('../lib/email');
 
 const router = express.Router();
 
@@ -75,6 +75,48 @@ router.post('/inquire', async (req, res) => {
     res.json({ ok: true, order });
   } catch (err) {
     console.error('inquire error:', err);
+    res.status(500).json({ error: 'Could not send your enquiry. Please try again or WhatsApp us directly.' });
+  }
+});
+
+// POST /api/contact
+// body: { name, email, arrival, departure, groupSize, needs: [], notes, lang }
+// Marketing-site contact form (accommodation/custom requests — no priced
+// basket). Emails the business so the enquiry is never missed, and sends
+// the customer an immediate acknowledgment, regardless of whether their
+// device has a mail client configured for the mailto: link this replaces.
+router.post('/contact', async (req, res) => {
+  try {
+    const { name, email, arrival, departure, groupSize, needs, notes, lang } = req.body;
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Please enter your name.' });
+    }
+    if (!email || !emailPattern.test(email.trim())) {
+      return res.status(400).json({ error: 'Please enter a valid email address.' });
+    }
+    if (!arrival || !departure) {
+      return res.status(400).json({ error: 'Please choose your arrival and departure dates.' });
+    }
+
+    const contact = {
+      name: name.trim().slice(0, 200),
+      email: email.trim().slice(0, 200),
+      arrival,
+      departure,
+      groupSize: (groupSize || '').toString().slice(0, 60),
+      needs: Array.isArray(needs) ? needs.slice(0, 20).map((n) => String(n).slice(0, 60)) : [],
+      notes: (notes || '').toString().slice(0, 2000),
+      lang: (lang || 'en').toString().slice(0, 5)
+    };
+
+    await sendContactNotification(contact);
+    await sendContactAcknowledgment(contact);
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('contact error:', err);
     res.status(500).json({ error: 'Could not send your enquiry. Please try again or WhatsApp us directly.' });
   }
 });

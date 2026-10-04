@@ -77,4 +77,61 @@ async function sendEnquiryNotification(order, pdfPath) {
   }
 }
 
-module.exports = { sendInvoiceEmail, sendEnquiryNotification };
+/**
+ * Notifies the business of a new marketing-site contact-form enquiry
+ * (accommodation/custom requests — no priced basket, just free-text details).
+ */
+async function sendContactNotification(contact) {
+  if (!resend) return;
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: BUSINESS_EMAIL,
+      subject: `New website enquiry — ${contact.name}`,
+      html: `
+        <p>New enquiry received from the website contact form:</p>
+        <ul>
+          <li><strong>Name:</strong> ${contact.name}</li>
+          <li><strong>Email:</strong> ${contact.email}</li>
+          <li><strong>Arrival:</strong> ${contact.arrival}</li>
+          <li><strong>Departure:</strong> ${contact.departure}</li>
+          <li><strong>Group size:</strong> ${contact.groupSize || '—'}</li>
+          <li><strong>Services needed:</strong> ${contact.needs && contact.needs.length ? contact.needs.join(', ') : '—'}</li>
+          <li><strong>Page language:</strong> ${contact.lang || 'en'}</li>
+        </ul>
+        <p><strong>Notes:</strong> ${contact.notes || '—'}</p>
+      `
+    });
+    console.log(`✅ Contact-form enquiry emailed to ${BUSINESS_EMAIL} from ${contact.email}`);
+  } catch (err) {
+    console.error('Could not email contact-form notification:', err.message);
+  }
+}
+
+/**
+ * Acknowledges the customer's marketing-site enquiry immediately, so they
+ * know it arrived even if the site itself gives no other confirmation.
+ */
+async function sendContactAcknowledgment(contact) {
+  if (!resend) return;
+
+  try {
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: contact.email,
+      subject: 'We received your enquiry — Cervinia Travel Services',
+      html: `
+        <p>Hi ${contact.name},</p>
+        <p>Thanks for getting in touch with Cervinia Travel Services! We've received your enquiry for ${contact.arrival} to ${contact.departure} and our local team will check availability and be in touch within 24 hours (CET) with a tailored quote.</p>
+        <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
+        <p>We don't just go there, we are there.</p>
+      `
+    });
+    console.log(`✅ Contact-form acknowledgment emailed to ${contact.email}`);
+  } catch (err) {
+    console.error('Could not email contact-form acknowledgment:', err.message);
+  }
+}
+
+module.exports = { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment };

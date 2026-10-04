@@ -49,29 +49,89 @@ function selectedChipValues(groupId) {
   return Array.from(el.querySelectorAll('.chip.active')).map(c => c.dataset.value);
 }
 
-// Quote form -> mailto summary (no backend on this static site)
+// Quote form -> POST /api/contact (emails the business reliably + acknowledges the customer)
 const form = document.getElementById('quoteForm');
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const data = new FormData(form);
-  const get = (k) => data.get(k) || '—';
+if (form) {
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const submitLabel = submitBtn.textContent;
+  const statusEl = document.getElementById('formStatus');
+  const formLang = document.documentElement.lang || 'en';
 
-  const groupSize = selectedChipValues('groupSizeChips')[0] || '—';
-  const needs = selectedChipValues('needsChips');
+  const FORM_STRINGS = {
+    en: {
+      sending: 'Sending…',
+      success: "Thanks — your enquiry is on its way. We'll be in touch within 24 hours (CET).",
+      missingName: 'Please enter your name.',
+      missingEmail: 'Please enter a valid email address.',
+      missingDates: 'Please choose your arrival and departure dates.',
+      error: 'Something went wrong sending your enquiry — please try again or WhatsApp us directly.'
+    },
+    fr: {
+      sending: 'Envoi en cours…',
+      success: 'Merci — votre demande est en route. Nous vous répondrons sous 24 heures (HEC).',
+      missingName: 'Veuillez indiquer votre nom.',
+      missingEmail: 'Veuillez saisir une adresse e-mail valide.',
+      missingDates: "Veuillez choisir vos dates d'arrivée et de départ.",
+      error: "Une erreur s'est produite lors de l'envoi — veuillez réessayer ou nous contacter sur WhatsApp."
+    },
+    de: {
+      sending: 'Wird gesendet…',
+      success: 'Danke — Ihre Anfrage ist unterwegs. Wir melden uns innerhalb von 24 Stunden (MEZ).',
+      missingName: 'Bitte geben Sie Ihren Namen ein.',
+      missingEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
+      missingDates: 'Bitte wählen Sie Ankunfts- und Abreisedatum.',
+      error: 'Beim Senden ist ein Fehler aufgetreten — bitte versuchen Sie es erneut oder schreiben Sie uns auf WhatsApp.'
+    }
+  };
+  const ft = FORM_STRINGS[formLang] || FORM_STRINGS.en;
 
-  const body = [
-    `Name: ${get('fname')}`,
-    `Email: ${get('femail')}`,
-    `Arrival: ${get('arrival')}`,
-    `Departure: ${get('departure')}`,
-    `Group size: ${groupSize}`,
-    `Services needed: ${needs.length ? needs.join(', ') : 'None selected'}`,
-    `Notes: ${get('notes')}`
-  ].join('\n');
+  function showFormStatus(message, isError) {
+    if (!statusEl) return;
+    statusEl.textContent = message || '';
+    statusEl.classList.toggle('is-error', !!message && !!isError);
+    statusEl.classList.toggle('is-success', !!message && !isError);
+  }
 
-  const mailto = `mailto:info@cerviniatravelservices.com?subject=${encodeURIComponent('Cervinia Travel Services - Quote Request')}&body=${encodeURIComponent(body)}`;
-  window.open(mailto, '_blank');
-});
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const get = (k) => (data.get(k) || '').trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const name = get('fname');
+    const email = get('femail');
+    const arrival = get('arrival');
+    const departure = get('departure');
+
+    if (!name) return showFormStatus(ft.missingName, true);
+    if (!emailPattern.test(email)) return showFormStatus(ft.missingEmail, true);
+    if (!arrival || !departure) return showFormStatus(ft.missingDates, true);
+
+    const groupSize = selectedChipValues('groupSizeChips')[0] || '—';
+    const needs = selectedChipValues('needsChips');
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = ft.sending;
+    showFormStatus('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, arrival, departure, groupSize, needs, notes: get('notes'), lang: formLang })
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || ft.error);
+      form.reset();
+      showFormStatus(ft.success, false);
+    } catch (err) {
+      showFormStatus(err.message || ft.error, true);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = submitLabel;
+    }
+  });
+}
 
 // ---------- Live mountain weather widget (Open-Meteo, no API key needed) ----------
 (function initWeatherWidget() {
