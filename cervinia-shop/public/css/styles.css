@@ -246,6 +246,29 @@ footer{background:var(--ink-dark); color:#b7cbd8; padding:26px 0; margin-top:20p
 }
 .wa-float:hover{transform:scale(1.1); box-shadow:0 18px 40px -8px rgba(37,211,102,0.7);}
 
+/* SKI-RUN TRACK — dashed run down the right margin through the category sections.
+   It drifts gently right, then runs straight down; the next section mirrors it back,
+   so every section starts at the x where the one above ended and the line reads as
+   unbroken (short top overlap hides the seam). Decorative: behind content, no clicks,
+   hidden when the margin is too narrow. */
+:root{--track-drift-right:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 600' preserveAspectRatio='none'%3E%3Cpath d='M60 0 L60 90 C60 200 111 230 111 372 L111 600' fill='none' stroke='%237fa8c9' stroke-opacity='.38' stroke-width='2' stroke-dasharray='7 9' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E"); --track-drift-left:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 600' preserveAspectRatio='none'%3E%3Cpath d='M111 0 L111 228 C111 370 60 400 60 510 L60 600' fill='none' stroke='%237fa8c9' stroke-opacity='.38' stroke-width='2' stroke-dasharray='7 9' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");}
+#accommodation, #transfers, #equipment, #passes, #lessons{position:relative;}
+#accommodation::before, #transfers::before, #equipment::before, #passes::before, #lessons::before{
+  content:"";
+  position:absolute;
+  top:-48px; bottom:0; right:24px;
+  width:140px;
+  z-index:0;
+  pointer-events:none;
+  background:var(--track-drift-right) no-repeat 0 0 / 100% 100%;
+}
+#transfers::before, #passes::before{background-image:var(--track-drift-left);}
+#accommodation::before{top:0;}
+#accommodation > .wrap, #transfers > .wrap, #equipment > .wrap, #passes > .wrap, #lessons > .wrap{position:relative; z-index:1;}
+@media (max-width:1240px){
+  #accommodation::before, #transfers::before, #equipment::before, #passes::before, #lessons::before{display:none;}
+}
+
 @media (max-width:768px){
   .header-inner{justify-content:center;}
   .basket-drawer{width:100vw;}
