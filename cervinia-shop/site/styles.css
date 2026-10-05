@@ -568,8 +568,26 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
   50% { box-shadow: 0 14px 32px -8px rgba(37,211,102,.6), 0 0 0 10px rgba(37,211,102,0); }
 }
 
+/* ============================================================ ski-run track
+   One dashed run flowing down the right margin through the consecutive
+   text sections. Every section's path enters and exits at the same x, and
+   each draws a short overlap above its top edge, so the line reads as
+   unbroken across the seams. Decorative only: behind content, no clicks. */
+#services::before, #process::before, #stay::before, #know::before {
+  content: "";
+  position: absolute;
+  top: -48px; bottom: 0; right: 24px;
+  width: 140px;
+  z-index: 0;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 600' preserveAspectRatio='none'%3E%3Cpath d='M70 0 L70 70 C70 150 110 170 110 250 S30 330 30 410 S70 490 70 530 L70 600' fill='none' stroke='%237fa8c9' stroke-opacity='.38' stroke-width='2' stroke-dasharray='7 9' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%;
+}
+#services::before { top: 0; }
+#services > .wrap, #process > .wrap, #stay > .wrap, #know > .wrap { position: relative; z-index: 1; }
+
 /* ============================================================ responsive */
 @media (max-width: 980px) {
+  #services::before, #process::before, #stay::before, #know::before { display: none; }
   .hero { min-height: 520px; padding-top: 110px; }
   .split { grid-template-columns: 1fr; gap: 36px; }
   .split.reverse .split-media { order: 0; }
