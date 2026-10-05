@@ -186,7 +186,7 @@ header.site-nav {
   gap: 20px;
 }
 .logo { display: flex; align-items: center; }
-.logo img { height: 58px; width: auto; }
+.logo img { height: 84px; width: auto; }
 
 .nav-cta { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 
@@ -632,6 +632,7 @@ main > section.band > .wrap { position: relative; z-index: 1; }
 }
 
 @media (max-width: 720px) {
+  .logo img { height: 66px; }
   .wrap { padding: 0 20px; }
   section.band { padding: 64px 0; }
   .services-grid, .hotel-grid, .data-grid, .info-strip { grid-template-columns: 1fr; }
