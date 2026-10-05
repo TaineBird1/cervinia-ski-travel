@@ -567,6 +567,19 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
   50% { box-shadow: 0 14px 32px -8px rgba(37,211,102,.6), 0 0 0 10px rgba(37,211,102,0); }
 }
 
+/* ---------- fillers for the last, otherwise-empty grid cells ---------- */
+.tl-cta, .hotel-more { background: #14223f; border: 1px solid rgba(217,166,83,.65); }
+.tl-cta { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.tl-cta h3 { font-family: var(--font-head); font-weight: 500; font-size: 24px; line-height: 1.2; color: var(--snow); margin: 0 0 10px; }
+.tl-cta p { color: var(--muted); margin: 0 0 20px; }
+.hotel-more { display: flex; flex-direction: column; justify-content: center; }
+.hotel-more:hover { border-color: var(--gold); }
+.hotel-more .hn { color: var(--gold); }
+.hotel-more h4 { font-family: var(--font-head); font-weight: 500; font-size: 22px; line-height: 1.2; color: var(--snow); margin: 12px 0 8px; }
+.hotel-more p { color: var(--muted); }
+.hotel-more .hotel-price-link { color: var(--gold); }
+.hotel-more .hotel-price-link:hover { color: var(--snow); }
+
 /* ============================================================ ski imprint
    A small, faint pair of ski tracks (with pole marks) in the empty space beside
    section headings. Decorative: behind content, no clicks, desktop only. */
@@ -642,7 +655,7 @@ main > section.band > .wrap { position: relative; z-index: 1; }
   .intake-wrap { grid-template-columns: 1fr; }
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
   .stat:nth-child(2n) { border-right: none; }
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-flow: dense; }
   .timeline { grid-template-columns: repeat(2, 1fr); }
 }
 
