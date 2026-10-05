@@ -568,10 +568,11 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
 }
 
 /* ============================================================ ski-run track
-   One dashed run flowing down the right margin through the consecutive
-   text sections. Every section's path enters and exits at the same x, and
-   each draws a short overlap above its top edge, so the line reads as
-   unbroken across the seams. Decorative only: behind content, no clicks. */
+   Dashed run down the right margin through the consecutive text sections. It
+   drifts gently right, then runs straight down; the next section mirrors it back,
+   so each starts at the x where the one above ended and the line reads as unbroken
+   (short top overlap hides the seam). Decorative: behind content, no clicks. */
+:root { --track-drift-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 600' preserveAspectRatio='none'%3E%3Cpath d='M60 0 L60 90 C60 200 111 230 111 372 L111 600' fill='none' stroke='%237fa8c9' stroke-opacity='.38' stroke-width='2' stroke-dasharray='7 9' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E"); --track-drift-left: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 600' preserveAspectRatio='none'%3E%3Cpath d='M111 0 L111 228 C111 370 60 400 60 510 L60 600' fill='none' stroke='%237fa8c9' stroke-opacity='.38' stroke-width='2' stroke-dasharray='7 9' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E"); }
 #services::before, #process::before, #stay::before, #know::before {
   content: "";
   position: absolute;
@@ -579,8 +580,9 @@ footer { padding: 56px 0 28px; background: var(--brand-dark); }
   width: 140px;
   z-index: 0;
   pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 600' preserveAspectRatio='none'%3E%3Cpath d='M70 0 L70 70 C70 150 110 170 110 250 S30 330 30 410 S70 490 70 530 L70 600' fill='none' stroke='%237fa8c9' stroke-opacity='.38' stroke-width='2' stroke-dasharray='7 9' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%;
+  background: var(--track-drift-right) no-repeat 0 0 / 100% 100%;
 }
+#process::before, #know::before { background-image: var(--track-drift-left); }
 #services::before { top: 0; }
 #services > .wrap, #process > .wrap, #stay > .wrap, #know > .wrap { position: relative; z-index: 1; }
 
