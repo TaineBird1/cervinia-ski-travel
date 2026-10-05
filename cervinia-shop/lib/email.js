@@ -4,6 +4,13 @@ const resend = require('./emailClient');
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
 const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
 
+// The Resend SDK resolves with { error } on rejected sends (bad recipient,
+// unverified domain, ...) instead of throwing, so surface it to the callers' catch.
+async function send(payload) {
+  const { error } = await resend.emails.send(payload);
+  if (error) throw new Error(`${error.name || 'resend_error'}: ${error.message}`);
+}
+
 /**
  * Emails the generated quote PDF to the customer. Skips silently if
  * RESEND_API_KEY isn't configured or the order has no customer email on
@@ -18,7 +25,7 @@ async function sendInvoiceEmail(order, pdfPath) {
   }
 
   try {
-    await resend.emails.send({
+    await send({
       from: FROM_EMAIL,
       to: order.customerEmail,
       subject: `Your Cervinia Travel Services quote — ${order.id}`,
@@ -48,7 +55,7 @@ async function sendEnquiryNotification(order, pdfPath) {
   if (!resend) return;
 
   try {
-    await resend.emails.send({
+    await send({
       from: FROM_EMAIL,
       to: BUSINESS_EMAIL,
       subject: `New enquiry — ${order.customerName || 'Guest'} — €${order.total.toFixed(2)}`,
@@ -85,7 +92,7 @@ async function sendContactNotification(contact) {
   if (!resend) return;
 
   try {
-    await resend.emails.send({
+    await send({
       from: FROM_EMAIL,
       to: BUSINESS_EMAIL,
       subject: `New website enquiry — ${contact.name}`,
@@ -117,7 +124,7 @@ async function sendContactAcknowledgment(contact) {
   if (!resend) return;
 
   try {
-    await resend.emails.send({
+    await send({
       from: FROM_EMAIL,
       to: contact.email,
       subject: 'We received your enquiry — Cervinia Travel Services',
