@@ -6,6 +6,7 @@ const stripe = require('../lib/stripeClient');
 const orderStore = require('../lib/orderStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
 const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment } = require('../lib/email');
+const { BANK, groupIban } = require('../lib/bankDetails');
 
 const router = express.Router();
 
@@ -22,6 +23,11 @@ router.get('/pricing', (req, res) => {
 router.get('/hotels', (req, res) => {
   const hotels = JSON.parse(fs.readFileSync(HOTELS_PATH, 'utf8'));
   res.json(hotels);
+});
+
+// GET /api/bank-details — direct bank-transfer details for the enquiry-sent page
+router.get('/bank-details', (req, res) => {
+  res.json({ ...BANK, ibanGrouped: groupIban(BANK.iban) });
 });
 
 // POST /api/inquire

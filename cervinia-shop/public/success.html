@@ -34,6 +34,7 @@
     <div class="confirm-card" id="orderCard" style="display:none;"></div>
 
     <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Download Your Quote (PDF)</a>
+    <div class="confirm-card" id="bankCard" style="display:none;"></div>
     <p style="margin-top:20px; color:var(--slate); font-size:0.9rem;">No payment has been taken. We've emailed you a copy of this quote — our local team will check availability and be in touch within 24 hours.</p>
     <p style="margin-top:24px;"><a href="/shop" style="color:var(--blue); font-weight:700;">← Back to itinerary builder</a></p>
   </div>
@@ -86,6 +87,31 @@
     `;
     downloadBtn.href = `/api/invoice/${order.id}`;
     downloadBtn.style.display = 'inline-block';
+    showBankDetails(order);
+  }
+
+  function showBankDetails(order) {
+    fetch('/api/bank-details')
+      .then((r) => r.json())
+      .then((b) => {
+        const rows = [
+          ['Account name', b.accountName],
+          ['Bank', `${b.bankName}, ${b.bankAddress}`],
+          ['Account (Conto)', b.accountNumber],
+          ['IBAN', b.ibanGrouped],
+          ['BIC / SWIFT', b.bic],
+          ['Payment reference', order.id]
+        ];
+        const bankCard = document.getElementById('bankCard');
+        bankCard.innerHTML = `
+          <h3 style="margin-bottom:6px;">Prefer to pay by bank transfer?</h3>
+          <p style="color:var(--slate); font-size:0.88rem; margin-bottom:10px;">Once we have confirmed your booking you can pay directly into our account. Please only pay after we have confirmed availability and your final price.</p>
+        ` + rows.map(([label, value]) => `
+          <div class="confirm-row"><span>${label}</span><strong style="text-align:right;">${value}</strong></div>
+        `).join('');
+        bankCard.style.display = 'block';
+      })
+      .catch(() => {});
   }
 </script>
 

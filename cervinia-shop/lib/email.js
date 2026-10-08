@@ -1,5 +1,6 @@
 const fs = require('fs');
 const resend = require('./emailClient');
+const { BANK, groupIban } = require('./bankDetails');
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
 const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
@@ -33,6 +34,15 @@ async function sendInvoiceEmail(order, pdfPath) {
         <p>Hi ${order.customerName || 'there'},</p>
         <p>Thanks for your enquiry with Cervinia Travel Services! Here's a copy of your requested itinerary, totalling €${order.total.toFixed(2)}.</p>
         <p>This is a price estimate based on current rates — no payment has been taken. Our local team will check availability and be in touch within 24 hours to confirm everything and arrange payment.</p>
+        <p><strong>Paying by bank transfer.</strong> Once we have confirmed your booking, you can pay directly into our account — please only pay after we have confirmed:</p>
+        <table style="border-collapse:collapse;font-size:14px;margin:0 0 14px;">
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Account name</td><td style="padding:3px 0;"><strong>${BANK.accountName}</strong></td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Bank</td><td style="padding:3px 0;">${BANK.bankName}, ${BANK.bankAddress}</td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Account (Conto)</td><td style="padding:3px 0;">${BANK.accountNumber}</td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">IBAN</td><td style="padding:3px 0;"><strong>${groupIban(BANK.iban)}</strong></td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">BIC / SWIFT</td><td style="padding:3px 0;">${BANK.bic}</td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Payment reference</td><td style="padding:3px 0;"><strong>${order.id}</strong></td></tr>
+        </table>
         <p>Your quote is attached to this email.</p>
         <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
         <p>We don't just go there, we are there.</p>

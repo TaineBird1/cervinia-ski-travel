@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const { BANK, groupIban } = require('./bankDetails');
 
 const INVOICES_DIR = path.join(__dirname, '..', 'invoices');
 if (!fs.existsSync(INVOICES_DIR)) fs.mkdirSync(INVOICES_DIR, { recursive: true });
@@ -125,7 +126,10 @@ function generateInvoicePDF(order) {
   doc.fillColor(INK).text(`${currencySymbol}${order.total.toFixed(2)}`, col.total, y);
   y += 26;
 
-  doc.fillColor('#c87f0a').font('Helvetica-Bold').fontSize(11).text('NO PAYMENT TAKEN — QUOTE ONLY', col.unit, y);
+  doc.fillColor('#c87f0a').font('Helvetica-Bold').fontSize(11).text('NO PAYMENT TAKEN — QUOTE ONLY', LEFT, y, { width: WIDTH, align: 'right' });
+  y += 18;
+  doc.fillColor(SLATE).font('Helvetica').fontSize(8.5)
+    .text('Bank transfer details are on page 2 - please only pay once we have confirmed your booking.', LEFT, y, { width: RIGHT - LEFT, align: 'right' });
 
   // ---------- Footer ----------
   const footerLineY = Math.max(740, y + 40);
@@ -136,7 +140,7 @@ function generateInvoicePDF(order) {
     .text(`Cervinia Travel Services WhatsApp: ${BUSINESS.whatsapp}`, LEFT, footerLineY + 26, { width: WIDTH, align: 'center' })
     .text(BUSINESS.website, LEFT, footerLineY + 40, { width: WIDTH, align: 'center' });
 
-  addTermsPage(doc);
+  addTermsPage(doc, order);
 
   doc.end();
 
@@ -151,11 +155,46 @@ function rule(doc) {
   doc.moveTo(LEFT, ruleY).lineTo(RIGHT, ruleY).strokeColor(LINE).stroke();
 }
 
+// "Pay by direct bank transfer" panel at the top of the terms page.
+function addBankBox(doc, order) {
+  const top = doc.y;
+  const rows = [
+    ['Account name', BANK.accountName],
+    ['Bank', `${BANK.bankName}, ${BANK.bankAddress}`],
+    ['Account (Conto)', BANK.accountNumber],
+    ['IBAN', groupIban(BANK.iban)],
+    ['BIC / SWIFT', BANK.bic],
+    ['Payment reference', order.id]
+  ];
+  const rowH = 16;
+  const boxH = 30 + rows.length * rowH + 40;
+
+  doc.rect(LEFT, top, WIDTH, boxH).fillAndStroke('#f2f8fb', LINE);
+  doc.fillColor(INK).font('Helvetica-Bold').fontSize(12).text('Pay by direct bank transfer', LEFT + 12, top + 10);
+
+  let y = top + 32;
+  rows.forEach(([label, value]) => {
+    doc.fillColor(SLATE).font('Helvetica').fontSize(9.5).text(label, LEFT + 12, y, { width: 110 });
+    doc.fillColor(INK).font('Helvetica-Bold').fontSize(9.5).text(value, LEFT + 125, y, { width: WIDTH - 140 });
+    y += rowH;
+  });
+
+  doc.fillColor(SLATE).font('Helvetica-Oblique').fontSize(8.5)
+    .text('Please pay only once our team has confirmed availability and your final price. Use the account name exactly as shown and quote the payment reference.',
+      LEFT + 12, y + 6, { width: WIDTH - 24 });
+
+  doc.y = top + boxH;
+  doc.x = LEFT;
+}
+
 // Terms page appended to every quote. Adapted from the client's reference
 // terms sheet — reworded to make clear this document is an unpaid quote
 // generated from an enquiry, not a confirmed/paid booking.
-function addTermsPage(doc) {
+function addTermsPage(doc, order) {
   doc.addPage();
+
+  addBankBox(doc, order);
+  doc.moveDown(1);
 
   doc.font('Helvetica-Bold').fontSize(13).fillColor(INK).text('Package Cost EXCLUSIONS:');
   doc.moveDown(0.4);
