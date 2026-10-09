@@ -505,7 +505,7 @@
         addToBasket({
           id: `lesson-group-${g.id}-${state.lesson.groupSeason}`,
           name: `${g.label} (${seasonLabel})`,
-          unitPrice: price,
+          unitPrice: price / state.lesson.groupGuests,
           qty: state.lesson.groupGuests
         });
       }
@@ -1149,7 +1149,7 @@
       const res = await fetch('/api/inquire', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerName, customerEmail, customerPhone, items: state.basket })
+        body: JSON.stringify({ customerName, customerEmail, customerPhone, items: state.basket, hp: (document.getElementById('hpField') || {}).value || '' })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Could not send your enquiry.');

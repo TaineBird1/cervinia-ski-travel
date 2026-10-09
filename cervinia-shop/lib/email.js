@@ -5,6 +5,17 @@ const { BANK, groupIban } = require('./bankDetails');
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
 const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
 
+// Everything a visitor types ends up in an HTML email, so it is escaped first —
+// otherwise a name or note could inject links or markup into mail sent from our address.
+const esc = (value) => String(value == null ? '' : value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+const multiline = (value) => esc(value).replace(/\r?\n/g, '<br>');
+const oneLine = (value) => String(value == null ? '' : value).replace(/[\r\n]+/g, ' ').slice(0, 120);
+
 // The Resend SDK resolves with { error } on rejected sends (bad recipient,
 // unverified domain, ...) instead of throwing, so surface it to the callers' catch.
 async function send(payload) {
@@ -31,7 +42,7 @@ async function sendInvoiceEmail(order, pdfPath) {
       to: order.customerEmail,
       subject: `Your Cervinia Travel Services quote — ${order.id}`,
       html: `
-        <p>Hi ${order.customerName || 'there'},</p>
+        <p>Hi ${esc(order.customerName) || 'there'},</p>
         <p>Thanks for your enquiry with Cervinia Travel Services! Here's a copy of your requested itinerary, totalling €${order.total.toFixed(2)}.</p>
         <p>This is a price estimate based on current rates — no payment has been taken. Our local team will check availability and be in touch within 24 hours to confirm everything and arrange payment.</p>
         <p><strong>Paying by bank transfer.</strong> Once we have confirmed your booking, you can pay directly into our account — please only pay after we have confirmed:</p>
@@ -41,7 +52,7 @@ async function sendInvoiceEmail(order, pdfPath) {
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Account (Conto)</td><td style="padding:3px 0;">${BANK.accountNumber}</td></tr>
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">IBAN</td><td style="padding:3px 0;"><strong>${groupIban(BANK.iban)}</strong></td></tr>
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">BIC / SWIFT</td><td style="padding:3px 0;">${BANK.bic}</td></tr>
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Payment reference</td><td style="padding:3px 0;"><strong>${order.id}</strong></td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Payment reference</td><td style="padding:3px 0;"><strong>${esc(order.id)}</strong></td></tr>
         </table>
         <p>Your quote is attached to this email.</p>
         <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
@@ -68,19 +79,19 @@ async function sendEnquiryNotification(order, pdfPath) {
     await send({
       from: FROM_EMAIL,
       to: BUSINESS_EMAIL,
-      subject: `New enquiry — ${order.customerName || 'Guest'} — €${order.total.toFixed(2)}`,
+      subject: `New enquiry — ${oneLine(order.customerName) || 'Guest'} — €${order.total.toFixed(2)}`,
       html: `
         <p>New enquiry received from the website:</p>
         <ul>
-          <li><strong>Name:</strong> ${order.customerName || '—'}</li>
-          <li><strong>Email:</strong> ${order.customerEmail || '—'}</li>
-          <li><strong>Phone:</strong> ${order.customerPhone || '—'}</li>
-          <li><strong>Reference:</strong> ${order.id}</li>
+          <li><strong>Name:</strong> ${esc(order.customerName) || '—'}</li>
+          <li><strong>Email:</strong> ${esc(order.customerEmail) || '—'}</li>
+          <li><strong>Phone:</strong> ${esc(order.customerPhone) || '—'}</li>
+          <li><strong>Reference:</strong> ${esc(order.id)}</li>
           <li><strong>Estimated total:</strong> €${order.total.toFixed(2)}</li>
         </ul>
         <p><strong>Items requested:</strong></p>
         <ul>
-          ${order.items.map((item) => `<li>${item.name} × ${item.qty} — €${item.total.toFixed(2)}</li>`).join('')}
+          ${order.items.map((item) => `<li>${esc(item.name)} × ${item.qty} — €${item.total.toFixed(2)}</li>`).join('')}
         </ul>
         <p>The full itemized quote is attached as a PDF.</p>
       `,
@@ -105,19 +116,19 @@ async function sendContactNotification(contact) {
     await send({
       from: FROM_EMAIL,
       to: BUSINESS_EMAIL,
-      subject: `New website enquiry — ${contact.name}`,
+      subject: `New website enquiry — ${oneLine(contact.name)}`,
       html: `
         <p>New enquiry received from the website contact form:</p>
         <ul>
-          <li><strong>Name:</strong> ${contact.name}</li>
-          <li><strong>Email:</strong> ${contact.email}</li>
-          <li><strong>Arrival:</strong> ${contact.arrival}</li>
-          <li><strong>Departure:</strong> ${contact.departure}</li>
-          <li><strong>Group size:</strong> ${contact.groupSize || '—'}</li>
-          <li><strong>Services needed:</strong> ${contact.needs && contact.needs.length ? contact.needs.join(', ') : '—'}</li>
-          <li><strong>Page language:</strong> ${contact.lang || 'en'}</li>
+          <li><strong>Name:</strong> ${esc(contact.name)}</li>
+          <li><strong>Email:</strong> ${esc(contact.email)}</li>
+          <li><strong>Arrival:</strong> ${esc(contact.arrival)}</li>
+          <li><strong>Departure:</strong> ${esc(contact.departure)}</li>
+          <li><strong>Group size:</strong> ${esc(contact.groupSize) || '—'}</li>
+          <li><strong>Services needed:</strong> ${contact.needs && contact.needs.length ? esc(contact.needs.join(', ')) : '—'}</li>
+          <li><strong>Page language:</strong> ${esc(contact.lang) || 'en'}</li>
         </ul>
-        <p><strong>Notes:</strong> ${contact.notes || '—'}</p>
+        <p><strong>Notes:</strong> ${multiline(contact.notes) || '—'}</p>
       `
     });
     console.log(`✅ Contact-form enquiry emailed to ${BUSINESS_EMAIL} from ${contact.email}`);
@@ -139,8 +150,8 @@ async function sendContactAcknowledgment(contact) {
       to: contact.email,
       subject: 'We received your enquiry — Cervinia Travel Services',
       html: `
-        <p>Hi ${contact.name},</p>
-        <p>Thanks for getting in touch with Cervinia Travel Services! We've received your enquiry for ${contact.arrival} to ${contact.departure} and our local team will check availability and be in touch within 24 hours (CET) with a tailored quote.</p>
+        <p>Hi ${esc(contact.name)},</p>
+        <p>Thanks for getting in touch with Cervinia Travel Services! We've received your enquiry for ${esc(contact.arrival)} to ${esc(contact.departure)} and our local team will check availability and be in touch within 24 hours (CET) with a tailored quote.</p>
         <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
         <p>We don't just go there, we are there.</p>
       `
@@ -151,4 +162,4 @@ async function sendContactAcknowledgment(contact) {
   }
 }
 
-module.exports = { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment };
+module.exports = { esc, sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment };

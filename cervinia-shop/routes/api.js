@@ -7,8 +7,20 @@ const orderStore = require('../lib/orderStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
 const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment } = require('../lib/email');
 const { BANK, groupIban } = require('../lib/bankDetails');
+const { priceBasket, BasketError, cleanText } = require('../lib/priceCheck');
+const { createLimiter, clientIp } = require('../lib/rateLimit');
 
 const router = express.Router();
+
+// Abuse protection for the two forms that send email to an address the visitor
+// types in: a cap per visitor, and a cap per recipient so nobody's inbox can be
+// flooded through us. A hidden "hp" field (honeypot) catches simple bots.
+const inquireIpLimit = createLimiter({ max: 10 });
+const contactIpLimit = createLimiter({ max: 5 });
+const recipientLimit = createLimiter({ max: 3 });
+const TOO_MANY = 'Too many enquiries just now — please wait a while, or WhatsApp us directly.';
+const EMAIL_PATTERN = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/;
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const PRICING_PATH = path.join(__dirname, '..', 'data', 'pricing.json');
 const HOTELS_PATH = path.join(__dirname, '..', 'data', 'hotels.json');
@@ -38,24 +50,37 @@ router.get('/bank-details', (req, res) => {
 // left in place but unused by the frontend.
 router.post('/inquire', async (req, res) => {
   try {
-    const { customerName, customerEmail, customerPhone, items } = req.body;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const body = req.body || {};
+    if (body.hp) return res.json({ ok: true, order: { id: 'inq_received', items: [], total: 0 } });
 
-    if (!Array.isArray(items) || items.length === 0) {
+    const customerName = cleanText(body.customerName, 100);
+    const customerEmail = cleanText(body.customerEmail, 200);
+    const customerPhone = cleanText(body.customerPhone, 40);
+
+    if (!Array.isArray(body.items) || body.items.length === 0) {
       return res.status(400).json({ error: 'Your basket is empty.' });
     }
-    if (!customerName || !customerName.trim()) {
+    if (!customerName) {
       return res.status(400).json({ error: 'Please enter a name for the enquiry.' });
     }
-    if (!customerEmail || !emailPattern.test(customerEmail.trim())) {
+    if (!EMAIL_PATTERN.test(customerEmail)) {
       return res.status(400).json({ error: 'Please enter a valid email address.' });
     }
 
-    const normalizedItems = items.map((item) => {
-      const qty = Math.max(1, parseInt(item.qty, 10) || 1);
-      const unitPrice = Number(item.unitPrice) || 0;
-      return { name: item.name, qty, unitPrice, total: unitPrice * qty };
-    });
+    // Prices and descriptions are rebuilt on the server from the rate sheets;
+    // anything the browser sent that doesn't match a real product is refused.
+    let normalizedItems;
+    try {
+      normalizedItems = priceBasket(body.items);
+    } catch (err) {
+      if (err instanceof BasketError) return res.status(400).json({ error: err.message });
+      throw err;
+    }
+
+    if (!inquireIpLimit(clientIp(req)) || !recipientLimit(customerEmail.toLowerCase())) {
+      return res.status(429).json({ error: TOO_MANY });
+    }
+
     const total = normalizedItems.reduce((sum, item) => sum + item.total, 0);
 
     const id = `inq_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
@@ -63,9 +88,9 @@ router.post('/inquire', async (req, res) => {
       id,
       sessionId: id,
       status: 'enquiry',
-      customerName: customerName.trim(),
-      customerEmail: customerEmail.trim(),
-      customerPhone: (customerPhone || '').trim().slice(0, 40),
+      customerName,
+      customerEmail,
+      customerPhone,
       items: normalizedItems,
       subtotal: total,
       total,
@@ -93,28 +118,36 @@ router.post('/inquire', async (req, res) => {
 // device has a mail client configured for the mailto: link this replaces.
 router.post('/contact', async (req, res) => {
   try {
-    const { name, email, arrival, departure, groupSize, needs, notes, lang } = req.body;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const body = req.body || {};
+    if (body.hp) return res.json({ ok: true });
 
-    if (!name || !name.trim()) {
+    const name = cleanText(body.name, 100);
+    const email = cleanText(body.email, 200);
+    const { arrival, departure } = body;
+
+    if (!name) {
       return res.status(400).json({ error: 'Please enter your name.' });
     }
-    if (!email || !emailPattern.test(email.trim())) {
+    if (!EMAIL_PATTERN.test(email)) {
       return res.status(400).json({ error: 'Please enter a valid email address.' });
     }
-    if (!arrival || !departure) {
+    if (!DATE_PATTERN.test(String(arrival || '')) || !DATE_PATTERN.test(String(departure || ''))) {
       return res.status(400).json({ error: 'Please choose your arrival and departure dates.' });
     }
 
+    if (!contactIpLimit(clientIp(req)) || !recipientLimit(email.toLowerCase())) {
+      return res.status(429).json({ error: TOO_MANY });
+    }
+
     const contact = {
-      name: name.trim().slice(0, 200),
-      email: email.trim().slice(0, 200),
+      name,
+      email,
       arrival,
       departure,
-      groupSize: (groupSize || '').toString().slice(0, 60),
-      needs: Array.isArray(needs) ? needs.slice(0, 20).map((n) => String(n).slice(0, 60)) : [],
-      notes: (notes || '').toString().slice(0, 2000),
-      lang: (lang || 'en').toString().slice(0, 5)
+      groupSize: cleanText(body.groupSize, 60),
+      needs: Array.isArray(body.needs) ? body.needs.slice(0, 20).map((n) => cleanText(n, 60)).filter(Boolean) : [],
+      notes: String(body.notes == null ? '' : body.notes).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '').slice(0, 2000),
+      lang: cleanText(body.lang, 5).replace(/[^a-zA-Z-]/g, '') || 'en'
     };
 
     await sendContactNotification(contact);

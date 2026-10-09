@@ -118,7 +118,7 @@ if (form) {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, arrival, departure, groupSize, needs, notes: get('notes'), lang: formLang })
+        body: JSON.stringify({ name, email, arrival, departure, groupSize, needs, notes: get('notes'), lang: formLang, hp: get('hp_check') })
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || ft.error);

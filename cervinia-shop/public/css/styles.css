@@ -227,6 +227,7 @@ header{
 }
 .checkout-btn:hover{background:var(--blue-dark);}
 .checkout-btn:disabled{background:#b9c8d3; cursor:not-allowed;}
+.hp-field{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
 .checkout-note{font-size:0.78rem; color:var(--card-body); text-align:center; margin-top:10px;}
 .checkout-error{color:#d64545; font-size:0.85rem; text-align:center; margin-top:8px; display:none;}
 

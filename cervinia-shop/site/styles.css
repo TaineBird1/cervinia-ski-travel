@@ -526,6 +526,7 @@ header.site-nav {
 .field-check label { font-weight: 400; font-size: 14px; }
 .form-foot { grid-column: 1/-1; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; flex-wrap: wrap; gap: 16px; }
 .form-foot .note { font-size: 13px; color: var(--paper-body); }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .form-status { grid-column: 1/-1; font-size: 13.5px; font-weight: 600; padding: 10px 14px; border-radius: var(--radius-sm); }
 .form-status:empty { display: none; padding: 0; }
 .form-status.is-success { background: rgba(60,160,100,.12); color: #1f7a4c; border: 1px solid rgba(60,160,100,.25); }
