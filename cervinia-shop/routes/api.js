@@ -2,8 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 
-const stripe = require('../lib/stripeClient');
 const orderStore = require('../lib/orderStore');
+const contactStore = require('../lib/contactStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
 const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment } = require('../lib/email');
 const { BANK, groupIban } = require('../lib/bankDetails');
@@ -18,6 +18,9 @@ const router = express.Router();
 const inquireIpLimit = createLimiter({ max: 10 });
 const contactIpLimit = createLimiter({ max: 5 });
 const recipientLimit = createLimiter({ max: 3 });
+// Looking up a quote by its reference is limited so references can't be guessed in bulk.
+const lookupLimit = createLimiter({ max: 60 });
+const REFERENCE_PATTERN = /^inq_\d+_[a-z0-9]+$/;
 const TOO_MANY = 'Too many enquiries just now — please wait a while, or WhatsApp us directly.';
 const EMAIL_PATTERN = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -99,6 +102,8 @@ router.post('/inquire', async (req, res) => {
     };
 
     orderStore.save(order);
+    // Full copy in the server log too, so an enquiry can be recovered even if saved data is lost.
+    console.log('[ENQUIRY]', JSON.stringify({ id, name: customerName, email: customerEmail, phone: customerPhone, total, items: normalizedItems.map((i) => `${i.name} x${i.qty} = ${i.total.toFixed(2)}`) }));
     await generateInvoicePDF(order);
     await sendInvoiceEmail(order, invoicePath(order.id));
     await sendEnquiryNotification(order, invoicePath(order.id));
@@ -150,6 +155,10 @@ router.post('/contact', async (req, res) => {
       lang: cleanText(body.lang, 5).replace(/[^a-zA-Z-]/g, '') || 'en'
     };
 
+    const record = { id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`, createdAt: new Date().toISOString(), ...contact };
+    contactStore.save(record);
+    console.log('[CONTACT]', JSON.stringify(record));
+
     await sendContactNotification(contact);
     await sendContactAcknowledgment(contact);
 
@@ -160,120 +169,29 @@ router.post('/contact', async (req, res) => {
   }
 });
 
-// POST /api/create-checkout-session
-// body: { customerName, customerEmail, customerPhone, items: [{ id, name, unitPrice, qty }] }
-router.post('/create-checkout-session', async (req, res) => {
-  try {
-    const { customerName, customerEmail, customerPhone, items } = req.body;
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'Your basket is empty.' });
-    }
-    if (!customerName || !customerName.trim()) {
-      return res.status(400).json({ error: 'Please enter a name for the booking.' });
-    }
-    if (!customerEmail || !emailPattern.test(customerEmail.trim())) {
-      return res.status(400).json({ error: 'Please enter a valid email address.' });
-    }
-
-    const line_items = items.map((item) => ({
-      price_data: {
-        currency: 'eur',
-        product_data: { name: item.name },
-        unit_amount: Math.round(Number(item.unitPrice) * 100)
-      },
-      quantity: Math.max(1, parseInt(item.qty, 10) || 1)
-    }));
-
-    const domain = process.env.DOMAIN || `${req.protocol}://${req.get('host')}`;
-
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items,
-      customer_email: customerEmail.trim(),
-      success_url: `${domain}/shop/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${domain}/shop/cancel.html`,
-      metadata: {
-        customerName: customerName.trim(),
-        customerPhone: (customerPhone || '').trim().slice(0, 40),
-        // Stripe metadata values must be strings and are capped at 500 chars,
-        // so we keep a compact copy of the basket for invoice generation.
-        basket: JSON.stringify(items).slice(0, 490)
-      }
-    });
-
-    res.json({ url: session.url });
-  } catch (err) {
-    console.error('create-checkout-session error:', err);
-    res.status(500).json({ error: 'Could not start checkout. Please try again.' });
-  }
+// GET /api/order/:reference — the enquiry-sent page uses this to show the quote.
+// Only what that page needs is returned: no name, email or phone number.
+router.get('/order/:reference', (req, res) => {
+  if (!lookupLimit(clientIp(req))) return res.status(429).json({ error: 'Too many requests.' });
+  const order = REFERENCE_PATTERN.test(req.params.reference) ? orderStore.findBySessionId(req.params.reference) : null;
+  if (!order) return res.status(404).json({ status: 'not_found' });
+  res.json({
+    status: 'paid',
+    order: { id: order.id, items: order.items, total: order.total, currency: order.currency, createdAt: order.createdAt }
+  });
 });
 
-// GET /api/order/:sessionId — poll after redirect back from Stripe.
-// The order record is created by the webhook once payment is confirmed,
-// so this may return { status: 'processing' } for a few seconds first.
-router.get('/order/:sessionId', async (req, res) => {
-  try {
-    const existing = orderStore.findBySessionId(req.params.sessionId);
-    if (existing) {
-      return res.json({ status: 'paid', order: existing });
-    }
-
-    // Fallback for local dev if the webhook hasn't fired yet (e.g. you forgot
-    // to run `stripe listen`): check directly with Stripe and, if paid,
-    // generate the order/invoice right here instead of waiting.
-    const session = await stripe.checkout.sessions.retrieve(req.params.sessionId, {
-      expand: ['line_items', 'payment_intent']
-    });
-
-    if (session.payment_status === 'paid') {
-      const order = await buildOrderFromSession(session);
-      orderStore.save(order);
-      await generateInvoicePDF(order);
-      await sendInvoiceEmail(order, invoicePath(order.id));
-      return res.json({ status: 'paid', order });
-    }
-
-    res.json({ status: 'processing' });
-  } catch (err) {
-    console.error('order lookup error:', err);
-    res.status(500).json({ error: 'Could not look up your order.' });
-  }
-});
-
-// GET /api/invoice/:orderId — download the generated PDF
+// GET /api/invoice/:orderId — download the generated PDF quote
 router.get('/invoice/:orderId', (req, res) => {
+  if (!lookupLimit(clientIp(req))) return res.status(429).json({ error: 'Too many requests.' });
+  if (!REFERENCE_PATTERN.test(req.params.orderId)) {
+    return res.status(404).json({ error: 'Quote not found.' });
+  }
   const filePath = invoicePath(req.params.orderId);
   if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ error: 'Invoice not ready yet — try again in a moment.' });
+    return res.status(404).json({ error: 'Quote not found — it may have expired. Check your email for your copy.' });
   }
-  res.download(filePath, `invoice-${req.params.orderId}.pdf`);
+  res.download(filePath, `quote-${req.params.orderId}.pdf`);
 });
-
-async function buildOrderFromSession(session) {
-  const lineItems = session.line_items?.data || [];
-  const items = lineItems.map((li) => ({
-    name: li.description,
-    qty: li.quantity,
-    unitPrice: li.price.unit_amount / 100,
-    total: (li.price.unit_amount * li.quantity) / 100
-  }));
-  const total = session.amount_total / 100;
-
-  return {
-    id: session.id.replace('cs_', 'ord_'),
-    sessionId: session.id,
-    paymentIntentId: typeof session.payment_intent === 'object' ? session.payment_intent.id : session.payment_intent,
-    customerName: session.metadata?.customerName || session.customer_details?.name || 'Guest',
-    customerEmail: session.customer_details?.email || session.customer_email || '',
-    customerPhone: session.metadata?.customerPhone || '',
-    items,
-    subtotal: total,
-    total,
-    currency: (session.currency || 'eur').toUpperCase(),
-    createdAt: new Date().toISOString()
-  };
-}
 
 module.exports = router;

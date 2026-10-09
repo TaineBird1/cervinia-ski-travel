@@ -1,10 +1,22 @@
 const express = require('express');
+const crypto = require('crypto');
 const orderStore = require('../lib/orderStore');
+const contactStore = require('../lib/contactStore');
+const { createLimiter, clientIp } = require('../lib/rateLimit');
 const { setSessionCookie, clearSessionCookie, requireAdmin } = require('../lib/adminAuth');
 
 const router = express.Router();
 
-router.use(express.json());
+router.use(express.json({ limit: '5kb' }));
+
+// Password guessing is slowed to 10 attempts per 15 minutes per visitor.
+const loginAttempts = createLimiter({ windowMs: 15 * 60 * 1000, max: 10 });
+
+function samePassword(given, expected) {
+  const a = crypto.createHash('sha256').update(String(given)).digest();
+  const b = crypto.createHash('sha256').update(String(expected)).digest();
+  return crypto.timingSafeEqual(a, b);
+}
 
 // POST /api/admin/login — body: { password }
 router.post('/login', (req, res) => {
@@ -12,8 +24,11 @@ router.post('/login', (req, res) => {
   if (!expected) {
     return res.status(500).json({ error: 'Admin password is not configured on the server.' });
   }
+  if (!loginAttempts(clientIp(req))) {
+    return res.status(429).json({ error: 'Too many attempts — please wait a few minutes and try again.' });
+  }
   const { password } = req.body || {};
-  if (password !== expected) {
+  if (!samePassword(password, expected)) {
     return res.status(401).json({ error: 'Incorrect password.' });
   }
   setSessionCookie(req, res);
@@ -33,7 +48,7 @@ router.get('/session', (req, res) => {
 // Buckets a basket item's name into a revenue category. Matches the
 // name templates built in public/js/app.js's addToBasket() calls.
 function categorize(name) {
-  if (name.startsWith('Airport Transfer')) return 'Transfers';
+  if (name.startsWith('Airport Transfer') || name.startsWith('Transfer Booking Fee')) return 'Transfers';
   if (name.startsWith('Ski Lift Pass')) return 'Lift Passes';
   if (name.startsWith('Private Lesson') || name.startsWith('Group Lesson')) return 'Lessons';
   const equipmentPrefixes = [
@@ -67,6 +82,22 @@ router.get('/stats', requireAdmin, (req, res) => {
     });
   });
 
+  const contacts = contactStore.readAll();
+  const recentContacts = [...contacts]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 20)
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      email: c.email,
+      arrival: c.arrival,
+      departure: c.departure,
+      groupSize: c.groupSize,
+      needs: c.needs,
+      notes: String(c.notes || '').slice(0, 400),
+      createdAt: c.createdAt
+    }));
+
   const recentOrders = [...orders]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 20)
@@ -87,7 +118,9 @@ router.get('/stats', requireAdmin, (req, res) => {
     revenueLast30d,
     bookingsLast30d: ordersLast30d.length,
     categoryTotals,
-    recentOrders
+    recentOrders,
+    totalContacts: contacts.length,
+    recentContacts
   });
 });
 

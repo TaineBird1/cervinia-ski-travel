@@ -3,8 +3,7 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const { BANK, groupIban } = require('./bankDetails');
 
-const INVOICES_DIR = path.join(__dirname, '..', 'invoices');
-if (!fs.existsSync(INVOICES_DIR)) fs.mkdirSync(INVOICES_DIR, { recursive: true });
+const { INVOICES_DIR } = require('./dataDir');
 
 const LOGO_PATH = path.join(__dirname, '..', 'site', 'logo.png');
 
@@ -263,7 +262,7 @@ function addTermsPage(doc, order) {
 }
 
 function invoicePath(orderId) {
-  return path.join(INVOICES_DIR, `${orderId}.pdf`);
+  return path.join(INVOICES_DIR, `${path.basename(String(orderId))}.pdf`);
 }
 
 module.exports = { generateInvoicePDF, invoicePath, BUSINESS };

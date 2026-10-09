@@ -127,6 +127,11 @@
       <h2>Recent Enquiries</h2>
       <div id="recentOrdersWrap"></div>
     </section>
+
+    <section class="panel">
+      <h2>Contact Form Messages <span id="contactCount" style="color:var(--slate);font-size:0.85rem;font-weight:400;"></span></h2>
+      <div id="recentContactsWrap"></div>
+    </section>
   </main>
 </div>
 
@@ -180,6 +185,8 @@
       `).join('');
     }
 
+    renderContacts(data);
+
     const ordersEl = document.getElementById('recentOrdersWrap');
     if (data.recentOrders.length === 0) {
       ordersEl.innerHTML = '<p class="empty-note">No enquiries yet — they\'ll show up here as soon as a customer sends one.</p>';
@@ -200,6 +207,30 @@
         </table>
       `;
     }
+  }
+
+  function renderContacts(data) {
+    const el = document.getElementById('recentContactsWrap');
+    document.getElementById('contactCount').textContent = data.totalContacts ? `(${data.totalContacts} in total)` : '';
+    if (!data.recentContacts || data.recentContacts.length === 0) {
+      el.innerHTML = '<p class="empty-note">No contact-form messages yet.</p>';
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr><th>Date</th><th>Customer</th><th>Stay</th><th>Wants</th></tr></thead>
+        <tbody>
+          ${data.recentContacts.map((c) => `
+            <tr>
+              <td>${fmtDate(c.createdAt)}</td>
+              <td>${escapeHtml(c.name)}<br><span style="color:var(--slate);font-size:0.78rem;">${escapeHtml(c.email)}</span></td>
+              <td>${escapeHtml(c.arrival)} to ${escapeHtml(c.departure)}<br><span style="color:var(--slate);font-size:0.78rem;">${escapeHtml(c.groupSize)}</span></td>
+              <td>${escapeHtml((c.needs || []).join(', '))}${c.notes ? `<br><span style="color:var(--slate);font-size:0.78rem;">${escapeHtml(c.notes)}</span>` : ''}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
   }
 
   document.getElementById('loginForm').addEventListener('submit', async (e) => {

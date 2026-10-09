@@ -1,38 +1,10 @@
-// Very small file-based order store. Fine for a low-volume travel agency
-// site; swap for a real database later if you outgrow it.
+// Shop enquiries (basket quotes). See lib/dataDir.js for where the file lives.
+const { createStore } = require('./dataDir');
 
-const fs = require('fs');
-const path = require('path');
-
-const ORDERS_PATH = path.join(__dirname, '..', 'data', 'orders.json');
-
-function readAll() {
-  try {
-    const raw = fs.readFileSync(ORDERS_PATH, 'utf8');
-    return JSON.parse(raw || '[]');
-  } catch (err) {
-    return [];
-  }
-}
-
-function writeAll(orders) {
-  fs.writeFileSync(ORDERS_PATH, JSON.stringify(orders, null, 2));
-}
+const store = createStore('orders.json');
 
 function findBySessionId(sessionId) {
-  return readAll().find((o) => o.sessionId === sessionId);
+  return store.readAll().find((o) => o.sessionId === sessionId);
 }
 
-function save(order) {
-  const orders = readAll();
-  const existingIndex = orders.findIndex((o) => o.id === order.id);
-  if (existingIndex >= 0) {
-    orders[existingIndex] = order;
-  } else {
-    orders.push(order);
-  }
-  writeAll(orders);
-  return order;
-}
-
-module.exports = { readAll, findBySessionId, save };
+module.exports = { readAll: store.readAll, findBySessionId, save: store.save };

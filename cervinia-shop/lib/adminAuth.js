@@ -5,17 +5,25 @@
 
 const crypto = require('crypto');
 
-const SECRET = process.env.ADMIN_SESSION_SECRET || process.env.STRIPE_SECRET_KEY || 'dev-secret-change-me';
+// The session secret must never be a value that is public in the source code.
+// Use ADMIN_SESSION_SECRET if set; otherwise derive one from ADMIN_PASSWORD
+// (which has to exist for anyone to log in at all). With neither set there is
+// no secret, so no session can ever verify and the admin area stays locked.
+const SECRET = process.env.ADMIN_SESSION_SECRET
+  || (process.env.ADMIN_PASSWORD
+    ? crypto.createHmac('sha256', process.env.ADMIN_PASSWORD).update('cervinia-admin-session-key').digest('hex')
+    : null);
 const COOKIE_NAME = 'cervinia_admin_session';
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 function sign(value) {
+  if (!SECRET) throw new Error('Admin session secret is not configured.');
   const hmac = crypto.createHmac('sha256', SECRET).update(value).digest('hex');
   return `${value}.${hmac}`;
 }
 
 function verify(token) {
-  if (!token) return false;
+  if (!token || !SECRET) return false;
   const idx = token.lastIndexOf('.');
   if (idx === -1) return false;
   const value = token.slice(0, idx);

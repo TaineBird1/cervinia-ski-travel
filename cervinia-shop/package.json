@@ -1,7 +1,7 @@
 {
   "name": "cervinia-travel-shop",
   "version": "1.0.0",
-  "description": "Cervinia Travel Services - basket, Stripe checkout and invoice generator",
+  "description": "Cervinia Travel Services - marketing site, trip-planning shop, quotes by email and admin dashboard",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -13,7 +13,6 @@
     "express": "^4.19.2",
     "pdfkit": "^0.15.0",
     "resend": "^4.0.1",
-    "stripe": "^16.8.0",
     "xlsx": "^0.18.5"
   }
 }

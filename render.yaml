@@ -7,12 +7,6 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     envVars:
-      - key: STRIPE_SECRET_KEY
-        sync: false
-      - key: STRIPE_PUBLISHABLE_KEY
-        sync: false
-      - key: STRIPE_WEBHOOK_SECRET
-        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM_EMAIL
@@ -29,3 +23,7 @@ services:
         sync: false
       - key: ADMIN_SESSION_SECRET
         sync: false
+      # Once a Render persistent disk is attached, set DATA_DIR to its mount path
+      # (for example /var/data) so enquiries and quote PDFs survive restarts.
+      # - key: DATA_DIR
+      #   value: /var/data

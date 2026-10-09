@@ -57,7 +57,9 @@
     fetch(`/api/order/${sessionId}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.status === 'paid') {
+        if (data.status === 'not_found') {
+          statusMsg.textContent = 'We could not find this enquiry here — please check your email for your quote, or contact us on WhatsApp.';
+        } else if (data.status === 'paid') {
           renderOrder(data.order);
         } else if (attempt < 10) {
           statusMsg.textContent = 'Preparing your quote…';

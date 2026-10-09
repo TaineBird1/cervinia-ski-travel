@@ -3,3 +3,5 @@ node_modules/
 invoices/*.pdf
 data/orders.json
 .DS_Store
+data/contacts.json
+data/*.tmp
