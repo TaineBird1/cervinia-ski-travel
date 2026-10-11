@@ -129,6 +129,11 @@
     </section>
 
     <section class="panel">
+      <h2>Partner Link Clicks</h2>
+      <div id="partnerClicksWrap"></div>
+    </section>
+
+    <section class="panel">
       <h2>Contact Form Messages <span id="contactCount" style="color:var(--slate);font-size:0.85rem;font-weight:400;"></span></h2>
       <div id="recentContactsWrap"></div>
     </section>
@@ -185,6 +190,7 @@
       `).join('');
     }
 
+    renderPartnerClicks(data.partnerClicks || {});
     renderContacts(data);
 
     const ordersEl = document.getElementById('recentOrdersWrap');
@@ -207,6 +213,36 @@
         </table>
       `;
     }
+  }
+
+  const PARTNER_LABELS = {
+    skiset: 'Skiset (equipment)',
+    transfers: 'Ski Holiday Transfers',
+    'pass-cervinia': 'Lift pass: Cervinia',
+    'pass-international': 'Lift pass: International (Matterhorn Paradise)',
+    'pass-aosta': 'Lift pass: Aosta Valley'
+  };
+  const SOURCE_LABELS = { 'site-en': 'Site EN', 'site-fr': 'Site FR', 'site-de': 'Site DE', shop: 'Shop' };
+
+  function renderPartnerClicks(clicks) {
+    const el = document.getElementById('partnerClicksWrap');
+    const keys = Object.keys(PARTNER_LABELS);
+    if (keys.every((k) => !clicks[k])) {
+      el.innerHTML = '<p class="empty-note">No clicks on partner links yet. Clicks on the Skiset, transfer and lift-pass links are counted here (no personal details are stored).</p>';
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr><th>Partner</th><th>Last 30 days</th><th>All time</th><th>From</th></tr></thead>
+        <tbody>
+          ${keys.map((k) => {
+            const c = clicks[k] || { total: 0, last30d: 0, bySource: {} };
+            const from = Object.entries(c.bySource).map(([s, n]) => `${escapeHtml(SOURCE_LABELS[s] || s)} ${n}`).join(', ');
+            return `<tr><td>${PARTNER_LABELS[k]}</td><td>${c.last30d}</td><td>${c.total}</td><td style="color:var(--slate);font-size:0.78rem;">${from || '—'}</td></tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
   }
 
   function renderContacts(data) {

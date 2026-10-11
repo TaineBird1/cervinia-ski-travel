@@ -2,6 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const orderStore = require('../lib/orderStore');
 const contactStore = require('../lib/contactStore');
+const clickStore = require('../lib/clickStore');
 const { createLimiter, clientIp } = require('../lib/rateLimit');
 const { setSessionCookie, clearSessionCookie, requireAdmin } = require('../lib/adminAuth');
 
@@ -98,6 +99,16 @@ router.get('/stats', requireAdmin, (req, res) => {
       createdAt: c.createdAt
     }));
 
+  // Partner-link clicks: total and last 30 days per partner, plus where they came from.
+  const cutoffDay = new Date(now - THIRTY_DAYS_MS).toISOString().slice(0, 10);
+  const partnerClicks = {};
+  clickStore.readAll().forEach((c) => {
+    const p = partnerClicks[c.partner] || (partnerClicks[c.partner] = { total: 0, last30d: 0, bySource: {} });
+    p.total += c.count;
+    if (c.day >= cutoffDay) p.last30d += c.count;
+    p.bySource[c.from] = (p.bySource[c.from] || 0) + c.count;
+  });
+
   const recentOrders = [...orders]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 20)
@@ -119,6 +130,7 @@ router.get('/stats', requireAdmin, (req, res) => {
     bookingsLast30d: ordersLast30d.length,
     categoryTotals,
     recentOrders,
+    partnerClicks,
     totalContacts: contacts.length,
     recentContacts
   });

@@ -1183,3 +1183,20 @@
   }, { rootMargin: '-40% 0px -50% 0px' });
   sections.forEach((s) => navObserver.observe(s));
 })();
+
+// ---------- Partner-link click counting ----------
+// Counts clicks on outbound partner links (no personal data) for the admin report.
+(function () {
+  function track(e) {
+    var a = e.target.closest && e.target.closest('a[data-track]');
+    if (!a || !navigator.sendBeacon) return;
+    try {
+      navigator.sendBeacon('/api/track', new Blob(
+        [JSON.stringify({ partner: a.dataset.track, from: a.dataset.from })],
+        { type: 'application/json' }
+      ));
+    } catch (err) { /* never block the link */ }
+  }
+  document.addEventListener('click', track);
+  document.addEventListener('auxclick', track);
+})();

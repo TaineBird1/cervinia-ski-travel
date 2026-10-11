@@ -4,6 +4,7 @@ const path = require('path');
 
 const orderStore = require('../lib/orderStore');
 const contactStore = require('../lib/contactStore');
+const clickStore = require('../lib/clickStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
 const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment } = require('../lib/email');
 const { BANK, groupIban } = require('../lib/bankDetails');
@@ -20,6 +21,7 @@ const contactIpLimit = createLimiter({ max: 5 });
 const recipientLimit = createLimiter({ max: 3 });
 // Looking up a quote by its reference is limited so references can't be guessed in bulk.
 const lookupLimit = createLimiter({ max: 60 });
+const trackLimit = createLimiter({ max: 60 });
 const REFERENCE_PATTERN = /^inq_\d+_[a-z0-9]+$/;
 const TOO_MANY = 'Too many enquiries just now — please wait a while, or WhatsApp us directly.';
 const EMAIL_PATTERN = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/;
@@ -167,6 +169,18 @@ router.post('/contact', async (req, res) => {
     console.error('contact error:', err);
     res.status(500).json({ error: 'Could not send your enquiry. Please try again or WhatsApp us directly.' });
   }
+});
+
+// POST /api/track — counts a click on an outbound partner link. Fire-and-forget
+// from the page (sendBeacon); only allow-listed ids are recorded.
+router.post('/track', (req, res) => {
+  try {
+    const { partner, from } = req.body || {};
+    if (trackLimit(clientIp(req))) clickStore.record(String(partner), String(from));
+  } catch (err) {
+    console.error('track error:', err);
+  }
+  res.status(204).end();
 });
 
 // GET /api/order/:reference — the enquiry-sent page uses this to show the quote.

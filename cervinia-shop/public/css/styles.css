@@ -234,6 +234,7 @@ header{
 .checkout-btn:disabled{background:#b9c8d3; cursor:not-allowed;}
 .hp-field{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden;}
 .checkout-note{font-size:0.78rem; color:var(--card-body); text-align:center; margin-top:10px;}
+.checkout-note a{color:inherit; text-decoration:underline; text-underline-offset:2px;}
 .checkout-error{color:#d64545; font-size:0.85rem; text-align:center; margin-top:8px; display:none;}
 
 footer{background:var(--ink-dark); color:#b7cbd8; padding:26px 0; margin-top:20px;}
