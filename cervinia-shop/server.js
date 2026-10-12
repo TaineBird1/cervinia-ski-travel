@@ -47,6 +47,9 @@ function cacheStaticAssets(res, filePath) {
 }
 
 // JSON bodies (small cap: nothing legitimate is large)
+// The French and German pages were retired; send old links to the English page.
+app.get(/^\/(fr|de)(\/.*)?$/, (req, res) => res.redirect(301, '/'));
+
 app.use(express.json({ limit: '50kb' }));
 
 // Marketing site (site/ — hero, resort info, gallery, contact) at "/".

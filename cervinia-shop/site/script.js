@@ -66,21 +66,13 @@ if (form) {
       missingDates: 'Please choose your arrival and departure dates.',
       error: 'Something went wrong sending your enquiry — please try again or WhatsApp us directly.'
     },
-    fr: {
-      sending: 'Envoi en cours…',
-      success: 'Merci — votre demande est en route. Nous vous répondrons sous 24 heures (HEC).',
-      missingName: 'Veuillez indiquer votre nom.',
-      missingEmail: 'Veuillez saisir une adresse e-mail valide.',
-      missingDates: "Veuillez choisir vos dates d'arrivée et de départ.",
-      error: "Une erreur s'est produite lors de l'envoi — veuillez réessayer ou nous contacter sur WhatsApp."
-    },
-    de: {
-      sending: 'Wird gesendet…',
-      success: 'Danke — Ihre Anfrage ist unterwegs. Wir melden uns innerhalb von 24 Stunden (MEZ).',
-      missingName: 'Bitte geben Sie Ihren Namen ein.',
-      missingEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
-      missingDates: 'Bitte wählen Sie Ankunfts- und Abreisedatum.',
-      error: 'Beim Senden ist ein Fehler aufgetreten — bitte versuchen Sie es erneut oder schreiben Sie uns auf WhatsApp.'
+    it: {
+      sending: 'Invio in corso…',
+      success: 'Grazie: la vostra richiesta è in viaggio. Vi risponderemo entro 24 ore (CET).',
+      missingName: 'Inserite il vostro nome.',
+      missingEmail: 'Inserite un indirizzo email valido.',
+      missingDates: 'Scegliete le date di arrivo e di partenza.',
+      error: "Si è verificato un errore durante l'invio: riprovate oppure scriveteci direttamente su WhatsApp."
     }
   };
   const ft = FORM_STRINGS[formLang] || FORM_STRINGS.en;
@@ -147,51 +139,45 @@ if (form) {
       windLabel: 'Wind',
       updated: (time) => `Updated ${time} CET`
     },
-    fr: {
-      error: 'Conditions en direct indisponibles pour le moment — réessayez bientôt.',
-      snowLabel: 'Neige prévue, 3 prochains jours',
-      windLabel: 'Vent',
-      updated: (time) => `Mis à jour à ${time} (HEC)`
-    },
-    de: {
-      error: 'Live-Bedingungen derzeit nicht verfügbar — bitte später erneut versuchen.',
-      snowLabel: 'Schneevorhersage, nächste 3 Tage',
-      windLabel: 'Wind',
-      updated: (time) => `Aktualisiert um ${time} (MEZ)`
+    it: {
+      error: 'Condizioni in tempo reale non disponibili al momento: riprovate più tardi.',
+      snowLabel: 'Neve prevista nei prossimi 3 giorni',
+      windLabel: 'Vento',
+      updated: (time) => `Aggiornato alle ${time} (CET)`
     }
   };
   const t = STRINGS[lang] || STRINGS.en;
 
   // WMO weather codes -> icon + localized description
   const WEATHER_CODES = {
-    0: { icon: 'sun', text: { en: 'Clear sky', fr: 'Ciel dégagé', de: 'Klarer Himmel' } },
-    1: { icon: 'sun', text: { en: 'Mostly clear', fr: 'Généralement dégagé', de: 'Meist klar' } },
-    2: { icon: 'cloud-sun', text: { en: 'Partly cloudy', fr: 'Partiellement nuageux', de: 'Teilweise bewölkt' } },
-    3: { icon: 'cloud', text: { en: 'Overcast', fr: 'Couvert', de: 'Bedeckt' } },
-    45: { icon: 'fog', text: { en: 'Fog', fr: 'Brouillard', de: 'Nebel' } },
-    48: { icon: 'fog', text: { en: 'Fog', fr: 'Brouillard', de: 'Nebel' } },
-    51: { icon: 'rain', text: { en: 'Light drizzle', fr: 'Bruine légère', de: 'Leichter Sprühregen' } },
-    53: { icon: 'rain', text: { en: 'Drizzle', fr: 'Bruine', de: 'Sprühregen' } },
-    55: { icon: 'rain', text: { en: 'Heavy drizzle', fr: 'Forte bruine', de: 'Starker Sprühregen' } },
-    56: { icon: 'rain', text: { en: 'Freezing drizzle', fr: 'Bruine verglaçante', de: 'Gefrierender Sprühregen' } },
-    57: { icon: 'rain', text: { en: 'Freezing drizzle', fr: 'Bruine verglaçante', de: 'Gefrierender Sprühregen' } },
-    61: { icon: 'rain', text: { en: 'Light rain', fr: 'Pluie légère', de: 'Leichter Regen' } },
-    63: { icon: 'rain', text: { en: 'Rain', fr: 'Pluie', de: 'Regen' } },
-    65: { icon: 'rain', text: { en: 'Heavy rain', fr: 'Forte pluie', de: 'Starker Regen' } },
-    66: { icon: 'rain', text: { en: 'Freezing rain', fr: 'Pluie verglaçante', de: 'Gefrierender Regen' } },
-    67: { icon: 'rain', text: { en: 'Freezing rain', fr: 'Pluie verglaçante', de: 'Gefrierender Regen' } },
-    71: { icon: 'snow', text: { en: 'Light snow', fr: 'Neige légère', de: 'Leichter Schneefall' } },
-    73: { icon: 'snow', text: { en: 'Snow', fr: 'Neige', de: 'Schneefall' } },
-    75: { icon: 'snow', text: { en: 'Heavy snow', fr: 'Fortes chutes de neige', de: 'Starker Schneefall' } },
-    77: { icon: 'snow', text: { en: 'Snow grains', fr: 'Grains de neige', de: 'Schneegriesel' } },
-    80: { icon: 'rain', text: { en: 'Rain showers', fr: 'Averses de pluie', de: 'Regenschauer' } },
-    81: { icon: 'rain', text: { en: 'Rain showers', fr: 'Averses de pluie', de: 'Regenschauer' } },
-    82: { icon: 'rain', text: { en: 'Heavy rain showers', fr: 'Fortes averses', de: 'Starke Regenschauer' } },
-    85: { icon: 'snow', text: { en: 'Snow showers', fr: 'Averses de neige', de: 'Schneeschauer' } },
-    86: { icon: 'snow', text: { en: 'Heavy snow showers', fr: 'Fortes averses de neige', de: 'Starke Schneeschauer' } },
-    95: { icon: 'storm', text: { en: 'Thunderstorm', fr: 'Orage', de: 'Gewitter' } },
-    96: { icon: 'storm', text: { en: 'Thunderstorm with hail', fr: 'Orage avec grêle', de: 'Gewitter mit Hagel' } },
-    99: { icon: 'storm', text: { en: 'Thunderstorm with hail', fr: 'Orage avec grêle', de: 'Gewitter mit Hagel' } }
+    0: { icon: 'sun', text: { en: 'Clear sky', it: 'Cielo sereno' } },
+    1: { icon: 'sun', text: { en: 'Mostly clear', it: 'Prevalentemente sereno' } },
+    2: { icon: 'cloud-sun', text: { en: 'Partly cloudy', it: 'Poco nuvoloso' } },
+    3: { icon: 'cloud', text: { en: 'Overcast', it: 'Coperto' } },
+    45: { icon: 'fog', text: { en: 'Fog', it: 'Nebbia' } },
+    48: { icon: 'fog', text: { en: 'Fog', it: 'Nebbia' } },
+    51: { icon: 'rain', text: { en: 'Light drizzle', it: 'Pioviggine leggera' } },
+    53: { icon: 'rain', text: { en: 'Drizzle', it: 'Pioviggine' } },
+    55: { icon: 'rain', text: { en: 'Heavy drizzle', it: 'Pioviggine intensa' } },
+    56: { icon: 'rain', text: { en: 'Freezing drizzle', it: 'Pioviggine gelata' } },
+    57: { icon: 'rain', text: { en: 'Freezing drizzle', it: 'Pioviggine gelata' } },
+    61: { icon: 'rain', text: { en: 'Light rain', it: 'Pioggia debole' } },
+    63: { icon: 'rain', text: { en: 'Rain', it: 'Pioggia' } },
+    65: { icon: 'rain', text: { en: 'Heavy rain', it: 'Pioggia forte' } },
+    66: { icon: 'rain', text: { en: 'Freezing rain', it: 'Pioggia gelata' } },
+    67: { icon: 'rain', text: { en: 'Freezing rain', it: 'Pioggia gelata' } },
+    71: { icon: 'snow', text: { en: 'Light snow', it: 'Neve debole' } },
+    73: { icon: 'snow', text: { en: 'Snow', it: 'Neve' } },
+    75: { icon: 'snow', text: { en: 'Heavy snow', it: 'Neve abbondante' } },
+    77: { icon: 'snow', text: { en: 'Snow grains', it: 'Granuli di neve' } },
+    80: { icon: 'rain', text: { en: 'Rain showers', it: 'Rovesci di pioggia' } },
+    81: { icon: 'rain', text: { en: 'Rain showers', it: 'Rovesci di pioggia' } },
+    82: { icon: 'rain', text: { en: 'Heavy rain showers', it: 'Forti rovesci di pioggia' } },
+    85: { icon: 'snow', text: { en: 'Snow showers', it: 'Rovesci nevosi' } },
+    86: { icon: 'snow', text: { en: 'Heavy snow showers', it: 'Forti rovesci nevosi' } },
+    95: { icon: 'storm', text: { en: 'Thunderstorm', it: 'Temporale' } },
+    96: { icon: 'storm', text: { en: 'Thunderstorm with hail', it: 'Temporale con grandine' } },
+    99: { icon: 'storm', text: { en: 'Thunderstorm with hail', it: 'Temporale con grandine' } }
   };
 
   const ICON_PATHS = {

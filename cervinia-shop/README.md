@@ -2,7 +2,7 @@
 
 A plain Node/Express app (no build step) with three parts:
 
-- **Marketing site** (`site/`, served at `/`) in English, French (`/fr/`) and German (`/de/`),
+- **Marketing site** (`site/`, served at `/`) in English and Italian (`/it/`),
   with a contact form.
 - **Trip-planning shop** (`public/`, served at `/shop`) where customers build an
   itinerary — accommodation, airport transfers, equipment hire, lift passes and

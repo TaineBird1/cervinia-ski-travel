@@ -8,7 +8,7 @@ const store = createStore('clicks.json');
 // Anything not on these lists is ignored, so the endpoint can't be used to
 // fill the file with arbitrary text.
 const PARTNERS = ['skiset', 'transfers', 'pass-cervinia', 'pass-international', 'pass-aosta'];
-const SOURCES = ['site-en', 'site-fr', 'site-de', 'shop'];
+const SOURCES = ['site-en', 'site-it', 'shop'];
 
 function record(partner, from) {
   if (!PARTNERS.includes(partner) || !SOURCES.includes(from)) return false;
