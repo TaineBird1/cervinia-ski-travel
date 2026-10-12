@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cervinia Travel Services | Pianificate il vostro viaggio</title>
+<meta name="description" content="Costruite l'itinerario della vostra vacanza sugli sci a Cervinia (transfer, noleggio attrezzatura, skipass e lezioni) e ricevete subito un preventivo via email.">
+<link rel="canonical" href="https://cervinia-ski-travel.onrender.com/shop/it/">
+<link rel="alternate" hreflang="en" href="https://cervinia-ski-travel.onrender.com/shop">
+<link rel="alternate" hreflang="it" href="https://cervinia-ski-travel.onrender.com/shop/it/">
+<link rel="icon" type="image/png" href="/logo.png">
+<link rel="apple-touch-icon" href="/logo.png">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Cervinia Travel Services">
+<meta property="og:title" content="Cervinia Travel Services | Pianificate il vostro viaggio">
+<meta property="og:description" content="Costruite l'itinerario della vostra vacanza sugli sci a Cervinia (transfer, noleggio attrezzatura, skipass e lezioni) e ricevete subito un preventivo via email.">
+<meta property="og:url" content="https://cervinia-ski-travel.onrender.com/shop/it/">
+<meta property="og:image" content="https://cervinia-ski-travel.onrender.com/logo.png">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cervinia Travel Services | Pianificate il vostro viaggio">
+<meta name="twitter:description" content="Costruite l'itinerario della vostra vacanza sugli sci a Cervinia (transfer, noleggio attrezzatura, skipass e lezioni) e ricevete subito un preventivo via email.">
+<meta name="twitter:image" content="https://cervinia-ski-travel.onrender.com/logo.png">
+
+<link rel="stylesheet" href="/shop/css/styles.css">
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6e0016c2f4b04814a3c7ae1dce39b337"}'></script><!-- End Cloudflare Web Analytics -->
+</head>
+<body>
+<a class="skip-link" href="#top">Vai al contenuto</a>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/it/" class="logo">Cervinia <span>Travel Services</span></a>
+    <nav class="cat-nav" aria-label="Categorie">
+      <button class="cat-btn active" data-target="accommodation">Soggiorno</button>
+      <button class="cat-btn" data-target="transfers">Transfer</button>
+      <button class="cat-btn" data-target="equipment">Attrezzatura</button>
+      <button class="cat-btn" data-target="passes">Skipass</button>
+      <button class="cat-btn" data-target="lessons">Lezioni</button>
+    </nav>
+    <div class="lang-switch" aria-label="Lingua"><a href="/shop/">EN</a><a href="/shop/it/" class="active">IT</a></div>
+    <div class="currency-select" title="Solo a titolo indicativo: il preventivo sarà confermato in EUR">
+      <select id="currencySelect" aria-label="Valuta visualizzata">
+        <option value="EUR">EUR €</option>
+        <option value="GBP">GBP £</option>
+        <option value="USD">USD $</option>
+      </select>
+    </div>
+    <button class="basket-btn" id="basketToggle">
+      Carrello <span class="basket-count" id="basketCount">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="eyebrow">Breuil-Cervinia, Italia</span>
+      <h1>Costruite la vostra vacanza sugli sci, passo dopo passo.</h1>
+      <p>Scegliete ciò che vi serve, aggiungetelo al carrello e inviateci la richiesta: vi manderemo via email un preventivo dettagliato.</p>
+    </div>
+  </section>
+
+  <section class="cat-section" id="accommodation">
+    <div class="wrap">
+      <h2>Alloggio</h2>
+      <p class="section-sub" id="hotelPriceBasisNote">Tariffe settimanali ufficiali, a persona, dai nostri hotel partner.</p>
+
+      <div class="config-group">
+        <label class="config-label">Hotel</label>
+        <div class="btn-group" id="hotelNameBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Date di arrivo e di partenza</label>
+        <div class="date-calendar" id="hotelCalendar">
+          <div class="cal-header">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="Mese precedente">‹</button>
+            <span id="calMonthLabel"></span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="Mese successivo">›</button>
+          </div>
+          <div class="cal-weekdays">
+            <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <p class="cal-selection" id="calSelectionSummary"></p>
+        <p class="tiny-note">Il prezzo a notte è calcolato a partire dalla tariffa settimanale indicata da ciascun hotel: i valori originali sono riportati in «Tariffe e condizioni» qui sotto.</p>
+        <p class="unavailable-note" id="hotelMinNightsNote"></p>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Tipo di camera</label>
+        <div class="btn-group" id="hotelRoomBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Adulti</label>
+        <div class="stepper" id="hotelGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="hotelGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Bambini</label>
+        <div class="stepper" id="hotelChildrenStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="hotelChildrenValue">0</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+        <div id="hotelChildRates" class="child-rates"></div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Totale: <strong id="hotelPrice">€0</strong></div>
+        <button class="add-btn" id="hotelAddBtn">Aggiungi al carrello</button>
+      </div>
+      <p class="unavailable-note" id="hotelUnavailable">Questo periodo non è disponibile: scegliete date diverse.</p>
+
+      <details class="hotel-notes-details">
+        <summary>Tariffe e condizioni</summary>
+        <div id="hotelNotesList"></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="cat-section alt" id="transfers">
+    <div class="wrap">
+      <h2>Transfer aeroportuali</h2>
+      <p class="section-sub" id="transferNote">Tariffe per singola tratta, prezzo per gruppo. Le navette condivise circolano solo il sabato. Per ogni transfer si applica una quota di prenotazione di €16.</p>
+
+      <div class="config-group">
+        <label class="config-label">Tipo di transfer</label>
+        <div class="btn-group" id="transferTypeBtns">
+          <button type="button" class="opt-btn active" data-type="shared">Navetta condivisa (solo sabato)</button>
+          <button type="button" class="opt-btn" data-type="private">Transfer privato</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Direzione</label>
+        <div class="btn-group" id="transferDirectionBtns">
+          <button type="button" class="opt-btn active" data-direction="oneway">Solo andata</button>
+          <button type="button" class="opt-btn" data-direction="return">Andata e ritorno</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Aeroporto</label>
+        <div class="btn-group" id="transferAirportBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Passeggeri</label>
+        <div class="stepper" id="transferGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="transferGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label" for="transferAddress">Dove alloggiate? (nome dell'appartamento o della struttura e indirizzo)</label>
+        <input type="text" id="transferAddress" class="text-input" placeholder="es. Residence Bontadini, Via Guido Rey 15">
+      </div>
+      <div class="config-group">
+        <label class="config-label" for="transferContact">Numero di telefono per l'autista</label>
+        <input type="tel" id="transferContact" class="text-input" placeholder="es. +39 333 123 4567">
+      </div>
+      <div class="config-group">
+        <label class="config-label">Passeggeri con bagagli</label>
+        <div class="stepper" id="transferLuggageStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="transferLuggageValue">0</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Passeggeri con attrezzatura da sci/snowboard</label>
+        <div class="stepper" id="transferEquipStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="transferEquipValue">0</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Totale: <strong id="transferPrice">€0</strong></div>
+        <button class="add-btn" id="transferAddBtn">Aggiungi al carrello</button>
+      </div>
+      <p class="tiny-note" id="transferTravelTime"></p>
+      <p class="tiny-note" id="transferFeeNote">+ €16 di quota di prenotazione, aggiunta come riga separata quando inserite il transfer nel carrello.</p>
+      <p class="unavailable-note" id="transferUnavailable">Non disponibile per questo numero di persone: scegliete al massimo 8 ospiti oppure contattateci direttamente per un gruppo più numeroso.</p>
+      <p class="direct-note">Preferite prenotare direttamente il transfer? <a href="https://www.skiholidaytransfers.com/reservation?utm_source=cerviniatravelservices&amp;utm_medium=website&amp;utm_campaign=airport-transfers&amp;utm_content=shop" data-track="transfers" data-from="shop" target="_blank" rel="noopener sponsored">Prenotate con Ski Holiday Transfers →</a></p>
+    </div>
+  </section>
+
+  <section class="cat-section" id="equipment">
+    <div class="wrap">
+      <h2>Noleggio attrezzatura</h2>
+      <p class="section-sub">Noleggio scontato di sci e snowboard, con prezzi in base ai giorni di noleggio: listino 2026/27.</p>
+
+      <div class="config-group">
+        <label class="config-label">Categoria</label>
+        <div class="btn-group" id="equipCategoryBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Articolo / livello</label>
+        <div class="btn-group" id="equipItemBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Numero di giorni</label>
+        <div class="btn-group" id="equipDaysBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Numero di persone</label>
+        <div class="stepper" id="equipPeopleStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="equipPeopleValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Totale: <strong id="equipPrice">€0</strong></div>
+        <button class="add-btn" id="equipAddBtn">Aggiungi al carrello</button>
+      </div>
+      <p class="unavailable-note" id="equipUnavailable">Questa combinazione non è disponibile per questo numero di giorni: provate con un numero di giorni diverso.</p>
+      <p class="direct-note">Preferite prenotare direttamente l'attrezzatura? <a href="https://www.skiset.co.uk/partner/discountskis?utm_source=cerviniatravelservices&amp;utm_medium=website&amp;utm_campaign=equipment&amp;utm_content=shop" data-track="skiset" data-from="shop" target="_blank" rel="noopener sponsored">Prenotate con Skiset →</a></p>
+    </div>
+  </section>
+
+  <section class="cat-section alt" id="passes">
+    <div class="wrap">
+      <h2>Skipass</h2>
+      <p class="section-sub" id="passSeasonNote">Skipass locale versante italiano: Breuil-Cervinia e Valtournenche.</p>
+
+      <div class="config-group">
+        <label class="config-label">Titolare dello skipass</label>
+        <div class="btn-group" id="passTierBtns"></div>
+      </div>
+      <div class="config-group" id="passChildFreeGroup" style="display:none;">
+        <label class="check-row">
+          <input type="checkbox" id="passChildFreeCheck">
+          Accompagnato da un adulto con skipass: il bambino scia gratis
+        </label>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Numero di giorni</label>
+        <div class="btn-group" id="passDaysBtns"></div>
+      </div>
+      <div class="config-group">
+        <label class="config-label">Passeggeri</label>
+        <div class="stepper" id="passGuestsStepper">
+          <button type="button" class="step-btn" data-step="-1">−</button>
+          <span id="passGuestsValue">1</span>
+          <button type="button" class="step-btn" data-step="1">+</button>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Totale: <strong id="passPrice">€0</strong></div>
+        <button class="add-btn" id="passAddBtn">Aggiungi al carrello</button>
+      </div>
+      <p class="tiny-note" id="passKeyCardNote">Il prezzo include €2 per la key card (non dovuti per gli skipass gratuiti dei bambini).</p>
+      <p class="tiny-note" id="passZermattNote"></p>
+      <p class="direct-note">Preferite prenotare lo skipass online? <a href="https://www.cervinia.it/it?utm_source=cerviniatravelservices&amp;utm_medium=website&amp;utm_campaign=ski-passes&amp;utm_content=shop" data-track="pass-cervinia" data-from="shop" target="_blank" rel="noopener sponsored">Skipass Cervinia</a> · <a href="https://www.matterhornparadise.ch/en/book/tickets?utm_source=cerviniatravelservices&amp;utm_medium=website&amp;utm_campaign=ski-passes&amp;utm_content=shop" data-track="pass-international" data-from="shop" target="_blank" rel="noopener sponsored">Skipass internazionale</a> · <a href="https://www.lovevda.it/it?utm_source=cerviniatravelservices&amp;utm_medium=website&amp;utm_campaign=ski-passes&amp;utm_content=shop" data-track="pass-aosta" data-from="shop" target="_blank" rel="noopener sponsored">Skipass Valle d'Aosta</a></p>
+    </div>
+  </section>
+
+  <section class="cat-section" id="lessons">
+    <div class="wrap">
+      <h2>Lezioni di sci e snowboard</h2>
+      <p class="section-sub" id="lessonSeasonNote">Vi abbineremo al maestro di sci giusto.</p>
+
+      <div class="config-group">
+        <label class="config-label">Tipo di lezione</label>
+        <div class="btn-group" id="lessonTypeBtns">
+          <button type="button" class="opt-btn active" data-type="private">Lezione privata</button>
+          <button type="button" class="opt-btn" data-type="group">Lezione di gruppo</button>
+        </div>
+      </div>
+
+      <div id="lessonPrivatePanel">
+        <div class="config-group">
+          <label class="config-label">Persone</label>
+          <div class="btn-group" id="lessonPeopleBtns"></div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Durata</label>
+          <div class="btn-group" id="lessonDurationBtns"></div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Stagione</label>
+          <div class="btn-group" id="lessonSeasonBtns">
+            <button type="button" class="opt-btn active" data-season="low">Bassa stagione</button>
+            <button type="button" class="opt-btn" data-season="high">Alta stagione</button>
+          </div>
+        </div>
+        <div class="config-group" id="lessonTimeGroup">
+          <label class="config-label">Orario</label>
+          <div class="btn-group" id="lessonTimeBtns"></div>
+        </div>
+      </div>
+
+      <div id="lessonGroupPanel" style="display:none;">
+        <div class="config-group">
+          <label class="config-label">Pacchetto</label>
+          <div class="btn-group" id="lessonGroupOptionBtns"></div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Stagione</label>
+          <div class="btn-group" id="lessonGroupSeasonBtns">
+            <button type="button" class="opt-btn active" data-season="low">Bassa stagione</button>
+            <button type="button" class="opt-btn" data-season="high">Alta stagione</button>
+          </div>
+        </div>
+        <div class="config-group">
+          <label class="config-label">Partecipanti</label>
+          <div class="stepper" id="lessonGroupGuestsStepper">
+            <button type="button" class="step-btn" data-step="-1">−</button>
+            <span id="lessonGroupGuestsValue">1</span>
+            <button type="button" class="step-btn" data-step="1">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-display">Totale: <strong id="lessonPrice">€0</strong></div>
+        <button class="add-btn" id="lessonAddBtn">Aggiungi al carrello</button>
+      </div>
+      <p class="unavailable-note" id="lessonUnavailable">Non disponibile per questa combinazione: provate con una durata, una stagione o un orario diversi.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- BASKET DRAWER -->
+<div class="basket-overlay" id="basketOverlay"></div>
+<aside class="basket-drawer" id="basketDrawer" aria-label="Carrello">
+  <div class="basket-header">
+    <h3>Il vostro carrello</h3>
+    <button class="basket-close" id="basketClose" aria-label="Chiudi il carrello">✕</button>
+  </div>
+  <div class="basket-items" id="basketItems">
+    <p class="basket-empty" id="basketEmpty">Il carrello è vuoto: aggiungete qualcosa per iniziare.</p>
+  </div>
+  <div class="basket-nudge" id="basketNudge"></div>
+  <div class="basket-footer">
+    <div class="basket-total-row">
+      <span>Totale</span>
+      <strong id="basketTotal">€0.00</strong>
+    </div>
+    <p class="fx-note" id="fxNote" style="display:none;"></p>
+    <div class="hp-field" aria-hidden="true"><label>Lasciate vuoto questo campo<input type="text" name="hp_check" id="hpField" tabindex="-1" autocomplete="off"></label></div>
+    <div class="field">
+      <label for="customerName">Nome per la richiesta</label>
+      <input type="text" id="customerName" placeholder="Maria Rossi">
+    </div>
+    <div class="field">
+      <label for="customerEmail">Indirizzo email</label>
+      <input type="email" id="customerEmail" placeholder="maria@esempio.it">
+    </div>
+    <div class="field">
+      <label for="customerPhone">Numero di telefono <span class="field-optional">(facoltativo)</span></label>
+      <input type="tel" id="customerPhone" placeholder="+39 333 123 4567">
+    </div>
+    <button class="checkout-btn" id="checkoutBtn">Invia richiesta</button>
+    <p class="checkout-note">Inviando questa richiesta accettate i nostri <a href="/terms.html">Termini e Condizioni</a> e l'<a href="/privacy.html">Informativa sulla privacy</a>.</p>
+    <p class="checkout-note">Nessun pagamento richiesto: vi invieremo via email un preventivo dettagliato e confermeremo la disponibilità.</p>
+    <p class="checkout-error" id="checkoutError"></p>
+  </div>
+</aside>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Cervinia Travel Services · <a href="/terms.html">Termini e Condizioni</a> · <a href="/privacy.html">Informativa sulla privacy</a></span>
+    <span><a href="mailto:info@cerviniatravelservices.com">info@cerviniatravelservices.com</a> · WhatsApp <a href="https://wa.me/393668794487" target="_blank" rel="noopener">+39 366 879 4487</a></span>
+  </div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/393668794487" target="_blank" rel="noopener" aria-label="Scriveteci su WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="4.93" y1="7" x2="19.07" y2="17"/><line x1="19.07" y1="7" x2="4.93" y2="17"/><path d="M12 2 L9.5 4.5 M12 2 L14.5 4.5"/><path d="M12 22 L9.5 19.5 M12 22 L14.5 19.5"/><path d="M4.93 7 L6.5 9.5 M4.93 7 L7.8 6.5"/><path d="M19.07 17 L17.5 14.5 M19.07 17 L16.2 17.5"/><path d="M19.07 7 L16.2 6.5 M19.07 7 L17.5 9.5"/><path d="M4.93 17 L7.8 17.5 M4.93 17 L6.5 14.5"/></svg></a>
+
+<script src="/shop/js/i18n.js"></script>
+<script src="/shop/js/app.js"></script>
+</body>
+</html>

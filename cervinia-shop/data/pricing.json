@@ -1014,13 +1014,13 @@
     "group": [
       {
         "id": "group-3day",
-        "label": "Group Lesson \u00e2\u20ac\u201d 3 Days (Mon\u00e2\u20ac\u201cFri 10:00\u00e2\u20ac\u201c12:30)",
+        "label": "Group Lesson \u2014 3 Days (Mon\u2013Fri 10:00\u201312:30)",
         "low": 189,
         "high": 205
       },
       {
         "id": "group-5day",
-        "label": "Group Lesson \u00e2\u20ac\u201d 5 Days (Mon\u00e2\u20ac\u201cFri 10:00\u00e2\u20ac\u201c12:30)",
+        "label": "Group Lesson \u2014 5 Days (Mon\u2013Fri 10:00\u201312:30)",
         "low": 210,
         "high": 273
       }

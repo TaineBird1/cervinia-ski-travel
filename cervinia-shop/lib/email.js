@@ -1,6 +1,7 @@
 const fs = require('fs');
 const resend = require('./emailClient');
 const { BANK, groupIban } = require('./bankDetails');
+const i18n = require('./i18nServer');
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
 const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
@@ -37,26 +38,29 @@ async function sendInvoiceEmail(order, pdfPath) {
   }
 
   try {
+    const T = i18n.get(order.lang);
+    const B = T.email.quoteBody({ name: esc(order.customerName), total: require('../public/js/i18n.js').get(T.code).money(order.total) });
+    const L = T.pdf.bankLabels;
     await send({
       from: FROM_EMAIL,
       to: order.customerEmail,
-      subject: `Your Cervinia Travel Services quote — ${order.id}`,
+      subject: T.email.quoteSubject(order.id),
       html: `
-        <p>Hi ${esc(order.customerName) || 'there'},</p>
-        <p>Thanks for your enquiry with Cervinia Travel Services! Here's a copy of your requested itinerary, totalling €${order.total.toFixed(2)}.</p>
-        <p>This is a price estimate based on current rates — no payment has been taken. Our local team will check availability and be in touch within 24 hours to confirm everything and arrange payment.</p>
-        <p><strong>Paying by bank transfer.</strong> Once we have confirmed your booking, you can pay directly into our account — please only pay after we have confirmed:</p>
+        <p>${B.greeting}</p>
+        <p>${B.intro}</p>
+        <p>${B.estimate}</p>
+        <p><strong>${B.bankIntro}</strong>${B.bankIntroRest}</p>
         <table style="border-collapse:collapse;font-size:14px;margin:0 0 14px;">
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Account name</td><td style="padding:3px 0;"><strong>${BANK.accountName}</strong></td></tr>
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Bank</td><td style="padding:3px 0;">${BANK.bankName}, ${BANK.bankAddress}</td></tr>
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Account (Conto)</td><td style="padding:3px 0;">${BANK.accountNumber}</td></tr>
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">IBAN</td><td style="padding:3px 0;"><strong>${groupIban(BANK.iban)}</strong></td></tr>
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">BIC / SWIFT</td><td style="padding:3px 0;">${BANK.bic}</td></tr>
-          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">Payment reference</td><td style="padding:3px 0;"><strong>${esc(order.id)}</strong></td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.accountName}</td><td style="padding:3px 0;"><strong>${BANK.accountName}</strong></td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.bank}</td><td style="padding:3px 0;">${BANK.bankName}, ${BANK.bankAddress}</td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.account}</td><td style="padding:3px 0;">${BANK.accountNumber}</td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.iban}</td><td style="padding:3px 0;"><strong>${groupIban(BANK.iban)}</strong></td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.bic}</td><td style="padding:3px 0;">${BANK.bic}</td></tr>
+          <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.reference}</td><td style="padding:3px 0;"><strong>${esc(order.id)}</strong></td></tr>
         </table>
-        <p>Your quote is attached to this email.</p>
-        <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
-        <p>We don't just go there, we are there.</p>
+        <p>${B.attached}</p>
+        <p>${B.questions} <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
+        <p>${B.tagline}</p>
       `,
       attachments: [
         { filename: `quote-${order.id}.pdf`, content: fs.readFileSync(pdfPath).toString('base64') }
@@ -87,6 +91,7 @@ async function sendEnquiryNotification(order, pdfPath) {
           <li><strong>Email:</strong> ${esc(order.customerEmail) || '—'}</li>
           <li><strong>Phone:</strong> ${esc(order.customerPhone) || '—'}</li>
           <li><strong>Reference:</strong> ${esc(order.id)}</li>
+          <li><strong>Customer language:</strong> ${order.lang === 'it' ? 'Italian (quote PDF sent in Italian)' : 'English'}</li>
           <li><strong>Estimated total:</strong> €${order.total.toFixed(2)}</li>
         </ul>
         <p><strong>Items requested:</strong></p>
@@ -145,15 +150,17 @@ async function sendContactAcknowledgment(contact) {
   if (!resend) return;
 
   try {
+    const T = i18n.get(i18n.normalise(contact.lang));
+    const A = T.email.ackBody({ name: esc(contact.name), arrival: esc(contact.arrival), departure: esc(contact.departure) });
     await send({
       from: FROM_EMAIL,
       to: contact.email,
-      subject: 'We received your enquiry — Cervinia Travel Services',
+      subject: T.email.ackSubject,
       html: `
-        <p>Hi ${esc(contact.name)},</p>
-        <p>Thanks for getting in touch with Cervinia Travel Services! We've received your enquiry for ${esc(contact.arrival)} to ${esc(contact.departure)} and our local team will check availability and be in touch within 24 hours (CET) with a tailored quote.</p>
-        <p>Questions in the meantime? WhatsApp us any time: <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
-        <p>We don't just go there, we are there.</p>
+        <p>${A.greeting}</p>
+        <p>${A.body}</p>
+        <p>${A.questions} <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
+        <p>${A.tagline}</p>
       `
     });
     console.log(`✅ Contact-form acknowledgment emailed to ${contact.email}`);

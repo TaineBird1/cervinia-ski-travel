@@ -6,7 +6,12 @@ A plain Node/Express app (no build step) with three parts:
   with a contact form.
 - **Trip-planning shop** (`public/`, served at `/shop`) where customers build an
   itinerary — accommodation, airport transfers, equipment hire, lift passes and
-  lessons — and send it as an **enquiry**. No payment is taken online.
+  lessons — and send it as an **enquiry**. No payment is taken online. Also in
+  Italian (`/shop/it/`): screen text and rate-sheet labels come from
+  `public/js/i18n.js`, the customer's quote PDF and emails from `lib/i18nServer.js`.
+  The rate sheets in `data/` stay English (they are the lookup keys) and are
+  translated for display only; add a new hotel, room or note there and add its
+  Italian to `IT_DATA` in `public/js/i18n.js`, or it will show in English.
 - **Admin dashboard** (`admin/`, served at `/admin`) showing enquiries and
   contact-form messages.
 

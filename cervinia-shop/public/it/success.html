@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Richiesta inviata | Cervinia Travel Services</title>
+<link rel="stylesheet" href="/shop/css/styles.css">
+<style>
+  .confirm-wrap{max-width:640px; margin:0 auto; padding:80px 24px; text-align:center;}
+  .confirm-icon{font-size:3rem; margin-bottom:16px;}
+  .confirm-card{
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:16px; padding:28px;
+    margin-top:32px; text-align:left;
+  }
+  .confirm-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.94rem;}
+  .confirm-row:last-child{border-bottom:none;}
+  .confirm-total{font-weight:800; font-size:1.1rem;}
+  .download-btn{
+    display:inline-block; margin-top:26px; background:var(--blue); color:#fff; padding:14px 28px;
+    border-radius:12px; font-weight:800; text-decoration:none;
+  }
+  .status-msg{color:var(--slate); margin-top:20px;}
+</style>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6e0016c2f4b04814a3c7ae1dce39b337"}'></script><!-- End Cloudflare Web Analytics -->
+</head>
+<body>
+  <header><div class="wrap header-inner"><a href="/it/" class="logo">Cervinia <span>Travel Services</span></a></div></header>
+
+  <div class="confirm-wrap">
+    <div class="confirm-icon">🎉</div>
+    <h1>Grazie: la vostra richiesta è in viaggio!</h1>
+    <p class="status-msg" id="statusMsg">Stiamo completando la vostra richiesta…</p>
+
+    <div class="confirm-card" id="orderCard" style="display:none;"></div>
+
+    <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Scarica il preventivo (PDF)</a>
+    <div class="confirm-card" id="bankCard" style="display:none;"></div>
+    <p style="margin-top:20px; color:var(--slate); font-size:0.9rem;">Non è stato addebitato alcun pagamento. Vi abbiamo inviato via email una copia di questo preventivo: il nostro team locale verificherà la disponibilità e vi contatterà entro 24 ore.</p>
+    <p style="margin-top:24px;"><a href="/shop/it/" style="color:var(--blue); font-weight:700;">← Torna al configuratore del viaggio</a></p>
+  </div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  const statusMsg = document.getElementById('statusMsg');
+  const orderCard = document.getElementById('orderCard');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  if (!sessionId) {
+    statusMsg.textContent = 'Nessun riferimento della richiesta trovato.';
+  } else {
+    localStorage.removeItem('cervinia_basket');
+    poll(0);
+  }
+
+  function poll(attempt) {
+    fetch(`/api/order/${sessionId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status === 'not_found') {
+          statusMsg.textContent = 'Non troviamo questa richiesta qui: controllate la vostra email per il preventivo oppure scriveteci su WhatsApp.';
+        } else if (data.status === 'paid') {
+          renderOrder(data.order);
+        } else if (attempt < 10) {
+          statusMsg.textContent = 'Stiamo preparando il preventivo…';
+          setTimeout(() => poll(attempt + 1), 1500);
+        } else {
+          statusMsg.textContent = 'Quasi pronto: se non si aggiorna, ricaricate la pagina tra un momento.';
+        }
+      })
+      .catch(() => {
+        statusMsg.textContent = 'Impossibile caricare automaticamente la richiesta: controllate la vostra email o contattateci.';
+      });
+  }
+
+  const fmtMoney = (n) => Number(n).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function renderOrder(order) {
+    statusMsg.textContent = `Riferimento della richiesta: ${order.id}`;
+    orderCard.style.display = 'block';
+    orderCard.innerHTML = order.items.map((item) => `
+      <div class="confirm-row">
+        <span>${item.nameLocal || item.name} × ${item.qty}</span>
+        <span>€${fmtMoney(item.total)}</span>
+      </div>
+    `).join('') + `
+      <div class="confirm-row confirm-total">
+        <span>Totale stimato</span>
+        <span>€${fmtMoney(order.total)}</span>
+      </div>
+    `;
+    downloadBtn.href = `/api/invoice/${order.id}`;
+    downloadBtn.style.display = 'inline-block';
+    showBankDetails(order);
+  }
+
+  function showBankDetails(order) {
+    fetch('/api/bank-details')
+      .then((r) => r.json())
+      .then((b) => {
+        const rows = [
+          ['Intestatario del conto', b.accountName],
+          ['Banca', `${b.bankName}, ${b.bankAddress}`],
+          ['Conto', b.accountNumber],
+          ['IBAN', b.ibanGrouped],
+          ['BIC / SWIFT', b.bic],
+          ['Causale (riferimento di pagamento)', order.id]
+        ];
+        const bankCard = document.getElementById('bankCard');
+        bankCard.innerHTML = `
+          <h3 style="margin-bottom:6px;">Preferite pagare con bonifico bancario?</h3>
+          <p style="color:var(--slate); font-size:0.88rem; margin-bottom:10px;">Una volta confermata la prenotazione potete pagare direttamente sul nostro conto. Vi preghiamo di pagare solo dopo che avremo confermato la disponibilità e il prezzo finale.</p>
+        ` + rows.map(([label, value]) => `
+          <div class="confirm-row"><span>${label}</span><strong style="text-align:right;">${value}</strong></div>
+        `).join('');
+        bankCard.style.display = 'block';
+      })
+      .catch(() => {});
+  }
+</script>
+
+<a class="wa-float" href="https://wa.me/393668794487" target="_blank" rel="noopener" aria-label="Scriveteci su WhatsApp"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="4.93" y1="7" x2="19.07" y2="17"/><line x1="19.07" y1="7" x2="4.93" y2="17"/><path d="M12 2 L9.5 4.5 M12 2 L14.5 4.5"/><path d="M12 22 L9.5 19.5 M12 22 L14.5 19.5"/><path d="M4.93 7 L6.5 9.5 M4.93 7 L7.8 6.5"/><path d="M19.07 17 L17.5 14.5 M19.07 17 L16.2 17.5"/><path d="M19.07 7 L16.2 6.5 M19.07 7 L17.5 9.5"/><path d="M4.93 17 L7.8 17.5 M4.93 17 L6.5 14.5"/></svg></a>
+</body>
+</html>

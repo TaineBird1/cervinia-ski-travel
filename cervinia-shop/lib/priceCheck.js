@@ -8,6 +8,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const I18N = require('../public/js/i18n.js');
+
 const PRICING_PATH = path.join(__dirname, '..', 'data', 'pricing.json');
 const HOTELS_PATH = path.join(__dirname, '..', 'data', 'hotels.json');
 
@@ -19,7 +21,6 @@ const MAX_SUFFIX = 300;
 
 class BasketError extends Error {}
 
-const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 function cleanText(value, max) {
   return String(value == null ? '' : value)
@@ -30,7 +31,7 @@ function cleanText(value, max) {
 }
 
 // ---------- transfers ----------
-function priceTransfer(pricing, id, clientName) {
+function priceTransfer(pricing, id, clientName, L) {
   const feeMatch = id.match(/^transfer-(shared|private)-(.+)-(\d+)-([a-z-]+)-fee$/);
   const match = feeMatch || id.match(/^transfer-(shared|private)-(.+)-(\d+)-([a-z-]+)$/);
   if (!match) return null;
@@ -40,7 +41,7 @@ function priceTransfer(pricing, id, clientName) {
   if (!option) return null;
 
   if (feeMatch) {
-    return { unitPrice: TRANSFER_BOOKING_FEE, name: `Transfer Booking Fee — ${airport}` };
+    return { unitPrice: TRANSFER_BOOKING_FEE, name: (P) => P.names.bookingFee(P.d(airport)) };
   }
 
   let price;
@@ -49,13 +50,17 @@ function priceTransfer(pricing, id, clientName) {
   if (price == null) return null;
   const unitPrice = direction === 'return' ? price * 2 : price;
 
-  const typeLabel = type === 'shared' ? 'Shared Shuttle' : 'Scheduled Transfer';
-  const directionLabel = direction === 'return' ? 'Return' : 'One-way';
-  const prefix = `Airport Transfer — ${airport} (${typeLabel}, ${directionLabel}, ${guests} pax)`;
-  // The customer's own details (address, contact, luggage) follow the prefix.
+  const prefixFor = (P) => P.names.transferPrefix(P.d(airport), P.typeLabel(type), P.directionLabel(direction), guests);
+  // The customer's own details (address, contact, luggage) follow the prefix,
+  // written in whichever language the customer's page used.
   let suffix = '';
-  if (clientName.startsWith(`${prefix} — `)) suffix = ` — ${cleanText(clientName.slice(prefix.length + 3), MAX_SUFFIX)}`;
-  return { unitPrice, name: prefix + suffix };
+  [L, I18N.en].some((P) => {
+    const prefix = prefixFor(P);
+    if (!clientName.startsWith(`${prefix} — `)) return false;
+    suffix = ` — ${cleanText(clientName.slice(prefix.length + 3), MAX_SUFFIX)}`;
+    return true;
+  });
+  return { unitPrice, name: (P) => prefixFor(P) + suffix };
 }
 
 // ---------- equipment ----------
@@ -69,7 +74,7 @@ function priceEquipment(pricing, id) {
   const row = group && group.pricesByDays[String(days)];
   const price = row ? row[itemIndex] : null;
   if (item == null || price == null) return null;
-  return { unitPrice: price, name: `${cat} — ${item} — ${plural(days, 'day')}` };
+  return { unitPrice: price, name: (P) => P.names.equipment(P.d(cat), P.d(item), P.days(days)) };
 }
 
 // ---------- lift passes ----------
@@ -91,7 +96,7 @@ function pricePass(pricing, id) {
     if (base == null) return null;
     unitPrice = base + PASS_SURCHARGE;
   }
-  return { unitPrice, name: `Ski Lift Pass — ${tierLabel}, ${plural(days, 'day')}${free ? ' — Free (with adult pass)' : ''}` };
+  return { unitPrice, name: (P) => P.names.pass(P.d(tierLabel), P.days(days), free) };
 }
 
 // ---------- lessons ----------
@@ -104,8 +109,7 @@ function priceLesson(pricing, id) {
     if (!durationRates) return null;
     const unitPrice = season === 'high' ? durationRates.high : durationRates[time];
     if (unitPrice == null) return null;
-    const seasonLabel = season === 'high' ? 'High Season' : `Low Season, ${time === 'lowAfternoon' ? 'Afternoon' : 'Morning'}`;
-    return { unitPrice, name: `Private Lesson — ${people} people, ${duration} (${seasonLabel})` };
+    return { unitPrice, name: (P) => P.names.lessonPrivate(people, P.d(duration), season, time) };
   }
 
   m = id.match(/^lesson-group-(.+)-(high|low)$/);
@@ -114,7 +118,7 @@ function priceLesson(pricing, id) {
     if (!group) return null;
     const unitPrice = m[2] === 'high' ? group.high : group.low;
     if (unitPrice == null) return null;
-    return { unitPrice, name: `${group.label} (${m[2] === 'high' ? 'High Season' : 'Low Season'})` };
+    return { unitPrice, name: (P) => P.names.lessonGroup(P.d(group.label), m[2]) };
   }
   return null;
 }
@@ -127,7 +131,6 @@ function addDays(dateStr, days) {
   d.setUTCDate(d.getUTCDate() + days);
   return d.toISOString().slice(0, 10);
 }
-const fmtDate = (s) => dateOnly(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 
 function adultUnitTotal(hotel, roomIndex, checkIn, checkOut) {
   const n = nightsBetween(checkIn, checkOut);
@@ -166,20 +169,19 @@ function priceHotel(hotels, id, qty) {
   const adultTotal = adultUnitTotal(hotel, roomIndex, checkIn, checkOut);
   if (adultTotal == null) return null;
 
-  const label = `${fmtDate(checkIn)} – ${fmtDate(checkOut)} (${plural(nights, 'night')})`;
-  const base = `${hotelName} — ${roomName}, ${label}`;
+  const baseFor = (P) => P.names.hotelBase(hotelName, P.d(roomName), checkIn, checkOut, nights, P.fmtDate);
 
   if (childrenFlag) {
     if (hotel.childPolicy && hotel.childPolicy.length) return null;
-    return { unitPrice: adultTotal, name: `${base} (${qty} child${qty > 1 ? 'ren' : ''}, standard rate)` };
+    return { unitPrice: adultTotal, name: (P) => P.names.hotelChildrenStd(baseFor(P), qty) };
   }
   if (childIdx != null) {
     const policy = hotel.childPolicy;
     if (!policy || !policy.length) return null;
     const tier = policy[Number(childIdx)] || policy[0];
-    return { unitPrice: childTierCost(tier, adultTotal, nights), name: `${base} (Child: ${tier.label})` };
+    return { unitPrice: childTierCost(tier, adultTotal, nights), name: (P) => P.names.hotelChild(baseFor(P), P.d(tier.label)) };
   }
-  return { unitPrice: adultTotal, name: `${base} (${qty} adult${qty > 1 ? 's' : ''})` };
+  return { unitPrice: adultTotal, name: (P) => P.names.hotelAdults(baseFor(P), qty) };
 }
 
 // ---------- public API ----------
@@ -188,9 +190,10 @@ function priceHotel(hotels, id, qty) {
  * prices and names. Throws BasketError (safe to show the customer) if any line
  * is unrecognised, so a forged or stale basket is never turned into a quote.
  */
-function priceBasket(rawItems) {
-  if (!Array.isArray(rawItems) || rawItems.length === 0) throw new BasketError('Your basket is empty.');
-  if (rawItems.length > MAX_ITEMS) throw new BasketError('Your basket is too large — please send it in two enquiries.');
+function priceBasket(rawItems, lang) {
+  const L = I18N.get(lang);
+  if (!Array.isArray(rawItems) || rawItems.length === 0) throw new BasketError(L.errors.basketEmpty);
+  if (rawItems.length > MAX_ITEMS) throw new BasketError(L.errors.basketTooLarge);
 
   const pricing = JSON.parse(fs.readFileSync(PRICING_PATH, 'utf8'));
   const hotels = JSON.parse(fs.readFileSync(HOTELS_PATH, 'utf8')).hotels;
@@ -199,12 +202,12 @@ function priceBasket(rawItems) {
     const id = cleanText(raw && raw.id, 200);
     const qty = Number(raw && raw.qty);
     if (!id || !Number.isInteger(qty) || qty < 1 || qty > MAX_QTY) {
-      throw new BasketError('Something in your basket looks out of date — please refresh the page and add it again.');
+      throw new BasketError(L.errors.basketStale);
     }
     const clientName = cleanText(raw.name, 500);
 
     const priced =
-      (id.startsWith('transfer-') && priceTransfer(pricing, id, clientName)) ||
+      (id.startsWith('transfer-') && priceTransfer(pricing, id, clientName, L)) ||
       (id.startsWith('equip-') && priceEquipment(pricing, id)) ||
       (id.startsWith('pass-') && pricePass(pricing, id)) ||
       (id.startsWith('lesson-') && priceLesson(pricing, id)) ||
@@ -212,10 +215,14 @@ function priceBasket(rawItems) {
       null;
 
     if (!priced) {
-      throw new BasketError('Something in your basket looks out of date — please refresh the page and add it again.');
+      throw new BasketError(L.errors.basketStale);
     }
     const unitPrice = priced.unitPrice;
-    return { name: priced.name, qty, unitPrice, total: unitPrice * qty };
+    // `name` is always English (the business's working language, used by the admin
+    // dashboard); `nameLocal` is the customer's own language for their quote.
+    const line = { name: priced.name(I18N.en), qty, unitPrice, total: unitPrice * qty };
+    if (L.code !== 'en') line.nameLocal = priced.name(L);
+    return line;
   });
 }
 

@@ -10,6 +10,8 @@ const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, send
 const { BANK, groupIban } = require('../lib/bankDetails');
 const { priceBasket, BasketError, cleanText } = require('../lib/priceCheck');
 const { createLimiter, clientIp } = require('../lib/rateLimit');
+const I18N = require('../public/js/i18n.js');
+const { normalise } = require('../lib/i18nServer');
 
 const router = express.Router();
 
@@ -23,7 +25,6 @@ const recipientLimit = createLimiter({ max: 3 });
 const lookupLimit = createLimiter({ max: 60 });
 const trackLimit = createLimiter({ max: 60 });
 const REFERENCE_PATTERN = /^inq_\d+_[a-z0-9]+$/;
-const TOO_MANY = 'Too many enquiries just now — please wait a while, or WhatsApp us directly.';
 const EMAIL_PATTERN = /^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -57,33 +58,35 @@ router.post('/inquire', async (req, res) => {
   try {
     const body = req.body || {};
     if (body.hp) return res.json({ ok: true, order: { id: 'inq_received', items: [], total: 0 } });
+    const lang = normalise(body.lang);
+    const E = I18N.get(lang).errors;
 
     const customerName = cleanText(body.customerName, 100);
     const customerEmail = cleanText(body.customerEmail, 200);
     const customerPhone = cleanText(body.customerPhone, 40);
 
     if (!Array.isArray(body.items) || body.items.length === 0) {
-      return res.status(400).json({ error: 'Your basket is empty.' });
+      return res.status(400).json({ error: E.basketEmpty });
     }
     if (!customerName) {
-      return res.status(400).json({ error: 'Please enter a name for the enquiry.' });
+      return res.status(400).json({ error: E.needName });
     }
     if (!EMAIL_PATTERN.test(customerEmail)) {
-      return res.status(400).json({ error: 'Please enter a valid email address.' });
+      return res.status(400).json({ error: E.needEmail });
     }
 
     // Prices and descriptions are rebuilt on the server from the rate sheets;
     // anything the browser sent that doesn't match a real product is refused.
     let normalizedItems;
     try {
-      normalizedItems = priceBasket(body.items);
+      normalizedItems = priceBasket(body.items, lang);
     } catch (err) {
       if (err instanceof BasketError) return res.status(400).json({ error: err.message });
       throw err;
     }
 
     if (!inquireIpLimit(clientIp(req)) || !recipientLimit(customerEmail.toLowerCase())) {
-      return res.status(429).json({ error: TOO_MANY });
+      return res.status(429).json({ error: E.tooMany });
     }
 
     const total = normalizedItems.reduce((sum, item) => sum + item.total, 0);
@@ -96,6 +99,7 @@ router.post('/inquire', async (req, res) => {
       customerName,
       customerEmail,
       customerPhone,
+      lang,
       items: normalizedItems,
       subtotal: total,
       total,
@@ -113,7 +117,7 @@ router.post('/inquire', async (req, res) => {
     res.json({ ok: true, order });
   } catch (err) {
     console.error('inquire error:', err);
-    res.status(500).json({ error: 'Could not send your enquiry. Please try again or WhatsApp us directly.' });
+    res.status(500).json({ error: I18N.get(normalise((req.body || {}).lang)).errors.sendFailed });
   }
 });
 
@@ -127,6 +131,7 @@ router.post('/contact', async (req, res) => {
   try {
     const body = req.body || {};
     if (body.hp) return res.json({ ok: true });
+    const E = I18N.get(normalise(body.lang)).errors;
 
     const name = cleanText(body.name, 100);
     const email = cleanText(body.email, 200);
@@ -143,7 +148,7 @@ router.post('/contact', async (req, res) => {
     }
 
     if (!contactIpLimit(clientIp(req)) || !recipientLimit(email.toLowerCase())) {
-      return res.status(429).json({ error: TOO_MANY });
+      return res.status(429).json({ error: E.tooMany });
     }
 
     const contact = {
@@ -167,7 +172,7 @@ router.post('/contact', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('contact error:', err);
-    res.status(500).json({ error: 'Could not send your enquiry. Please try again or WhatsApp us directly.' });
+    res.status(500).json({ error: I18N.get(normalise((req.body || {}).lang)).errors.sendFailed });
   }
 });
 
@@ -191,7 +196,7 @@ router.get('/order/:reference', (req, res) => {
   if (!order) return res.status(404).json({ status: 'not_found' });
   res.json({
     status: 'paid',
-    order: { id: order.id, items: order.items, total: order.total, currency: order.currency, createdAt: order.createdAt }
+    order: { id: order.id, lang: order.lang || 'en', items: order.items, total: order.total, currency: order.currency, createdAt: order.createdAt }
   });
 });
 

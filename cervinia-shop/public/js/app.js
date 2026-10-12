@@ -1,4 +1,9 @@
 (() => {
+  // Language pack (public/js/i18n.js): screen text, line names and rate-sheet labels.
+  const L = window.CTS_I18N.get(document.documentElement.lang === 'it' ? 'it' : 'en');
+  const U = L.ui;
+  const d = L.d; // translates a rate-sheet label for display (the data itself stays English)
+
   const state = {
     pricing: null,
     hotels: null,
@@ -31,7 +36,7 @@
   // DISPLAYED. The enquiry always submits the original EUR amount.
   const fmt = (eur) => {
     const amount = Number(eur) * (state.fxRates[state.currency] || 1);
-    return `${CURRENCY_SYMBOLS[state.currency]}${amount.toFixed(2)}`;
+    return `${CURRENCY_SYMBOLS[state.currency]}${L.money(amount)}`;
   };
 
   fetch('https://api.frankfurter.dev/v1/latest?base=EUR&symbols=GBP,USD')
@@ -62,7 +67,7 @@
     .catch(() => {
       document.querySelectorAll('.cat-section').forEach((s) => {
         const sub = s.querySelector('.section-sub');
-        if (sub && s.id !== 'accommodation') sub.textContent = 'Could not load pricing — is the server running?';
+        if (sub && s.id !== 'accommodation') sub.textContent = U.loadPricingError;
       });
     });
 
@@ -74,7 +79,7 @@
     })
     .catch(() => {
       const sub = document.getElementById('hotelPriceBasisNote');
-      if (sub) sub.textContent = 'Could not load hotel rates — is the server running?';
+      if (sub) sub.textContent = U.loadHotelsError;
     });
 
   // ---------- helpers ----------
@@ -123,7 +128,7 @@
   const PASS_KEY_CARD_FEE = 2;
 
   function initTransfers() {
-    document.getElementById('transferNote').textContent = state.pricing.transfers.notes || '';
+    document.getElementById('transferNote').textContent = d(state.pricing.transfers.notes || '');
 
     document.getElementById('transferTypeBtns').querySelectorAll('.opt-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -186,27 +191,27 @@
       const opt = currentTransferOption();
       const unitPrice = currentTransferPrice();
       if (!opt || unitPrice == null) return;
-      const typeLabel = state.transfer.type === 'shared' ? 'Shared Shuttle' : 'Scheduled Transfer';
-      const directionLabel = state.transfer.direction === 'return' ? 'Return' : 'One-way';
+      const typeLabel = L.typeLabel(state.transfer.type);
+      const directionLabel = L.directionLabel(state.transfer.direction);
 
       const details = [];
-      if (state.transfer.address.trim()) details.push(`Staying at: ${state.transfer.address.trim()}`);
-      if (state.transfer.contact.trim()) details.push(`Contact: ${state.transfer.contact.trim()}`);
-      if (state.transfer.luggagePax > 0) details.push(`${state.transfer.luggagePax} pax w/ luggage`);
-      if (state.transfer.equipmentPax > 0) details.push(`${state.transfer.equipmentPax} pax w/ ski/board equipment`);
+      if (state.transfer.address.trim()) details.push(`${U.stayingAt}: ${state.transfer.address.trim()}`);
+      if (state.transfer.contact.trim()) details.push(`${U.contact}: ${state.transfer.contact.trim()}`);
+      if (state.transfer.luggagePax > 0) details.push(U.paxLuggage(state.transfer.luggagePax));
+      if (state.transfer.equipmentPax > 0) details.push(U.paxEquip(state.transfer.equipmentPax));
       const detailsSuffix = details.length ? ` — ${details.join(', ')}` : '';
 
       const itemId = `transfer-${state.transfer.type}-${opt.airport}-${state.transfer.guests}-${state.transfer.direction}`;
 
       addToBasket({
         id: itemId,
-        name: `Airport Transfer — ${opt.airport} (${typeLabel}, ${directionLabel}, ${state.transfer.guests} pax)${detailsSuffix}`,
+        name: `${L.names.transferPrefix(d(opt.airport), typeLabel, directionLabel, state.transfer.guests)}${detailsSuffix}`,
         unitPrice,
         qty: 1
       });
       addToBasket({
         id: `${itemId}-fee`,
-        name: `Transfer Booking Fee — ${opt.airport}`,
+        name: L.names.bookingFee(d(opt.airport)),
         unitPrice: TRANSFER_BOOKING_FEE,
         qty: 1
       });
@@ -216,7 +221,7 @@
   function renderTransferAirports() {
     const list = state.pricing.transfers[state.transfer.type].options;
     const airports = list.map((o) => o.airport);
-    buildButtons(document.getElementById('transferAirportBtns'), airports, 0, (i) => {
+    buildButtons(document.getElementById('transferAirportBtns'), airports.map(d), 0, (i) => {
       state.transfer.airport = airports[i];
       updateTransferPrice();
     });
@@ -257,13 +262,13 @@
       addBtn.disabled = false;
       note.style.display = 'none';
     }
-    timeNote.textContent = opt && opt.travelTime ? `Travel time: approx. ${opt.travelTime.replace('h', 'h ')}` : '';
+    timeNote.textContent = opt && opt.travelTime ? U.travelTime(opt.travelTime.replace('h', 'h ')) : '';
   }
 
   // ---------- Equipment ----------
   function initEquipment() {
     const categories = state.pricing.equipment.categories;
-    buildButtons(document.getElementById('equipCategoryBtns'), categories, 0, (i) => {
+    buildButtons(document.getElementById('equipCategoryBtns'), categories.map(d), 0, (i) => {
       state.equip.catIndex = i;
       state.equip.itemIndex = 0;
       renderEquipItems();
@@ -290,7 +295,7 @@
       const item = state.pricing.equipment.data[cat].items[state.equip.itemIndex];
       addToBasket({
         id: `equip-${state.equip.catIndex}-${state.equip.itemIndex}-${state.equip.days}`,
-        name: `${cat} — ${item} — ${state.equip.days} day${state.equip.days > 1 ? 's' : ''}`,
+        name: L.names.equipment(d(cat), d(item), L.days(state.equip.days)),
         unitPrice: price,
         qty: state.equip.people
       });
@@ -300,7 +305,7 @@
   function renderEquipItems() {
     const cat = state.pricing.equipment.categories[state.equip.catIndex];
     const items = state.pricing.equipment.data[cat].items;
-    buildButtons(document.getElementById('equipItemBtns'), items, state.equip.itemIndex, (i) => {
+    buildButtons(document.getElementById('equipItemBtns'), items.map(d), state.equip.itemIndex, (i) => {
       state.equip.itemIndex = i;
       updateEquipPrice();
     });
@@ -312,7 +317,7 @@
     if (!dayKeys.includes(String(state.equip.days))) state.equip.days = Number(dayKeys[0]);
     buildButtons(
       document.getElementById('equipDaysBtns'),
-      dayKeys.map((d) => `${d} day${d > 1 ? 's' : ''}`),
+      dayKeys.map((k) => L.days(Number(k))),
       dayKeys.indexOf(String(state.equip.days)),
       (i) => { state.equip.days = Number(dayKeys[i]); updateEquipPrice(); }
     );
@@ -355,7 +360,7 @@
       }
     }
 
-    buildButtons(document.getElementById('passTierBtns'), tiers, 0, (i) => {
+    buildButtons(document.getElementById('passTierBtns'), tiers.map(d), 0, (i) => {
       state.pass.tierIndex = i;
       syncChildFreeVisibility();
       updatePassPrice();
@@ -370,14 +375,14 @@
     const dayKeys = sortedDayKeys(state.pricing.liftPasses.pricesByDays);
     buildButtons(
       document.getElementById('passDaysBtns'),
-      dayKeys.map((d) => `${d} day${d > 1 ? 's' : ''}`),
+      dayKeys.map((k) => L.days(Number(k))),
       0,
       (i) => { state.pass.days = Number(dayKeys[i]); updatePassPrice(); }
     );
     state.pass.days = Number(dayKeys[0]);
 
-    document.getElementById('passSeasonNote').textContent = state.pricing.liftPasses.season || '';
-    document.getElementById('passZermattNote').textContent = state.pricing.liftPasses.notes || '';
+    document.getElementById('passSeasonNote').textContent = d(state.pricing.liftPasses.season || '');
+    document.getElementById('passZermattNote').textContent = d(state.pricing.liftPasses.notes || '');
 
     setupStepper(
       document.getElementById('passGuestsStepper'),
@@ -391,10 +396,9 @@
       const unitPrice = currentPassUnitPrice();
       if (unitPrice == null) return;
       const tierLabel = state.pricing.liftPasses.tiers[state.pass.tierIndex];
-      const freeSuffix = state.pass.childFree ? ' — Free (with adult pass)' : '';
       addToBasket({
         id: `pass-${state.pass.tierIndex}-${state.pass.days}${state.pass.childFree ? '-free' : ''}`,
-        name: `Ski Lift Pass — ${tierLabel}, ${state.pass.days} day${state.pass.days > 1 ? 's' : ''}${freeSuffix}`,
+        name: L.names.pass(d(tierLabel), L.days(state.pass.days), state.pass.childFree),
         unitPrice,
         qty: state.pass.guests
       });
@@ -414,13 +418,13 @@
     const unit = currentPassUnitPrice();
     const total = unit == null ? null : unit * state.pass.guests;
     document.getElementById('passPrice').textContent =
-      total == null ? '—' : state.pass.childFree ? 'Free' : fmt(total);
+      total == null ? '—' : state.pass.childFree ? U.free : fmt(total);
     document.getElementById('passAddBtn').disabled = total == null;
   }
 
   // ---------- Lessons ----------
   function initLessons() {
-    document.getElementById('lessonSeasonNote').textContent = state.pricing.lessons.seasonNote || '';
+    document.getElementById('lessonSeasonNote').textContent = d(state.pricing.lessons.seasonNote || '');
 
     const typeBtns = document.getElementById('lessonTypeBtns');
     typeBtns.querySelectorAll('.opt-btn').forEach((btn) => {
@@ -436,14 +440,14 @@
 
     // Private panel
     const people = state.pricing.lessons.private.peopleOptions;
-    buildButtons(document.getElementById('lessonPeopleBtns'), people.map((p) => `${p} ${p === 1 ? 'person' : 'people'}`), 0, (i) => {
+    buildButtons(document.getElementById('lessonPeopleBtns'), people.map((p) => U.people(p)), 0, (i) => {
       state.lesson.people = people[i];
       renderLessonTimes();
       updateLessonPrice();
     });
 
     const durations = state.pricing.lessons.private.durations;
-    buildButtons(document.getElementById('lessonDurationBtns'), durations, 0, (i) => {
+    buildButtons(document.getElementById('lessonDurationBtns'), durations.map(d), 0, (i) => {
       state.lesson.duration = durations[i];
       renderLessonTimes();
       updateLessonPrice();
@@ -463,7 +467,7 @@
 
     // Group panel
     const groupOptions = state.pricing.lessons.group;
-    buildButtons(document.getElementById('lessonGroupOptionBtns'), groupOptions.map((g) => g.label), 0, (i) => {
+    buildButtons(document.getElementById('lessonGroupOptionBtns'), groupOptions.map((g) => d(g.label)), 0, (i) => {
       state.lesson.groupId = groupOptions[i].id;
       updateLessonPrice();
     });
@@ -490,10 +494,9 @@
       if (state.lesson.type === 'private') {
         const price = currentPrivateLessonPrice();
         if (price == null) return;
-        const seasonLabel = state.lesson.season === 'high' ? 'High Season' : `Low Season, ${state.lesson.time === 'lowAfternoon' ? 'Afternoon' : 'Morning'}`;
         addToBasket({
           id: `lesson-private-${state.lesson.people}-${state.lesson.duration}-${state.lesson.season}-${state.lesson.time}`,
-          name: `Private Lesson — ${state.lesson.people} people, ${state.lesson.duration} (${seasonLabel})`,
+          name: L.names.lessonPrivate(state.lesson.people, d(state.lesson.duration), state.lesson.season, state.lesson.time),
           unitPrice: price,
           qty: 1
         });
@@ -501,10 +504,9 @@
         const price = currentGroupLessonPrice();
         if (price == null) return;
         const g = state.pricing.lessons.group.find((g) => g.id === state.lesson.groupId);
-        const seasonLabel = state.lesson.groupSeason === 'high' ? 'High Season' : 'Low Season';
         addToBasket({
           id: `lesson-group-${g.id}-${state.lesson.groupSeason}`,
-          name: `${g.label} (${seasonLabel})`,
+          name: L.names.lessonGroup(d(g.label), state.lesson.groupSeason),
           unitPrice: price / state.lesson.groupGuests,
           qty: state.lesson.groupGuests
         });
@@ -524,8 +526,8 @@
     }
 
     const options = [];
-    if (durationRates.lowMorning != null) options.push({ key: 'lowMorning', label: 'Morning' });
-    if (durationRates.lowAfternoon != null) options.push({ key: 'lowAfternoon', label: 'Afternoon' });
+    if (durationRates.lowMorning != null) options.push({ key: 'lowMorning', label: U.morning });
+    if (durationRates.lowAfternoon != null) options.push({ key: 'lowAfternoon', label: U.afternoon });
 
     if (options.length === 0) {
       timeGroup.style.display = 'none';
@@ -656,11 +658,11 @@
       if (adultUnitTotal == null || nights < minNights) return;
 
       const roomName = hotel.rooms[state.hotel.roomIndex];
-      const label = `${fmtDate(checkIn)} – ${fmtDate(checkOut)} (${nights} night${nights > 1 ? 's' : ''})`;
+      const base = L.names.hotelBase(state.hotel.name, d(roomName), checkIn, checkOut, nights, L.fmtDate);
 
       addToBasket({
         id: `hotel-${state.hotel.name}-${checkIn}-${checkOut}-${state.hotel.roomIndex}`,
-        name: `${state.hotel.name} — ${roomName}, ${label} (${state.hotel.guests} adult${state.hotel.guests > 1 ? 's' : ''})`,
+        name: L.names.hotelAdults(base, state.hotel.guests),
         unitPrice: adultUnitTotal,
         qty: state.hotel.guests
       });
@@ -670,7 +672,7 @@
         if (!policy || policy.length === 0) {
           addToBasket({
             id: `hotel-${state.hotel.name}-${checkIn}-${checkOut}-${state.hotel.roomIndex}-children`,
-            name: `${state.hotel.name} — ${roomName}, ${label} (${state.hotel.children} child${state.hotel.children > 1 ? 'ren' : ''}, standard rate)`,
+            name: L.names.hotelChildrenStd(base, state.hotel.children),
             unitPrice: adultUnitTotal,
             qty: state.hotel.children
           });
@@ -683,7 +685,7 @@
             const cost = childTierCost(tier, adultUnitTotal, nights);
             addToBasket({
               id: `hotel-${state.hotel.name}-${checkIn}-${checkOut}-${state.hotel.roomIndex}-child-${idx}`,
-              name: `${state.hotel.name} — ${roomName}, ${label} (Child: ${tier.label})`,
+              name: L.names.hotelChild(base, d(tier.label)),
               unitPrice: cost,
               qty
             });
@@ -709,7 +711,7 @@
     if (!policy || policy.length === 0) {
       const note = document.createElement('p');
       note.className = 'child-rate-note';
-      note.textContent = 'No child discount at this property — children are charged at the standard adult rate.';
+      note.textContent = U.noChildDiscount;
       container.appendChild(note);
       return;
     }
@@ -718,12 +720,12 @@
       const row = document.createElement('div');
       row.className = 'child-rate-row';
       const label = document.createElement('span');
-      label.textContent = `Child ${i + 1}:`;
+      label.textContent = U.childN(i + 1);
       const select = document.createElement('select');
       policy.forEach((tier, idx) => {
         const opt = document.createElement('option');
         opt.value = String(idx);
-        opt.textContent = tier.label;
+        opt.textContent = d(tier.label);
         select.appendChild(opt);
       });
       select.value = String(state.hotel.childRateIndexes[i] || 0);
@@ -783,7 +785,7 @@
   }
 
   function fmtDate(dateStr) {
-    return new Date(`${dateStr}T00:00:00`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    return L.fmtDate(dateStr);
   }
 
   function nightlyRateForDate(hotel, roomIndex, dateStr) {
@@ -824,8 +826,7 @@
     if (!state.hotel.calMonth) state.hotel.calMonth = min.slice(0, 7) + '-01';
 
     const monthDate = new Date(`${state.hotel.calMonth}T00:00:00`);
-    document.getElementById('calMonthLabel').textContent =
-      monthDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+    document.getElementById('calMonthLabel').textContent = L.monthLabel(state.hotel.calMonth);
 
     const year = monthDate.getFullYear();
     const monthIdx = monthDate.getMonth();
@@ -882,18 +883,18 @@
   function renderCalSelectionSummary() {
     const el = document.getElementById('calSelectionSummary');
     if (!state.hotel.checkIn) {
-      el.textContent = 'Select your check-in date.';
+      el.textContent = U.selectCheckIn;
     } else if (!state.hotel.checkOut) {
-      el.textContent = `Check-in: ${fmtDate(state.hotel.checkIn)} — now select your check-out date.`;
+      el.textContent = U.checkInSelected(fmtDate(state.hotel.checkIn));
     } else {
       const n = dateDiffNights(state.hotel.checkIn, state.hotel.checkOut);
-      el.textContent = `${fmtDate(state.hotel.checkIn)} → ${fmtDate(state.hotel.checkOut)} · ${n} night${n > 1 ? 's' : ''}`;
+      el.textContent = U.rangeSummary(fmtDate(state.hotel.checkIn), fmtDate(state.hotel.checkOut), n);
     }
   }
 
   function renderHotelRooms() {
     const hotel = state.hotels[state.hotel.name];
-    buildButtons(document.getElementById('hotelRoomBtns'), hotel.rooms, state.hotel.roomIndex, (i) => {
+    buildButtons(document.getElementById('hotelRoomBtns'), hotel.rooms.map(d), state.hotel.roomIndex, (i) => {
       state.hotel.roomIndex = i;
       updateHotelPrice();
     });
@@ -902,9 +903,9 @@
   function renderHotelNotes() {
     const hotel = state.hotels[state.hotel.name];
     const basisNote = document.getElementById('hotelPriceBasisNote');
-    basisNote.dataset.original = hotel.priceBasis;
-    basisNote.textContent = hotel.priceBasis.replace('€', CURRENCY_SYMBOLS[state.currency]);
-    document.getElementById('hotelNotesList').innerHTML = hotel.notes.map((n) => `<p>${escapeHtml(n)}</p>`).join('');
+    basisNote.dataset.original = d(hotel.priceBasis);
+    basisNote.textContent = d(hotel.priceBasis).replace('€', CURRENCY_SYMBOLS[state.currency]);
+    document.getElementById('hotelNotesList').innerHTML = hotel.notes.map((n) => `<p>${escapeHtml(d(n))}</p>`).join('');
   }
 
   function updateHotelPrice() {
@@ -940,7 +941,7 @@
     if (nights < minNights) {
       priceEl.textContent = '—';
       addBtn.disabled = true;
-      minNightsNote.textContent = `This hotel requires a minimum stay of ${minNights} nights — please select a longer date range.`;
+      minNightsNote.textContent = U.minNights(minNights);
       minNightsNote.style.display = 'block';
       return;
     }
@@ -985,7 +986,7 @@
     container.innerHTML = '';
 
     if (state.basket.length === 0) {
-      container.innerHTML = '<p class="basket-empty" id="basketEmpty">Your basket is empty — add some items to get started.</p>';
+      container.innerHTML = `<p class="basket-empty" id="basketEmpty">${U.basketEmpty}</p>`;
     } else {
       state.basket.forEach((item) => {
         const row = document.createElement('div');
@@ -997,7 +998,7 @@
           </div>
           <div class="basket-item-right">
             <div class="basket-item-price">${fmt(item.unitPrice * item.qty)}</div>
-            <button class="basket-item-remove" data-id="${item.id}">Remove</button>
+            <button class="basket-item-remove" data-id="${item.id}">${U.remove}</button>
           </div>
         `;
         container.appendChild(row);
@@ -1018,7 +1019,7 @@
         fxNote.style.display = 'none';
       } else {
         fxNote.style.display = 'block';
-        fxNote.textContent = `${state.currency} shown for reference — your quote will be confirmed in ${fmt2(total, 'EUR')} EUR.`;
+        fxNote.textContent = U.fxNote(state.currency, fmt2(total, 'EUR'));
       }
     }
 
@@ -1029,17 +1030,17 @@
   // currently selected display currency (used for the "charged in EUR" note).
   function fmt2(eur, currency) {
     const amount = Number(eur) * (state.fxRates[currency] || 1);
-    return `${CURRENCY_SYMBOLS[currency]}${amount.toFixed(2)}`;
+    return `${CURRENCY_SYMBOLS[currency]}${L.money(amount)}`;
   }
 
   // "Complete your trip" nudge — shows which categories are already in the
   // basket and lets the customer jump straight to any they haven't added.
   const TRIP_CATEGORIES = [
-    { prefix: 'hotel-', label: 'Stay', target: 'accommodation' },
-    { prefix: 'transfer-', label: 'Transfer', target: 'transfers' },
-    { prefix: 'equip-', label: 'Equipment', target: 'equipment' },
-    { prefix: 'pass-', label: 'Lift Pass', target: 'passes' },
-    { prefix: 'lesson-', label: 'Lessons', target: 'lessons' }
+    { prefix: 'hotel-', label: U.cats.stay, target: 'accommodation' },
+    { prefix: 'transfer-', label: U.cats.transfer, target: 'transfers' },
+    { prefix: 'equip-', label: U.cats.equipment, target: 'equipment' },
+    { prefix: 'pass-', label: U.cats.pass, target: 'passes' },
+    { prefix: 'lesson-', label: U.cats.lessons, target: 'lessons' }
   ];
 
   function renderBasketNudge() {
@@ -1057,7 +1058,7 @@
         : `<button type="button" class="nudge-chip missing" data-target="${cat.target}">+ ${cat.label}</button>`;
     }).join('');
 
-    el.innerHTML = `<div class="basket-nudge-label">Complete your trip</div><div class="nudge-chips">${chips}</div>`;
+    el.innerHTML = `<div class="basket-nudge-label">${U.completeTrip}</div><div class="nudge-chips">${chips}</div>`;
 
     el.querySelectorAll('.nudge-chip.missing').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -1079,10 +1080,10 @@
   // ---------- Currency display toggle (estimate only — checkout is always EUR) ----------
   function updateCurrencyNotes() {
     const feeNote = document.getElementById('transferFeeNote');
-    if (feeNote) feeNote.textContent = `+ ${fmt(TRANSFER_BOOKING_FEE)} booking fee, added as a separate line when you add this to your basket.`;
+    if (feeNote) feeNote.textContent = U.feeNote(fmt(TRANSFER_BOOKING_FEE));
 
     const keyCardNote = document.getElementById('passKeyCardNote');
-    if (keyCardNote) keyCardNote.textContent = `Price includes a ${fmt(PASS_KEY_CARD_FEE)} key card charge (waived on free child passes).`;
+    if (keyCardNote) keyCardNote.textContent = U.keyCardNote(fmt(PASS_KEY_CARD_FEE));
 
     const basisNote = document.getElementById('hotelPriceBasisNote');
     if (basisNote && basisNote.dataset.original) {
@@ -1126,39 +1127,39 @@
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (state.basket.length === 0) {
-      errorEl.textContent = 'Your basket is empty.';
+      errorEl.textContent = U.errBasketEmpty;
       errorEl.style.display = 'block';
       return;
     }
     if (!customerName) {
-      errorEl.textContent = 'Please enter a name for the booking.';
+      errorEl.textContent = U.errName;
       errorEl.style.display = 'block';
       return;
     }
     if (!customerEmail || !emailPattern.test(customerEmail)) {
-      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.textContent = U.errEmail;
       errorEl.style.display = 'block';
       return;
     }
 
     const btn = document.getElementById('checkoutBtn');
     btn.disabled = true;
-    btn.textContent = 'Sending your enquiry…';
+    btn.textContent = U.sending;
 
     try {
       const res = await fetch('/api/inquire', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerName, customerEmail, customerPhone, items: state.basket, hp: (document.getElementById('hpField') || {}).value || '' })
+        body: JSON.stringify({ customerName, customerEmail, customerPhone, lang: L.code, items: state.basket, hp: (document.getElementById('hpField') || {}).value || '' })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Could not send your enquiry.');
-      window.location.href = `/shop/success.html?session_id=${encodeURIComponent(data.order.id)}`;
+      if (!res.ok) throw new Error(data.error || U.sendFailed);
+      window.location.href = `${U.successPath}?session_id=${encodeURIComponent(data.order.id)}`;
     } catch (err) {
       errorEl.textContent = err.message;
       errorEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Send Enquiry';
+      btn.textContent = U.sendBtn;
     }
   });
 

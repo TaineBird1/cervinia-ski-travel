@@ -290,3 +290,8 @@ footer{background:var(--ink-dark); color:#b7cbd8; padding:26px 0; margin-top:20p
   .cat-nav::-webkit-scrollbar{display:none;}
   .cat-btn{flex-shrink:0;}
 }
+
+.lang-switch{display:flex; gap:4px; font-size:0.82rem; font-weight:700;}
+.lang-switch a{padding:6px 10px; border-radius:8px; color:var(--slate); text-decoration:none; border:1px solid transparent;}
+.lang-switch a:hover{color:var(--ink);}
+.lang-switch a.active{color:var(--ink); border-color:var(--line); background:var(--bg-alt);}
