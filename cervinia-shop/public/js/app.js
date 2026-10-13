@@ -1071,10 +1071,12 @@
   function openBasket() {
     document.getElementById('basketDrawer').classList.add('open');
     document.getElementById('basketOverlay').classList.add('open');
+    document.body.classList.add('basket-open');
   }
   function closeBasket() {
     document.getElementById('basketDrawer').classList.remove('open');
     document.getElementById('basketOverlay').classList.remove('open');
+    document.body.classList.remove('basket-open');
   }
 
   // ---------- Currency display toggle (estimate only — checkout is always EUR) ----------

@@ -187,6 +187,8 @@ header{
   display:flex; flex-direction:column; color:var(--card-title); overflow-y:auto;
 }
 .basket-drawer.open{transform:translateX(0);}
+/* the floating WhatsApp button would sit on top of the basket's total and form */
+body.basket-open .wa-float{display:none;}
 .basket-header{display:flex; align-items:center; justify-content:space-between; padding:20px 22px; border-bottom:1px solid var(--card-border); position:sticky; top:0; z-index:2; background:var(--card); flex:none;}
 .basket-header h3{font-size:1.15rem;}
 .basket-close{background:none; border:none; font-size:1.3rem; color:var(--card-body);}
