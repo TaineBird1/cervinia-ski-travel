@@ -283,7 +283,7 @@
     setupStepper(
       document.getElementById('equipPeopleStepper'),
       document.getElementById('equipPeopleValue'),
-      (v) => { state.equip.people = v; },
+      (v) => { state.equip.people = v; updateEquipPrice(); },
       1,
       10
     );
@@ -338,7 +338,7 @@
       addBtn.disabled = true;
       note.style.display = 'block';
     } else {
-      document.getElementById('equipPrice').textContent = fmt(price);
+      document.getElementById('equipPrice').textContent = fmt(price * state.equip.people);
       addBtn.disabled = false;
       note.style.display = 'none';
     }
