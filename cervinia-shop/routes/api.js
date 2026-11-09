@@ -8,6 +8,7 @@ const clickStore = require('../lib/clickStore');
 const { invoicePath, generateInvoicePDF } = require('../lib/invoice');
 const { sendInvoiceEmail, sendEnquiryNotification, sendContactNotification, sendContactAcknowledgment } = require('../lib/email');
 const { BANK, groupIban } = require('../lib/bankDetails');
+const { paypalUrl } = require('../lib/paypal');
 const { priceBasket, BasketError, cleanText } = require('../lib/priceCheck');
 const { createLimiter, clientIp } = require('../lib/rateLimit');
 const I18N = require('../public/js/i18n.js');
@@ -196,7 +197,7 @@ router.get('/order/:reference', (req, res) => {
   if (!order) return res.status(404).json({ status: 'not_found' });
   res.json({
     status: 'paid',
-    order: { id: order.id, lang: order.lang || 'en', items: order.items, total: order.total, currency: order.currency, createdAt: order.createdAt }
+    order: { id: order.id, lang: order.lang || 'en', items: order.items, total: order.total, currency: order.currency, createdAt: order.createdAt, paypalUrl: paypalUrl(order.total) }
   });
 });
 

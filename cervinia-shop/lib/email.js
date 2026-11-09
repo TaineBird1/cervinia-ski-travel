@@ -2,6 +2,7 @@ const fs = require('fs');
 const resend = require('./emailClient');
 const { BANK, groupIban } = require('./bankDetails');
 const i18n = require('./i18nServer');
+const { paypalUrl } = require('./paypal');
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
 const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
@@ -41,6 +42,11 @@ async function sendInvoiceEmail(order, pdfPath) {
     const T = i18n.get(order.lang);
     const B = T.email.quoteBody({ name: esc(order.customerName), total: require('../public/js/i18n.js').get(T.code).money(order.total) });
     const L = T.pdf.bankLabels;
+    const payUrl = paypalUrl(order.total);
+    const payAmount = require('../public/js/i18n.js').get(T.code).money(order.total);
+    const payPalHtml = payUrl
+      ? `<p><strong>${B.paypalIntro}</strong>${B.paypalRest}</p><p><a href="${payUrl}" style="display:inline-block;background:#0070ba;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:bold;">${B.paypalLink(payAmount)}</a></p>`
+      : '';
     await send({
       from: FROM_EMAIL,
       to: order.customerEmail,
@@ -58,6 +64,7 @@ async function sendInvoiceEmail(order, pdfPath) {
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.bic}</td><td style="padding:3px 0;">${BANK.bic}</td></tr>
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.reference}</td><td style="padding:3px 0;"><strong>${esc(order.id)}</strong></td></tr>
         </table>
+        ${payPalHtml}
         <p>${B.attached}</p>
         <p>${B.questions} <a href="https://wa.me/393668794487">+39 366 879 4487</a></p>
         <p>${B.tagline}</p>

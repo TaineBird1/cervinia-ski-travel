@@ -5,6 +5,7 @@ const { BANK, groupIban } = require('./bankDetails');
 
 const { INVOICES_DIR } = require('./dataDir');
 const i18n = require('./i18nServer');
+const { paypalUrl } = require('./paypal');
 
 const LOGO_PATH = path.join(__dirname, '..', 'site', 'logo.png');
 
@@ -191,6 +192,24 @@ function addBankBox(doc, order, S) {
   doc.x = LEFT;
 }
 
+// PayPal.me option under the bank-transfer box (only if a handle is configured).
+function addPayPalBox(doc, order, S) {
+  const url = paypalUrl(order.total);
+  if (!url) return;
+  const money = require('../public/js/i18n.js').get(order.lang === 'it' ? 'it' : 'en').money;
+  doc.moveDown(0.4);
+  const top = doc.y;
+  const boxH = 58;
+  doc.rect(LEFT, top, WIDTH, boxH).fillAndStroke('#f2f8fb', LINE);
+  doc.fillColor(INK).font('Helvetica-Bold').fontSize(11).text(S.paypalTitle, LEFT + 12, top + 8);
+  doc.fillColor(SLATE).font('Helvetica').fontSize(9)
+    .text(S.paypalText(`€${money(order.total)}`), LEFT + 12, top + 24, { width: WIDTH - 24 });
+  doc.fillColor('#0070ba').font('Helvetica-Bold').fontSize(9.5)
+    .text(S.paypalLink, LEFT + 12, top + 46, { link: url, underline: true });
+  doc.y = top + boxH;
+  doc.x = LEFT;
+}
+
 // Terms page appended to every quote. Adapted from the client's reference
 // terms sheet — reworded to make clear this document is an unpaid quote
 // generated from an enquiry, not a confirmed/paid booking.
@@ -198,6 +217,7 @@ function addTermsPage(doc, order, S) {
   doc.addPage();
 
   addBankBox(doc, order, S);
+  addPayPalBox(doc, order, S);
   doc.moveDown(1);
 
   doc.font('Helvetica-Bold').fontSize(13).fillColor(INK).text(S.exclTitle);
@@ -239,9 +259,9 @@ function addTermsPage(doc, order, S) {
   doc.moveDown(0.6);
   doc.font('Helvetica').fontSize(8).fillColor(SLATE).text(S.eoe);
 
-  doc.moveDown(1);
-  rule(doc);
   doc.moveDown(0.6);
+  rule(doc);
+  doc.moveDown(0.4);
   doc.fillColor('#1f7fae').font('Helvetica-Oblique').fontSize(9)
     .text(S.whatsapp(BUSINESS.whatsapp), { align: 'center' })
     .text(BUSINESS.website, { align: 'center' });

@@ -35,6 +35,7 @@
 
     <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Scarica il preventivo (PDF)</a>
     <div class="confirm-card" id="bankCard" style="display:none;"></div>
+    <div class="confirm-card" id="paypalCard" style="display:none;"></div>
     <p style="margin-top:20px; color:var(--slate); font-size:0.9rem;">Non è stato addebitato alcun pagamento. Vi abbiamo inviato via email una copia di questo preventivo: il nostro team locale verificherà la disponibilità e vi contatterà entro 24 ore.</p>
     <p style="margin-top:24px;"><a href="/shop/it/" style="color:var(--blue); font-weight:700;">← Torna al configuratore del viaggio</a></p>
   </div>
@@ -92,6 +93,18 @@
     downloadBtn.href = `/api/invoice/${order.id}`;
     downloadBtn.style.display = 'inline-block';
     showBankDetails(order);
+    showPayPal(order);
+  }
+
+  function showPayPal(order) {
+    if (!order.paypalUrl) return;
+    const card = document.getElementById('paypalCard');
+    card.innerHTML = `
+      <h3 style="margin-bottom:6px;">Oppure pagate con PayPal</h3>
+      <p style="color:var(--slate); font-size:0.88rem; margin-bottom:12px;">Una volta confermata la prenotazione potete pagare con PayPal. L'importo è già inserito. Scegliete <strong>Beni e servizi</strong> e indicate il vostro riferimento <strong>${order.id}</strong> nella nota. Vi preghiamo di pagare solo dopo che avremo confermato la disponibilità e il prezzo finale.</p>
+      <a class="download-btn" style="background:#0070ba; margin-top:0;" href="${order.paypalUrl}" target="_blank" rel="noopener">Paga €${fmtMoney(order.total)} con PayPal</a>
+    `;
+    card.style.display = 'block';
   }
 
   function showBankDetails(order) {

@@ -26,6 +26,9 @@ const en = {
     bankTitle: 'Pay by direct bank transfer',
     bankLabels: { accountName: 'Account name', bank: 'Bank', account: 'Account (Conto)', iban: 'IBAN', bic: 'BIC / SWIFT', reference: 'Payment reference' },
     bankNote: 'Please pay only once our team has confirmed availability and your final price. Use the account name exactly as shown and quote the payment reference.',
+    paypalTitle: 'Or pay by PayPal',
+    paypalText: (amount) => `Once we have confirmed your booking you can pay ${amount} with PayPal. Choose "Goods and services" and put your enquiry reference in the note.`,
+    paypalLink: 'Pay with PayPal',
     exclTitle: 'Package Cost EXCLUSIONS:',
     exclIntro: 'The following are NOT included in the package price unless specifically stated otherwise.',
     exclList: [
@@ -66,6 +69,9 @@ const en = {
       estimate: 'This is a price estimate based on current rates — no payment has been taken. Our local team will check availability and be in touch within 24 hours to confirm everything and arrange payment.',
       bankIntro: 'Paying by bank transfer.',
       bankIntroRest: ' Once we have confirmed your booking, you can pay directly into our account — please only pay after we have confirmed:',
+      paypalIntro: 'Paying by PayPal.',
+      paypalRest: ' You can also pay with PayPal — again, only after we have confirmed. Choose "Goods and services" and put your reference in the note:',
+      paypalLink: (amount) => `Pay €${amount} with PayPal`,
       attached: 'Your quote is attached to this email.',
       questions: 'Questions in the meantime? WhatsApp us any time:',
       tagline: "We don't just go there, we are there."
@@ -103,8 +109,11 @@ const it = {
     whatsappShort: (n) => `WhatsApp: ${n}`,
     email: (e) => `Email: ${e}`,
     bankTitle: 'Pagamento con bonifico bancario',
-    bankLabels: { accountName: 'Intestatario del conto', bank: 'Banca', account: 'Conto', iban: 'IBAN', bic: 'BIC / SWIFT', reference: 'Causale (riferimento di pagamento)' },
+    bankLabels: { accountName: 'Intestatario del conto', bank: 'Banca', account: 'Conto', iban: 'IBAN', bic: 'BIC / SWIFT', reference: 'Causale' },
     bankNote: "Pagate solo dopo che il nostro team avrà confermato la disponibilità e il prezzo finale. Indicate l'intestatario del conto esattamente come riportato e riportate il riferimento di pagamento come causale.",
+    paypalTitle: 'Oppure pagate con PayPal',
+    paypalText: (amount) => `Una volta confermata la prenotazione potete pagare ${amount} con PayPal. Scegliete «Beni e servizi» e indicate il riferimento della richiesta nella nota.`,
+    paypalLink: 'Paga con PayPal',
     exclTitle: 'ESCLUSIONI dal costo del pacchetto:',
     exclIntro: 'Quanto segue NON è incluso nel prezzo del pacchetto, salvo diversa indicazione specifica.',
     exclList: [
@@ -145,6 +154,9 @@ const it = {
       estimate: 'Si tratta di una stima di prezzo basata sulle tariffe attuali: non è stato addebitato alcun pagamento. Il nostro team locale verificherà la disponibilità e vi contatterà entro 24 ore per confermare tutto e concordare il pagamento.',
       bankIntro: 'Pagamento con bonifico bancario.',
       bankIntroRest: ' Una volta confermata la prenotazione, potete pagare direttamente sul nostro conto; vi preghiamo di pagare solo dopo la nostra conferma:',
+      paypalIntro: 'Pagamento con PayPal.',
+      paypalRest: ' Potete pagare anche con PayPal, sempre solo dopo la nostra conferma. Scegliete «Beni e servizi» e indicate il vostro riferimento nella nota:',
+      paypalLink: (amount) => `Paga €${amount} con PayPal`,
       attached: 'Il vostro preventivo è allegato a questa email.',
       questions: 'Avete domande nel frattempo? Scriveteci su WhatsApp in qualsiasi momento:',
       tagline: 'Non ci andiamo soltanto: ci viviamo.'

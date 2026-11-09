@@ -35,6 +35,7 @@
 
     <a href="#" class="download-btn" id="downloadBtn" style="display:none;">Download Your Quote (PDF)</a>
     <div class="confirm-card" id="bankCard" style="display:none;"></div>
+    <div class="confirm-card" id="paypalCard" style="display:none;"></div>
     <p style="margin-top:20px; color:var(--slate); font-size:0.9rem;">No payment has been taken. We've emailed you a copy of this quote — our local team will check availability and be in touch within 24 hours.</p>
     <p style="margin-top:24px;"><a href="/shop" style="color:var(--blue); font-weight:700;">← Back to itinerary builder</a></p>
   </div>
@@ -90,6 +91,18 @@
     downloadBtn.href = `/api/invoice/${order.id}`;
     downloadBtn.style.display = 'inline-block';
     showBankDetails(order);
+    showPayPal(order);
+  }
+
+  function showPayPal(order) {
+    if (!order.paypalUrl) return;
+    const card = document.getElementById('paypalCard');
+    card.innerHTML = `
+      <h3 style="margin-bottom:6px;">Or pay by PayPal</h3>
+      <p style="color:var(--slate); font-size:0.88rem; margin-bottom:12px;">Once we have confirmed your booking you can pay with PayPal. The amount is filled in for you. Please choose <strong>Goods and services</strong> and put your reference <strong>${order.id}</strong> in the note. Please only pay after we have confirmed availability and your final price.</p>
+      <a class="download-btn" style="background:#0070ba; margin-top:0;" href="${order.paypalUrl}" target="_blank" rel="noopener">Pay €${Number(order.total).toFixed(2)} with PayPal</a>
+    `;
+    card.style.display = 'block';
   }
 
   function showBankDetails(order) {
