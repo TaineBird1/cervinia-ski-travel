@@ -5,7 +5,7 @@ const { BANK, groupIban } = require('./bankDetails');
 
 const { INVOICES_DIR } = require('./dataDir');
 const i18n = require('./i18nServer');
-const { paypalUrl } = require('./paypal');
+const { paypalUrl, paypalAmount, paypalFee, FEE_PERCENT } = require('./paypal');
 
 const LOGO_PATH = path.join(__dirname, '..', 'site', 'logo.png');
 
@@ -172,7 +172,10 @@ function addBankBox(doc, order, S) {
     [S.bankLabels.reference, order.id]
   ];
   const rowH = 16;
-  const boxH = 30 + rows.length * rowH + 40;
+  const money = require('../public/js/i18n.js').get(order.lang === 'it' ? 'it' : 'en').money;
+  const noteText = S.bankNote(`€${money(order.total)}`);
+  doc.font('Helvetica-Oblique').fontSize(8.5);
+  const boxH = 30 + rows.length * rowH + 12 + doc.heightOfString(noteText, { width: WIDTH - 24 });
 
   doc.rect(LEFT, top, WIDTH, boxH).fillAndStroke('#f2f8fb', LINE);
   doc.fillColor(INK).font('Helvetica-Bold').fontSize(12).text(S.bankTitle, LEFT + 12, top + 10);
@@ -185,7 +188,7 @@ function addBankBox(doc, order, S) {
   });
 
   doc.fillColor(SLATE).font('Helvetica-Oblique').fontSize(8.5)
-    .text(S.bankNote,
+    .text(noteText,
       LEFT + 12, y + 6, { width: WIDTH - 24 });
 
   doc.y = top + boxH;
@@ -199,13 +202,16 @@ function addPayPalBox(doc, order, S) {
   const money = require('../public/js/i18n.js').get(order.lang === 'it' ? 'it' : 'en').money;
   doc.moveDown(0.4);
   const top = doc.y;
-  const boxH = 58;
+  const text = S.paypalText({ amount: `€${money(paypalAmount(order.total))}`, fee: `€${money(paypalFee(order.total))}`, pct: FEE_PERCENT, total: `€${money(order.total)}` });
+  doc.font('Helvetica').fontSize(9);
+  const textH = doc.heightOfString(text, { width: WIDTH - 24 });
+  const boxH = 24 + textH + 22;
   doc.rect(LEFT, top, WIDTH, boxH).fillAndStroke('#f2f8fb', LINE);
   doc.fillColor(INK).font('Helvetica-Bold').fontSize(11).text(S.paypalTitle, LEFT + 12, top + 8);
   doc.fillColor(SLATE).font('Helvetica').fontSize(9)
-    .text(S.paypalText(`€${money(order.total)}`), LEFT + 12, top + 24, { width: WIDTH - 24 });
+    .text(text, LEFT + 12, top + 24, { width: WIDTH - 24 });
   doc.fillColor('#0070ba').font('Helvetica-Bold').fontSize(9.5)
-    .text(S.paypalLink, LEFT + 12, top + 46, { link: url, underline: true });
+    .text(S.paypalLink, LEFT + 12, top + 24 + textH + 6, { link: url, underline: true });
   doc.y = top + boxH;
   doc.x = LEFT;
 }
@@ -218,7 +224,7 @@ function addTermsPage(doc, order, S) {
 
   addBankBox(doc, order, S);
   addPayPalBox(doc, order, S);
-  doc.moveDown(1);
+  doc.moveDown(0.6);
 
   doc.font('Helvetica-Bold').fontSize(13).fillColor(INK).text(S.exclTitle);
   doc.moveDown(0.4);
@@ -232,9 +238,9 @@ function addTermsPage(doc, order, S) {
   doc.font('Helvetica-Bold').fontSize(9.5)
     .text(S.availability);
 
-  doc.moveDown(0.8);
+  doc.moveDown(0.5);
   rule(doc);
-  doc.moveDown(0.8);
+  doc.moveDown(0.5);
 
   doc.font('Helvetica-Bold').fontSize(13).fillColor(INK).text(S.docsTitle);
   doc.moveDown(0.4);
@@ -244,9 +250,9 @@ function addTermsPage(doc, order, S) {
   doc.font('Helvetica-Bold').fontSize(10).fillColor(INK)
     .text(S.estimateNote, { align: 'center' });
 
-  doc.moveDown(0.8);
+  doc.moveDown(0.5);
   rule(doc);
-  doc.moveDown(0.8);
+  doc.moveDown(0.5);
 
   doc.font('Helvetica-Bold').fontSize(13).fillColor(INK).text(S.importantTitle);
   doc.moveDown(0.4);

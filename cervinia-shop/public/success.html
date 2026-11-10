@@ -99,8 +99,8 @@
     const card = document.getElementById('paypalCard');
     card.innerHTML = `
       <h3 style="margin-bottom:6px;">Or pay by PayPal</h3>
-      <p style="color:var(--slate); font-size:0.88rem; margin-bottom:12px;">Once we have confirmed your booking you can pay with PayPal. The amount is filled in for you. Please choose <strong>Goods and services</strong> and put your reference <strong>${order.id}</strong> in the note. Please only pay after we have confirmed availability and your final price.</p>
-      <a class="download-btn" style="background:#0070ba; margin-top:0;" href="${order.paypalUrl}" target="_blank" rel="noopener">Pay €${Number(order.total).toFixed(2)} with PayPal</a>
+      <p style="color:var(--slate); font-size:0.88rem; margin-bottom:12px;">Once we have confirmed your booking you can pay with PayPal. PayPal payments include a ${order.paypalFeePercent}% addition (€${Number(order.paypalFee).toFixed(2)}) to cover PayPal's fee, so the PayPal total is €${Number(order.paypalAmount).toFixed(2)}. To avoid the extra, use the bank transfer above for exactly €${Number(order.total).toFixed(2)}. The amount is filled in for you. Please choose <strong>Goods and services</strong> and put your reference <strong>${order.id}</strong> in the note. Please only pay after we have confirmed availability and your final price.</p>
+      <a class="download-btn" style="background:#0070ba; margin-top:0;" href="${order.paypalUrl}" target="_blank" rel="noopener">Pay €${Number(order.paypalAmount).toFixed(2)} with PayPal</a>
     `;
     card.style.display = 'block';
   }
@@ -120,7 +120,7 @@
         const bankCard = document.getElementById('bankCard');
         bankCard.innerHTML = `
           <h3 style="margin-bottom:6px;">Prefer to pay by bank transfer?</h3>
-          <p style="color:var(--slate); font-size:0.88rem; margin-bottom:10px;">Once we have confirmed your booking you can pay directly into our account. Please only pay after we have confirmed availability and your final price.</p>
+          <p style="color:var(--slate); font-size:0.88rem; margin-bottom:10px;">Once we have confirmed your booking you can pay directly into our account. Pay exactly <strong>€${Number(order.total).toFixed(2)}</strong>, the amount of your quote, with no extra fee. Please only pay after we have confirmed availability and your final price.</p>
         ` + rows.map(([label, value]) => `
           <div class="confirm-row"><span>${label}</span><strong style="text-align:right;">${value}</strong></div>
         `).join('');

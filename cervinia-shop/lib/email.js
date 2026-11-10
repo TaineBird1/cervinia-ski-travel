@@ -2,7 +2,7 @@ const fs = require('fs');
 const resend = require('./emailClient');
 const { BANK, groupIban } = require('./bankDetails');
 const i18n = require('./i18nServer');
-const { paypalUrl } = require('./paypal');
+const { paypalUrl, paypalAmount, paypalFee, FEE_PERCENT } = require('./paypal');
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Cervinia Travel Services <onboarding@resend.dev>';
 const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'info@CerviniaTravelServices.com';
@@ -43,9 +43,12 @@ async function sendInvoiceEmail(order, pdfPath) {
     const B = T.email.quoteBody({ name: esc(order.customerName), total: require('../public/js/i18n.js').get(T.code).money(order.total) });
     const L = T.pdf.bankLabels;
     const payUrl = paypalUrl(order.total);
-    const payAmount = require('../public/js/i18n.js').get(T.code).money(order.total);
+    const money = require('../public/js/i18n.js').get(T.code).money;
+    const payAmount = money(paypalAmount(order.total));
+    const feeText = `€${money(paypalFee(order.total))}`;
+    const totalText = `€${money(order.total)}`;
     const payPalHtml = payUrl
-      ? `<p><strong>${B.paypalIntro}</strong>${B.paypalRest}</p><p><a href="${payUrl}" style="display:inline-block;background:#0070ba;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:bold;">${B.paypalLink(payAmount)}</a></p>`
+      ? `<p><strong>${B.paypalIntro}</strong>${B.paypalRest(FEE_PERCENT, feeText)}</p><p><a href="${payUrl}" style="display:inline-block;background:#0070ba;color:#fff;text-decoration:none;padding:10px 18px;border-radius:6px;font-weight:bold;">${B.paypalLink(payAmount)}</a></p>`
       : '';
     await send({
       from: FROM_EMAIL,
@@ -55,7 +58,7 @@ async function sendInvoiceEmail(order, pdfPath) {
         <p>${B.greeting}</p>
         <p>${B.intro}</p>
         <p>${B.estimate}</p>
-        <p><strong>${B.bankIntro}</strong>${B.bankIntroRest}</p>
+        <p><strong>${B.bankIntro}</strong>${B.bankIntroRest(totalText)}</p>
         <table style="border-collapse:collapse;font-size:14px;margin:0 0 14px;">
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.accountName}</td><td style="padding:3px 0;"><strong>${BANK.accountName}</strong></td></tr>
           <tr><td style="padding:3px 16px 3px 0;color:#5b6b78;">${L.bank}</td><td style="padding:3px 0;">${BANK.bankName}, ${BANK.bankAddress}</td></tr>
