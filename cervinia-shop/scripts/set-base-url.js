@@ -29,6 +29,7 @@ const files = [];
   }
 }).call(null, path.join(root, 'site'));
 files.push(path.join(root, 'public', 'index.html'));
+files.push(path.join(root, 'public', 'it', 'index.html'));
 
 let total = 0;
 for (const file of files) {

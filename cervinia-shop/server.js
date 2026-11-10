@@ -11,6 +11,17 @@ app.set('trust proxy', true);
 app.disable('x-powered-by');
 const PORT = process.env.PORT || 3000;
 
+// Visitors who arrive on the old Render address are sent to the real domain.
+// Set REDIRECT_RENDER_HOST=off on the server to turn this off.
+const RENDER_HOST = 'cervinia-ski-travel.onrender.com';
+const CANONICAL_HOST = process.env.CANONICAL_HOST || 'www.cerviniatravelservices.com';
+app.use((req, res, next) => {
+  if (process.env.REDIRECT_RENDER_HOST !== 'off' && (req.method === 'GET' || req.method === 'HEAD') && req.hostname === RENDER_HOST) {
+    return res.redirect(301, `https://${CANONICAL_HOST}${req.originalUrl}`);
+  }
+  next();
+});
+
 // Browser-side protections sent with every response. The content policy only
 // allows what the site really uses: its own files, Google Fonts, the Open-Meteo
 // weather feed and Cloudflare's visitor counter.

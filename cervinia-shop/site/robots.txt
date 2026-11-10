@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://cervinia-ski-travel.onrender.com/sitemap.xml
+Sitemap: https://www.cerviniatravelservices.com/sitemap.xml
